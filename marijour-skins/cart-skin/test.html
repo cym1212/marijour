@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart Skin Test</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <link rel="stylesheet" href="./dist/cart-skin.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+    }
+    
+    .test-container {
+      background: white;
+      min-height: 100vh;
+    }
+    
+    .test-section {
+      margin-bottom: 40px;
+    }
+    
+    .section-title {
+      text-align: center;
+      padding: 20px;
+      background: #333;
+      color: white;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-section">
+      <h2 class="section-title">장바구니 (쿠폰/포인트 포함)</h2>
+      <div id="cart-full"></div>
+    </div>
+    
+    <div class="test-section">
+      <h2 class="section-title">빈 장바구니</h2>
+      <div id="cart-empty"></div>
+    </div>
+  </div>
+  
+  <script src="./dist/cart-skin.umd.js"></script>
+  <script>
+    // 테스트 데이터
+    const cartItems = [
+      {
+        id: 1,
+        name: '프리미엄 오가닉 코튼 베드 시트 세트',
+        thumbnailUrl: 'https://via.placeholder.com/150/FF6B6B/FFFFFF?text=BED',
+        price: 89000,
+        originalPrice: 129000,
+        discountRate: 31,
+        quantity: 1,
+        options: [
+          { name: '사이즈', value: '퀸 (160x200)' },
+          { name: '색상', value: '화이트' }
+        ],
+        stock: 10
+      },
+      {
+        id: 2,
+        name: '프리미엄 구스다운 베개',
+        thumbnailUrl: 'https://via.placeholder.com/150/4ECDC4/FFFFFF?text=PILLOW',
+        price: 59000,
+        originalPrice: 79000,
+        discountRate: 25,
+        quantity: 2,
+        stock: 20
+      },
+      {
+        id: 3,
+        name: '메모리폼 매트리스 토퍼',
+        thumbnailUrl: 'https://via.placeholder.com/150/45B7D1/FFFFFF?text=TOPPER',
+        price: 129000,
+        originalPrice: 169000,
+        discountRate: 24,
+        quantity: 1,
+        options: [
+          { name: '사이즈', value: '킹 (180x200)' }
+        ]
+      }
+    ];
+    
+    const coupons = [
+      {
+        id: '1',
+        code: 'WELCOME10',
+        name: '신규회원 10% 할인',
+        discountType: 'percent',
+        discountValue: 10,
+        minOrderAmount: 50000
+      },
+      {
+        id: '2',
+        code: 'SAVE5000',
+        name: '5,000원 할인 쿠폰',
+        discountType: 'amount',
+        discountValue: 5000,
+        minOrderAmount: 30000
+      },
+      {
+        id: '3',
+        code: 'VIP20',
+        name: 'VIP 회원 20% 할인',
+        discountType: 'percent',
+        discountValue: 20,
+        minOrderAmount: 100000
+      }
+    ];
+    
+    const deliveryInfo = {
+      fee: 3000,
+      freeShippingThreshold: 50000,
+      message: '50,000원 이상 구매 시 무료배송',
+      regions: [
+        { name: '제주도', additionalFee: 3000 },
+        { name: '도서산간', additionalFee: 5000 }
+      ]
+    };
+    
+    // 유틸리티 및 액션 함수
+    const utils = {
+      navigate: (path) => {
+        console.log('Navigate to:', path);
+        alert(`페이지 이동: ${path}`);
+      }
+    };
+    
+    const actions = {
+      proceedToCheckout: (data) => {
+        console.log('Proceed to checkout:', data);
+        alert(`주문 페이지로 이동합니다.\\n선택 상품: ${data.selectedItems.length}개\\n총 금액: ${data.summary.totalPrice.toLocaleString('ko-KR')}원`);
+      }
+    };
+    
+    // 컴포넌트 렌더링
+    if (window.CartSkin) {
+      // 전체 기능 포함 장바구니
+      const container1 = document.getElementById('cart-full');
+      const root1 = ReactDOM.createRoot(container1);
+      root1.render(React.createElement(window.CartSkin, {
+        data: {
+          items: cartItems,
+          selectedItemIds: [1, 2, 3],
+          coupons: coupons,
+          availablePoints: 5000,
+          usedPoints: 0,
+          deliveryInfo: deliveryInfo,
+          showCoupon: true,
+          showPoints: true
+        },
+        utils: utils,
+        actions: actions
+      }));
+      
+      // 빈 장바구니
+      const container2 = document.getElementById('cart-empty');
+      const root2 = ReactDOM.createRoot(container2);
+      root2.render(React.createElement(window.CartSkin, {
+        data: {
+          items: [],
+          emptyMessage: '장바구니가 비어있어요',
+          emptySubMessage: '마음에 드는 상품을 장바구니에 담아보세요!',
+          emptyButtonText: '쇼핑 계속하기',
+          emptyButtonLink: '/shop'
+        },
+        utils: utils
+      }));
+    } else {
+      console.error('CartSkin not loaded');
+    }
+  </script>
+</body>
+</html>

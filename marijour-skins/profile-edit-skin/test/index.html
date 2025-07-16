@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfileEdit Skin Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .test-header {
+            background: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .test-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .test-header p {
+            margin: 8px 0 0 0;
+            opacity: 0.8;
+        }
+        .test-content {
+            padding: 20px;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast.success {
+            background-color: #28a745;
+        }
+        .toast.error {
+            background-color: #dc3545;
+        }
+        .toast.warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>ProfileEdit Skin Test</h1>
+            <p>회원정보 수정 스킨 컴포넌트 테스트</p>
+        </div>
+        <div class="test-content">
+            <div id="profile-edit-skin-container"></div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <div id="modal-container"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <script>
+        // Mock data for testing
+        const mockData = {
+            userInfo: {
+                id: 'user123',
+                name: '홍길동',
+                email: 'hong@example.com',
+                phoneNumber: '010-1234-5678',
+                birthDate: '1990-01-01',
+                gender: 'male',
+                joinDate: '2020-01-01T00:00:00Z',
+                lastLoginDate: '2024-01-01T00:00:00Z',
+                marketingConsent: true
+            },
+            addresses: [
+                {
+                    id: 'addr1',
+                    name: '집',
+                    recipient: '홍길동',
+                    phoneNumber: '010-1234-5678',
+                    zonecode: '12345',
+                    roadAddress: '서울특별시 강남구 테헤란로 123',
+                    detailAddress: '456호',
+                    isDefault: true,
+                    deliveryRequest: '문앞에 놓고 가세요'
+                },
+                {
+                    id: 'addr2',
+                    name: '회사',
+                    recipient: '홍길동',
+                    phoneNumber: '010-1234-5678',
+                    zonecode: '67890',
+                    roadAddress: '서울특별시 서초구 서초대로 789',
+                    detailAddress: '10층',
+                    isDefault: false
+                }
+            ],
+            withdrawalReasons: [
+                '서비스 불만족',
+                '이용 빈도 낮음',
+                '개인정보 보호',
+                '타 사이트 이용',
+                '기타'
+            ]
+        };
+
+        // Mock actions
+        const mockActions = {
+            updateUserInfo: async (userInfo) => {
+                console.log('Updating user info:', userInfo);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            changePassword: async (currentPassword, newPassword) => {
+                console.log('Changing password');
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            addAddress: async (address) => {
+                console.log('Adding address:', address);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            updateAddress: async (id, address) => {
+                console.log('Updating address:', id, address);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            deleteAddress: async (id) => {
+                console.log('Deleting address:', id);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            setDefaultAddress: async (id) => {
+                console.log('Setting default address:', id);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            updateRefundAccount: async (account) => {
+                console.log('Updating refund account:', account);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            requestWithdrawal: async (reason, detail) => {
+                console.log('Requesting withdrawal:', reason, detail);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve();
+            },
+            uploadProfileImage: async (file) => {
+                console.log('Uploading profile image:', file);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                return Promise.resolve('https://via.placeholder.com/150');
+            },
+            searchAddress: async (query) => {
+                console.log('Searching address:', query);
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 500));
+                return Promise.resolve([
+                    {
+                        zonecode: '12345',
+                        roadAddress: '서울특별시 강남구 테헤란로 123',
+                        jibunAddress: '서울특별시 강남구 역삼동 123-45',
+                        buildingName: '테헤란빌딩'
+                    },
+                    {
+                        zonecode: '12346',
+                        roadAddress: '서울특별시 강남구 테헤란로 125',
+                        jibunAddress: '서울특별시 강남구 역삼동 125-67'
+                    }
+                ]);
+            }
+        };
+
+        // Mock options
+        const mockOptions = {
+            allowProfileImageUpload: true,
+            allowPasswordChange: true,
+            allowWithdrawal: true,
+            maxAddresses: 5,
+            requiredFields: ['name', 'email', 'phoneNumber'],
+            passwordPolicy: {
+                minLength: 8,
+                requireUppercase: true,
+                requireLowercase: true,
+                requireNumbers: true,
+                requireSpecialChars: false
+            }
+        };
+
+        // Utility functions
+        const showToast = (message, type = 'success') => {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.getElementById('toast-container').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        };
+
+        const openModal = (content) => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Modal</h3>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        };
+
+        const closeModal = () => {
+            const modalContainer = document.getElementById('modal-container');
+            modalContainer.innerHTML = '';
+        };
+
+        const navigate = (path) => {
+            console.log('Navigating to:', path);
+            showToast(`페이지 이동: ${path}`, 'warning');
+        };
+
+        // Mock utils
+        const mockUtils = {
+            navigate,
+            openModal,
+            closeModal,
+            showToast
+        };
+
+        // Props for the component
+        const props = {
+            data: mockData,
+            actions: mockActions,
+            options: mockOptions,
+            utils: mockUtils,
+            mode: 'edit'
+        };
+
+        // Wait for the component to be loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof ProfileEditSkin !== 'undefined') {
+                const container = document.getElementById('profile-edit-skin-container');
+                const root = ReactDOM.createRoot(container);
+                root.render(React.createElement(ProfileEditSkin, props));
+            } else {
+                console.error('ProfileEditSkin component not found');
+            }
+        });
+    </script>
+</body>
+</html>

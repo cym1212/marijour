@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Skin Test</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <link rel="stylesheet" href="./dist/shop-skin.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+    }
+    
+    .test-section {
+      background: white;
+      margin-bottom: 40px;
+    }
+    
+    h1 {
+      text-align: center;
+      padding: 40px 20px 20px;
+      color: #333;
+      background: white;
+      margin: 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      padding: 20px;
+      background: #f8f8f8;
+      margin: 0;
+      font-size: 18px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Shop Skin 테스트</h1>
+  
+  <div class="test-section">
+    <h2 class="section-title">기본 상품 목록 (카테고리, 정렬, 뷰 타입 토글 포함)</h2>
+    <div id="shop-full"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2 class="section-title">심플 상품 목록 (상품만 표시)</h2>
+    <div id="shop-simple"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2 class="section-title">상품 없음 상태</h2>
+    <div id="shop-empty"></div>
+  </div>
+  
+  <script src="./dist/shop-skin.umd.js"></script>
+  <script>
+    // 테스트 데이터
+    const categories = [
+      { id: 'all', name: '전체', link: '/shop' },
+      { id: 'best', name: 'Best', link: '/shop/best' },
+      { id: 'kitchen', name: '키친&다이닝', link: '/shop/kitchen' },
+      { id: 'body', name: '바디케어', link: '/shop/body' },
+      { id: 'bedroom', name: '침실&패브릭', link: '/shop/bedroom' }
+    ];
+    
+    const sortOptions = [
+      { value: 'latest', label: '최신순' },
+      { value: 'popular', label: '인기순' },
+      { value: 'price-low', label: '낮은 가격순' },
+      { value: 'price-high', label: '높은 가격순' },
+      { value: 'review', label: '리뷰 많은순' }
+    ];
+    
+    const products = [
+      {
+        id: 1,
+        name: '프리미엄 세라믹 머그컵',
+        price: 25000,
+        originalPrice: 35000,
+        discountRate: 30,
+        thumbnailUrl: 'https://via.placeholder.com/300/FF6B6B/FFFFFF?text=MUG',
+        rating: 4.5,
+        reviewCount: 128,
+        badge: { type: 'best', label: 'BEST' },
+        link: '/products/1'
+      },
+      {
+        id: 2,
+        name: '오가닉 코튼 베개커버 (화이트)',
+        price: 18000,
+        thumbnailUrl: 'https://via.placeholder.com/300/4ECDC4/FFFFFF?text=PILLOW',
+        rating: 4.8,
+        reviewCount: 95,
+        badge: { type: 'new', label: 'NEW' },
+        link: '/products/2'
+      },
+      {
+        id: 3,
+        name: '네추럴 우드 디너 플레이트',
+        price: 32000,
+        originalPrice: 40000,
+        discountRate: 20,
+        thumbnailUrl: 'https://via.placeholder.com/300/45B7D1/FFFFFF?text=PLATE',
+        rating: 4.3,
+        reviewCount: 67,
+        badge: { type: 'sale', label: 'SALE' },
+        link: '/products/3'
+      },
+      {
+        id: 4,
+        name: '친환경 대나무 칫솔 세트',
+        price: 15000,
+        thumbnailUrl: 'https://via.placeholder.com/300/96CEB4/FFFFFF?text=BRUSH',
+        rating: 4.6,
+        reviewCount: 234,
+        badge: { type: 'eco', label: 'ECO' },
+        link: '/products/4'
+      },
+      {
+        id: 5,
+        name: '아로마테라피 캔들 (라벤더)',
+        price: 28000,
+        thumbnailUrl: 'https://via.placeholder.com/300/FECA57/FFFFFF?text=CANDLE',
+        rating: 4.7,
+        reviewCount: 189,
+        link: '/products/5'
+      },
+      {
+        id: 6,
+        name: '프리미엄 실크 아이마스크',
+        price: 35000,
+        originalPrice: 45000,
+        discountRate: 22,
+        thumbnailUrl: 'https://via.placeholder.com/300/FF6B9D/FFFFFF?text=MASK',
+        rating: 4.9,
+        reviewCount: 312,
+        badge: { type: 'premium', label: 'PREMIUM' },
+        link: '/products/6'
+      },
+      {
+        id: 7,
+        name: '미니멀 유리 화병 세트',
+        price: 22000,
+        thumbnailUrl: 'https://via.placeholder.com/300/C44569/FFFFFF?text=VASE',
+        rating: 4.4,
+        reviewCount: 78,
+        link: '/products/7'
+      },
+      {
+        id: 8,
+        name: '오가닉 바디 로션 (시어버터)',
+        price: 19000,
+        thumbnailUrl: 'https://via.placeholder.com/300/2C3E50/FFFFFF?text=LOTION',
+        rating: 4.5,
+        reviewCount: 156,
+        badge: { type: 'gift', label: 'GIFT' },
+        link: '/products/8'
+      }
+    ];
+    
+    // 유틸리티 및 액션 함수
+    const utils = {
+      navigate: (path) => {
+        console.log('Navigate to:', path);
+        alert(`페이지 이동: ${path}`);
+      }
+    };
+    
+    const actions = {
+      addToCart: (productId) => {
+        alert(`상품 ${productId}이(가) 장바구니에 추가되었습니다.`);
+      },
+      changeCategory: (categoryId) => {
+        console.log('Category changed to:', categoryId);
+      },
+      changeSort: (sortValue) => {
+        console.log('Sort changed to:', sortValue);
+      },
+      changeViewType: (viewType) => {
+        console.log('View type changed to:', viewType);
+      }
+    };
+    
+    // 컴포넌트 렌더링
+    if (window.ShopSkin) {
+      // 전체 기능 포함
+      const container1 = document.getElementById('shop-full');
+      const root1 = ReactDOM.createRoot(container1);
+      root1.render(React.createElement(window.ShopSkin, {
+        data: {
+          title: '전체 상품',
+          products: products,
+          categories: categories,
+          currentCategory: 'all',
+          totalCount: 128,
+          sortOptions: sortOptions,
+          currentSort: 'latest',
+          viewType: 'grid',
+          showSort: true,
+          showViewTypeToggle: true,
+          showBreadcrumb: true
+        },
+        utils: utils,
+        actions: actions
+      }));
+      
+      // 심플 버전
+      const container2 = document.getElementById('shop-simple');
+      const root2 = ReactDOM.createRoot(container2);
+      root2.render(React.createElement(window.ShopSkin, {
+        data: {
+          products: products.slice(0, 4),
+          columnsOnMobile: 2,
+          columnsOnDesktop: 4,
+          showSort: false,
+          showViewTypeToggle: false
+        },
+        utils: utils,
+        actions: actions
+      }));
+      
+      // 빈 상태
+      const container3 = document.getElementById('shop-empty');
+      const root3 = ReactDOM.createRoot(container3);
+      root3.render(React.createElement(window.ShopSkin, {
+        data: {
+          title: '검색 결과',
+          products: [],
+          noDataMessage: '검색 결과가 없습니다.',
+          showSort: false,
+          showViewTypeToggle: false
+        },
+        utils: utils
+      }));
+    } else {
+      console.error('ShopSkin not loaded');
+    }
+  </script>
+</body>
+</html>

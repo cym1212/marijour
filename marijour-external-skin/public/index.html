@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marijour Skin - Development</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        // 개발 환경 테스트용 모의 데이터
+        window.mockData = {
+            isUserLoggedIn: false,
+            isAdminLoggedIn: false,
+            user: null,
+            withcookieData: {
+                skin: {
+                    theme: {
+                        main_logo_url: null,
+                        colorset: {
+                            primary: "#89a1be",
+                            secondary: "#313AB9"
+                        }
+                    },
+                    extra: {
+                        company_name: "Marijour",
+                        sns_banner: [
+                            { url: '#', text: 'Facebook', style: 'facebook' },
+                            { url: '#', text: 'Instagram', style: 'instagram' }
+                        ]
+                    },
+                    address: "서울특별시 강남구 테헤란로 123",
+                    phone: "1234-5678",
+                    email: "example@example.com",
+                    owner: "홍길동",
+                    businessNumber: "211-88-81810",
+                    mailOrderBusinessCertificate: "2025-서울강남-12345",
+                    company: {
+                        useShop: true
+                    }
+                }
+            },
+            menus: [
+                {
+                    id: "1",
+                    name: "Shop",
+                    url: "/shop",
+                    visible: true,
+                    children: [
+                        {
+                            id: "1-1",
+                            name: "Best",
+                            url: "/shop/best",
+                            children: []
+                        },
+                        {
+                            id: "1-2",
+                            name: "키친&다이닝",
+                            url: "/shop/kitchen-dining",
+                            children: [
+                                { id: "1-2-1", name: "그릇", url: "/shop/kitchen-dining/bowls" },
+                                { id: "1-2-2", name: "컵", url: "/shop/kitchen-dining/cups" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "2",
+                    name: "About",
+                    url: "/about",
+                    visible: true
+                },
+                {
+                    id: "3",
+                    name: "Notice",
+                    url: "/notice",
+                    visible: true
+                },
+                {
+                    id: "4",
+                    name: "Login",
+                    url: "/login",
+                    visible: true,
+                    is_not_logged: true
+                },
+                {
+                    id: "5",
+                    name: "My Page",
+                    url: "/my-page",
+                    visible: true,
+                    is_logged: true
+                }
+            ],
+            cartItems: [],
+            companyIsUse: true,
+            isBusiness: false,
+            currentLanguage: "ko",
+            translations: {}
+        };
+
+        window.mockActions = {
+            onLogin: () => console.log('Login clicked'),
+            onLogout: () => console.log('Logout clicked'),
+            onCheckAuth: () => console.log('Check auth'),
+            onFetchBalances: () => {},
+            onFetchTransactions: () => {},
+            onFetchCartItems: () => {},
+            onFetchMenus: () => {},
+            onFetchWithcookieData: () => {},
+            onUpdateCart: (items) => console.log('Update cart:', items),
+            onChangeLanguage: (lang) => console.log('Change language:', lang)
+        };
+
+        window.mockUtils = {
+            navigate: (path) => console.log('Navigate to:', path),
+            location: {
+                pathname: '/',
+                search: '',
+                hash: '',
+                state: null
+            },
+            params: {},
+            t: (key) => key,
+            formatCurrency: (amount) => `₩${amount.toLocaleString()}`,
+            formatDate: (date) => date.toLocaleDateString('ko-KR')
+        };
+
+        window.mockLayout = {
+            children: React.createElement('div', { 
+                style: { padding: '40px', textAlign: 'center', minHeight: '400px' } 
+            }, 
+                React.createElement('h1', null, '페이지 컨텐츠 영역'),
+                React.createElement('p', null, '여기에 실제 페이지 내용이 표시됩니다.')
+            ),
+            showHeader: true,
+            showFooter: true
+        };
+
+        window.mockTheme = {};
+
+        // 스킨이 로드되면 렌더링
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.MarijouirSkin) {
+                    const root = ReactDOM.createRoot(document.getElementById('root'));
+                    root.render(
+                        React.createElement(window.MarijouirSkin, {
+                            data: window.mockData,
+                            actions: window.mockActions,
+                            utils: window.mockUtils,
+                            layout: window.mockLayout,
+                            theme: window.mockTheme
+                        })
+                    );
+                } else {
+                    console.error('MarijouirSkin not found!');
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

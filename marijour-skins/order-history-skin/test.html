@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History Skin Test</title>
+  <link rel="stylesheet" href="./dist/order-history-skin.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .test-header {
+      background: white;
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 20px;
+    }
+    .test-header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .scenario-title {
+      margin: 40px 20px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    .component-wrapper {
+      background: white;
+      margin: 20px;
+      padding: 40px;
+      border: 1px solid #e0e0e0;
+      min-height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-header">
+    <h1>Order History Skin Component Test</h1>
+  </div>
+
+  <div class="scenario-title">시나리오 1: 주문 목록 (필터 및 페이지네이션 포함)</div>
+  <div class="component-wrapper">
+    <div id="order-history-list"></div>
+  </div>
+
+  <div class="scenario-title">시나리오 2: 주문 상세</div>
+  <div class="component-wrapper">
+    <div id="order-history-detail"></div>
+  </div>
+
+  <div class="scenario-title">시나리오 3: 배송 추적</div>
+  <div class="component-wrapper">
+    <div id="order-history-tracking"></div>
+  </div>
+
+  <div class="scenario-title">시나리오 4: 빈 상태 (주문 없음)</div>
+  <div class="component-wrapper">
+    <div id="order-history-empty"></div>
+  </div>
+
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="./dist/order-history-skin.js"></script>
+  
+  <script>
+    // 테스트 데이터
+    const mockOrders = [
+      {
+        id: 1,
+        orderNumber: '20240115-001',
+        orderDate: '2024-01-15',
+        status: 'delivered',
+        items: [
+          {
+            id: 1,
+            productId: 101,
+            productName: '프리미엄 화이트 셔츠',
+            productImage: 'https://via.placeholder.com/80x80',
+            options: '화이트 / M',
+            quantity: 1,
+            price: 89000
+          },
+          {
+            id: 2,
+            productId: 102,
+            productName: '클래식 네이비 팬츠',
+            productImage: 'https://via.placeholder.com/80x80',
+            options: '네이비 / 30',
+            quantity: 2,
+            price: 129000
+          }
+        ],
+        totalAmount: 347000,
+        shippingFee: 0,
+        discountAmount: 20000,
+        finalAmount: 327000,
+        paymentMethod: '신용카드',
+        trackingNumber: '1234567890123',
+        trackingCompany: 'CJ대한통운',
+        deliveryInfo: {
+          recipientName: '홍길동',
+          recipientPhone: '010-1234-5678',
+          address: '서울특별시 강남구 테헤란로 123',
+          addressDetail: '456호',
+          zipCode: '06234',
+          deliveryMessage: '문 앞에 놓아주세요'
+        }
+      },
+      {
+        id: 2,
+        orderNumber: '20240110-002',
+        orderDate: '2024-01-10',
+        status: 'shipping',
+        items: [
+          {
+            id: 3,
+            productId: 103,
+            productName: '캐주얼 스니커즈',
+            productImage: 'https://via.placeholder.com/80x80',
+            options: '블랙 / 270',
+            quantity: 1,
+            price: 159000
+          }
+        ],
+        totalAmount: 159000,
+        shippingFee: 3000,
+        finalAmount: 162000,
+        paymentMethod: '계좌이체',
+        trackingNumber: '9876543210987',
+        trackingCompany: '한진택배'
+      },
+      {
+        id: 3,
+        orderNumber: '20240105-003',
+        orderDate: '2024-01-05',
+        status: 'pending_payment',
+        items: [
+          {
+            id: 4,
+            productId: 104,
+            productName: '울 코트',
+            productImage: 'https://via.placeholder.com/80x80',
+            options: '카멜 / L',
+            quantity: 1,
+            price: 299000
+          }
+        ],
+        totalAmount: 299000,
+        shippingFee: 0,
+        finalAmount: 299000,
+        paymentMethod: '무통장입금'
+      }
+    ];
+
+    // 주문 목록 데이터
+    const orderListData = {
+      orders: mockOrders,
+      currentFilter: { startDate: '2024-01-01', endDate: '2024-01-31' },
+      currentPage: 1,
+      totalPages: 3,
+      pageSize: 10,
+      viewMode: 'list',
+      showDeliveryTracking: false
+    };
+
+    // 주문 상세 데이터
+    const orderDetailData = {
+      orders: mockOrders,
+      selectedOrderId: 1,
+      viewMode: 'detail',
+      showDeliveryTracking: false
+    };
+
+    // 배송 추적 데이터
+    const trackingData = {
+      orders: mockOrders,
+      selectedOrderId: 2,
+      viewMode: 'detail',
+      showDeliveryTracking: true
+    };
+
+    // 빈 상태 데이터
+    const emptyData = {
+      orders: [],
+      currentFilter: {},
+      currentPage: 1,
+      totalPages: 0
+    };
+
+    // Mock utils
+    const mockUtils = {
+      navigate: (path) => {
+        console.log('Navigate to:', path);
+        alert(`페이지 이동: ${path}`);
+      }
+    };
+
+    // Mock actions
+    const mockActions = {
+      onFilterChange: (filter) => {
+        console.log('Filter changed:', filter);
+        alert(`필터 변경: ${JSON.stringify(filter)}`);
+      },
+      onPageChange: (page) => {
+        console.log('Page changed:', page);
+        alert(`페이지 변경: ${page}`);
+      },
+      onOrderSelect: (orderId) => {
+        console.log('Order selected:', orderId);
+        alert(`주문 선택: ${orderId}`);
+      },
+      onOrderCancel: (orderId) => {
+        console.log('Order cancel:', orderId);
+        if (confirm('주문을 취소하시겠습니까?')) {
+          alert('주문이 취소되었습니다.');
+        }
+      },
+      onOrderReturn: (orderId) => {
+        console.log('Order return:', orderId);
+        if (confirm('반품을 신청하시겠습니까?')) {
+          alert('반품 신청이 완료되었습니다.');
+        }
+      },
+      onOrderExchange: (orderId) => {
+        console.log('Order exchange:', orderId);
+        if (confirm('교환을 신청하시겠습니까?')) {
+          alert('교환 신청이 완료되었습니다.');
+        }
+      },
+      onTrackDelivery: (trackingNumber, carrier) => {
+        console.log('Track delivery:', trackingNumber, carrier);
+        alert(`배송 추적: ${carrier} ${trackingNumber}`);
+      },
+      onReorder: (orderId) => {
+        console.log('Reorder:', orderId);
+        alert('재구매 장바구니에 담겼습니다.');
+      },
+      onWriteReview: (productId) => {
+        console.log('Write review:', productId);
+        alert(`상품 ${productId}에 대한 리뷰를 작성합니다.`);
+      }
+    };
+
+    // Mock options
+    const mockOptions = {
+      dateFormat: 'YYYY.MM.DD',
+      showFilter: true,
+      showPagination: true,
+      allowCancel: true,
+      allowReturn: true,
+      allowExchange: true,
+      returnPeriodDays: 7,
+      exchangePeriodDays: 7,
+      statusLabels: {
+        pending_payment: '입금 대기',
+        payment_complete: '결제 완료',
+        preparing: '배송 준비중',
+        shipping: '배송중',
+        delivered: '배송 완료',
+        cancelled: '주문 취소',
+        refunded: '환불 완료'
+      },
+      deliveryStatusLabels: {
+        ready: '배송 준비',
+        in_transit: '배송중',
+        out_for_delivery: '배송 출발',
+        delivered: '배송 완료',
+        failed: '배송 실패'
+      }
+    };
+
+    // 컴포넌트 렌더링
+    const OrderHistorySkin = window.OrderHistorySkin.default;
+
+    // 주문 목록
+    ReactDOM.render(
+      React.createElement(OrderHistorySkin, {
+        data: orderListData,
+        actions: mockActions,
+        options: mockOptions,
+        utils: mockUtils
+      }),
+      document.getElementById('order-history-list')
+    );
+
+    // 주문 상세
+    ReactDOM.render(
+      React.createElement(OrderHistorySkin, {
+        data: orderDetailData,
+        actions: mockActions,
+        options: mockOptions,
+        utils: mockUtils
+      }),
+      document.getElementById('order-history-detail')
+    );
+
+    // 배송 추적
+    ReactDOM.render(
+      React.createElement(OrderHistorySkin, {
+        data: trackingData,
+        actions: mockActions,
+        options: mockOptions,
+        utils: mockUtils
+      }),
+      document.getElementById('order-history-tracking')
+    );
+
+    // 빈 상태
+    ReactDOM.render(
+      React.createElement(OrderHistorySkin, {
+        data: emptyData,
+        actions: mockActions,
+        options: mockOptions,
+        utils: mockUtils
+      }),
+      document.getElementById('order-history-empty')
+    );
+  </script>
+</body>
+</html>

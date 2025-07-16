@@ -1,0 +1,360 @@
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login Skin Test</title><style>body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast.success {
+            background-color: #28a745;
+        }
+        .toast.error {
+            background-color: #dc3545;
+        }
+        .toast.warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }</style><link href="login-skin.css" rel="stylesheet"></head><body><div id="login-skin-container"></div><div id="toast-container"></div><div id="modal-container"></div><script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script><script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script><script>// Mock data for testing (ComponentSkinProps 형식)
+        const mockData = {
+            id: 'login-form-1',
+            type: 'login',
+            props: {},
+            formData: {
+                user_id: '',
+                password: ''
+            },
+            validationErrors: {},
+            loading: false
+        };
+
+        // Mock actions (ComponentSkinProps 형식 - 문서 표준)
+        const mockActions = {
+            handleSubmit: (e) => {
+                e.preventDefault();
+                console.log('🔑 Form submitted');
+                showToast('로그인 시도 중...', 'warning');
+                
+                // 웹빌더가 실제로 처리할 로그인 로직 시뮬레이션
+                setTimeout(() => {
+                    if (mockData.formData.user_id === 'test@example.com' && mockData.formData.password === 'password123') {
+                        console.log('✅ Login successful');
+                        showToast('로그인 성공!', 'success');
+                        mockData.loading = false;
+                        // 실제 웹빌더에서는 페이지 이동 처리
+                    } else {
+                        console.log('❌ Login failed');
+                        showToast('로그인 실패', 'error');
+                        mockData.validationErrors.user_id = '이메일 또는 비밀번호가 올바르지 않습니다.';
+                        mockData.loading = false;
+                    }
+                }, 1500);
+                
+                mockData.loading = true;
+                mockData.validationErrors = {};
+            },
+            
+            handleChange: (e) => {
+                const { id, value } = e.target;
+                console.log(`📝 Field changed: ${id} = ${value}`);
+                mockData.formData[id] = value;
+                
+                // 에러 클리어
+                if (mockData.validationErrors[id]) {
+                    delete mockData.validationErrors[id];
+                }
+            },
+            onLogout: () => {
+                console.log('Logout');
+                showToast('로그아웃 되었습니다.', 'success');
+            },
+            onCheckAuth: () => {
+                console.log('Check auth status');
+                return Promise.resolve(false);
+            },
+            
+            socialLogin: async (provider) => {
+                console.log('Social login attempt:', provider);
+                
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return {
+                    success: true,
+                    message: `${provider} 로그인 성공`,
+                    user: {
+                        id: 'social-user123',
+                        email: `user@${provider}.com`,
+                        name: `${provider} 사용자`,
+                        role: 'user',
+                        emailVerified: true
+                    },
+                    token: 'mock-jwt-token',
+                    redirectUrl: '/'
+                };
+            },
+            
+            sendPasswordReset: async (email) => {
+                console.log('Password reset request:', email);
+                
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                return Promise.resolve();
+            },
+            
+            checkLoginStatus: async () => {
+                console.log('Checking login status');
+                return Promise.resolve(false);
+            },
+            
+            logout: async () => {
+                console.log('Logging out');
+                return Promise.resolve();
+            },
+            
+            validateEmail: (email) => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            },
+            
+            validatePassword: (password) => {
+                return password.length >= 6;
+            }
+        };
+
+        // Mock options
+        const mockOptions = {
+            allowRememberMe: true,
+            allowSocialLogin: true,
+            allowPasswordReset: true,
+            allowGuestOrderLookup: true,
+            requireEmailVerification: false,
+            enableCaptcha: false,
+            showSignupLink: true,
+            customBackground: '',
+            customLogo: '',
+            customTitle: 'Marijour 로그인',
+            customSubtitle: '마리쥬르에 오신 것을 환영합니다',
+            passwordRequirements: {
+                minLength: 6,
+                requireUppercase: false,
+                requireLowercase: false,
+                requireNumbers: false,
+                requireSpecialChars: false
+            },
+            theme: {
+                primaryColor: '#667eea',
+                secondaryColor: '#6c757d',
+                backgroundColor: '#f8f9fa',
+                textColor: '#333',
+                borderColor: '#e1e5e9',
+                borderRadius: '8px'
+            },
+            maxLoginAttempts: 5
+        };
+
+        // Utility functions
+        const showToast = (message, type = 'success') => {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.getElementById('toast-container').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        };
+
+        const openModal = (content) => {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Modal</h3>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        };
+
+        const closeModal = () => {
+            const modalContainer = document.getElementById('modal-container');
+            modalContainer.innerHTML = '';
+        };
+
+        const navigate = (path) => {
+            console.log('Navigating to:', path);
+            showToast(`페이지 이동: ${path}`, 'warning');
+        };
+
+        // Mock utils (ComponentSkinProps 형식 - 문서 표준)
+        const mockUtils = {
+            t: (key) => key, // 번역 함수 (그대로 반환)
+            navigate,
+            formatCurrency: (amount) => `₩${amount.toLocaleString()}`,
+            formatDate: (date) => new Date(date).toLocaleDateString(),
+            getAssetUrl: (path) => path,
+            cx: (...classes) => classes.filter(Boolean).join(' '), // 클래스명 조합
+            openModal,
+            closeModal,
+            showToast
+        };
+
+        // Props for the component (ComponentSkinProps 형식 - 문서 표준)
+        const props = {
+            data: mockData,
+            actions: mockActions,
+            options: mockOptions,
+            mode: 'preview',
+            utils: mockUtils,
+            app: {
+                user: null,
+                company: { name: 'Marijour' },
+                currentLanguage: 'ko',
+                theme: {
+                    colorset: {
+                        primaryColor: '#667eea',
+                        secondaryColor: '#6c757d',
+                        tertiaryColor: '#f8f9fa'
+                    }
+                }
+            }
+        };
+
+        // Instructions for testing
+        const instructions = `
+            <div style="position: fixed; top: 20px; left: 20px; background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 1000; max-width: 300px;">
+                <h3 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">테스트 계정</h3>
+                <p style="margin: 0 0 8px 0; font-size: 12px; color: #666;">
+                    <strong>이메일:</strong> test@example.com<br>
+                    <strong>비밀번호:</strong> password123
+                </p>
+                <p style="margin: 0; font-size: 11px; color: #888;">
+                    소셜 로그인 버튼도 테스트할 수 있습니다.
+                </p>
+            </div>
+        `;
+
+        // Wait for the component to be loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add test instructions
+            document.body.insertAdjacentHTML('beforeend', instructions);
+            
+            // 웹빌더 SDK Mock 설정
+            window.webBuilderSDK = {
+                registerSkin: (config) => {
+                    console.log('Skin registered:', config);
+                },
+                emit: (event, data) => {
+                    console.log('Event emitted:', event, data);
+                },
+                on: (event, callback) => {
+                    console.log('Event listener registered:', event);
+                },
+                off: (event, callback) => {
+                    console.log('Event listener removed:', event);
+                }
+            };
+            
+            window.webBuilderStore = {
+                dispatch: (action) => {
+                    console.log('Redux action dispatched:', action);
+                    return action;
+                },
+                getState: () => ({
+                    auth: {
+                        user: null,
+                        isLoggedIn: false,
+                        isLoading: false,
+                        error: null,
+                        token: null
+                    }
+                }),
+                subscribe: (listener) => {
+                    console.log('Redux store subscribed');
+                    return () => console.log('Redux store unsubscribed');
+                }
+            };
+            
+            if (typeof LoginSkin !== 'undefined') {
+                const container = document.getElementById('login-skin-container');
+                const root = ReactDOM.createRoot(container);
+                root.render(React.createElement(LoginSkin, props));
+            } else {
+                console.error('LoginSkin component not found');
+                console.log('Available components:', Object.keys(window));
+            }
+        });</script><script defer="defer" src="login-skin.umd.js"></script></body></html>

@@ -1,0 +1,241 @@
+/* Tailwind v4 */
+@import 'tailwindcss';
+
+/* ——— 테마 변수 정의 ——— */
+@layer theme {
+    :root {
+        /* 컬러 */
+        --color-primary: #89a1be;
+        --color-toss-pay: #4780ef;
+        --color-success: #47c288;
+        --color-error: #ff2e00;
+        --color-black: #292e2f;
+
+        /* 폰트 사이즈 (기본) */
+        --font-size-xs: 0.75rem;
+        --font-size-sm: 0.875rem;
+        --font-size-base: 1rem;
+        --font-size-lg: 1.125rem;
+        --font-size-xl: 1.25rem;
+        --font-size-2xl: 1.375rem;
+        --font-size-3xl: 1.75rem;
+        --font-size-4xl: 2.25rem;
+    }
+
+    @media (min-width: 768px) {
+        :root {
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.375rem;
+            --font-size-2xl: 1.75rem;
+            --font-size-3xl: 2.25rem;
+            --font-size-4xl: 3rem;
+        }
+    }
+}
+
+/**
+ * ——— 테마 변수 자동 유틸리티 생성 ———
+ * 테마 변수를 자동으로 유틸리티 클래스로 변환합니다.
+ */
+@theme {
+    /* 폰트 페밀리 */
+    --font-sans: 'Pretendard', 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Noto Serif KR', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-pretendard: 'Pretendard';
+    --font-noto: 'Noto Serif KR';
+
+    /* 컬러 매핑 */
+    --color-primary: var(--color-primary);
+    --color-toss-pay: var(--color-toss-pay);
+    --color-success: var(--color-success);
+    --color-error: var(--color-error);
+    --color-text: var(--color-text);
+
+    /* 폰트 사이즈 매핑 */
+    --text-xs: var(--font-size-xs);
+    --text-sm: var(--font-size-sm);
+    --text-base: var(--font-size-base);
+    --text-lg: var(--font-size-lg);
+    --text-xl: var(--font-size-xl);
+    --text-2xl: var(--font-size-2xl);
+    --text-3xl: var(--font-size-3xl);
+    --text-4xl: var(--font-size-4xl);
+
+    /* 행간 매핑 */
+    --spacing-logo: 1.25; /* 로고 여백 */
+    --spacing-heading: 1.4; /* 헤더 여백 */
+    --spacing-body: 1.6; /* 본문 여백 */
+}
+
+/* ——— 글로벌 스타일 (베이스 레이어) ——— */
+@layer base {
+    @font-face {
+        font-family: 'Pretendard';
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/pretendard/Pretendard-Regular.woff2') format('woff2');
+    }
+    @font-face {
+        font-family: 'Noto Serif KR';
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/noto-serif-kr/NotoSerifKR-Regular.ttf') format('truetype');
+    }
+
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        @apply text-black font-sans;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    .globalWrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        @apply px-5 md:px-10;
+    }
+
+    .noScrollbar {
+        scrollbar-width: none; /* Firefox */
+    }
+    .noScrollbar::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, and Opera */
+    }
+    .noScrollbar::-webkit-scrollbar-thumb {
+        background-color: transparent; /* Chrome, Safari, and Opera */
+    }
+    .noScrollbar::-webkit-scrollbar-track {
+        background-color: transparent; /* Chrome, Safari, and Opera */
+    }
+}
+
+/**
+ * ——— 사용자 정의 컴포넌트 스타일 (재사용 요소) ———
+ * 버튼, 카드, 모달 등 재사용 UI 컴포넌트를 정의할 때 사용합니다.
+ */
+@layer components {
+    .hover-primary {
+        @apply transition-colors duration-200;
+    }
+    .hover-primary:hover {
+        @apply !text-primary;
+    }
+
+    .hover-primary-80 {
+        @apply transition-colors duration-200;
+    }
+    .hover-primary-80:hover {
+        @apply !text-primary/80;
+    }
+    .hover-bg-primary-80 {
+        @apply transition-colors duration-200;
+    }
+    .hover-bg-primary-80:hover {
+        @apply !bg-primary/80;
+    }
+    .hover-bg-primary-10 {
+        @apply transition-colors duration-200;
+    }
+    .hover-bg-primary-10:hover {
+        @apply !bg-primary/10;
+    }
+
+    .hover-black {
+        @apply transition-colors duration-200;
+    }
+    .hover-black:hover {
+        @apply !text-black;
+    }
+    .hover-black-80 {
+        @apply transition-colors duration-200;
+    }
+    .hover-black-80:hover {
+        @apply !text-black/80;
+    }
+    .hover-black-40 {
+        @apply transition-colors duration-200;
+    }
+    .hover-black-40:hover {
+        @apply !text-black/40;
+    }
+    .hover-black-20 {
+        @apply transition-colors duration-200;
+    }
+    .hover-black-20:hover {
+        @apply !text-black/20;
+    }
+
+    .hover-white {
+        @apply transition-colors duration-200;
+    }
+    .hover-white:hover {
+        @apply !text-white;
+    }
+
+    /* ─── 스와이퍼 스크롤바 ─── */
+    .swiper-scrollbar-horizontal {
+        height: 3px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+
+    .keyVisualSlider .swiper-scrollbar-horizontal {
+        width: calc(100% - 40px) !important;
+        bottom: 20px !important;
+        background: rgba(255, 255, 255, 0.4) !important;
+    }
+
+    .keyVisualSlider .swiper-scrollbar-horizontal .swiper-scrollbar-drag {
+        background: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .productSlider .swiper-scrollbar-horizontal {
+        width: 100% !important;
+        bottom: 0px !important;
+        background: rgba(137, 161, 190, 0.4) !important;
+    }
+
+    .productSlider .swiper-scrollbar-horizontal .swiper-scrollbar-drag {
+        background: rgba(137, 161, 190, 0.6) !important;
+    }
+
+    @media (min-width: 768px) {
+        .keyVisualSlider .swiper-scrollbar-horizontal {
+            width: calc(100% - 80px) !important;
+        }
+    }
+}
+
+/**
+ * ——— 사용자 정의 유틸리티 클래스 ———
+ * Tailwind에서 제공하지 않는 단일 or 특수 스타일을 정의할 때 사용합니다.
+ */
+@layer utilities {
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+    }
+
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+}

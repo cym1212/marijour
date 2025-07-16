@@ -1,0 +1,38 @@
+홈 (index)
+숍
+ - All (index)
+ - Best (index)
+ - 키친&다이닝
+  - All (index)
+  - 그릇
+  - 컵
+ - 바디케어
+  - All (index)
+  - 구강케어
+  - 스킨케어
+ - 침실&패브릭
+  - All (index)
+  - 홈웨어
+  - 매트리스 커버&이불
+상품 (index)
+ - 상세(dynamic)
+어바웃 (index)
+공지사항 (index)
+ - 상세 (dynamic)
+리뷰 (index)
+장바구니 (index)
+주문서 (index)
+주문완료 (index)
+마이페이지
+ - 주문내역 (index)
+ - 문의
+ - 회원정보 수정
+인증 (index)
+ - 로그인
+ - 회원가입
+ - 비밀번호 찾기
+ - 비회원 주문조회
+약관 (index)
+ - 이용약관
+ - 개인정보 처리방침
+문의 (index)

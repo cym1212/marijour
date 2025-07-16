@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug ProductList</title>
+    <link rel="stylesheet" href="./dist/product-list-skin.css">
+    <style>
+        body { margin: 0; padding: 20px; font-family: sans-serif; }
+        .debug { border: 2px solid red; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Debug CSS Test</h1>
+    
+    <!-- Test basic CSS classes -->
+    <div class="debug">
+        <h3>Basic CSS Classes Test:</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10" style="background: #f0f0f0; padding: 20px;">
+            <div style="background: lightblue; padding: 10px;">Item 1</div>
+            <div style="background: lightgreen; padding: 10px;">Item 2</div>
+            <div style="background: lightcoral; padding: 10px;">Item 3</div>
+            <div style="background: lightyellow; padding: 10px;">Item 4</div>
+        </div>
+    </div>
+    
+    <!-- Test if CSS is loading -->
+    <div class="debug">
+        <h3>CSS Loading Test:</h3>
+        <div class="shopContainer" style="border: 1px solid blue; padding: 10px;">
+            <p class="text-lg font-bold text-black">This should be large bold black text</p>
+            <p class="text-sm text-gray-600">This should be small gray text</p>
+        </div>
+    </div>
+    
+    <!-- Test actual skin structure -->
+    <div class="debug">
+        <h3>Skin Structure Test:</h3>
+        <div class="shopContainer">
+            <section class="globalWrapper w-full pb-2">
+                <div class="mt-1">
+                    <p class="text-xs md:text-sm text-black/60">TOTAL 4 ITEMS</p>
+                </div>
+            </section>
+            <section class="productsContainer globalWrapper w-full pb-5 md:pb-10 mb-5 md:mb-10">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-5 gap-y-10 md:gap-y-15">
+                    <div class="productItem group/productItem cursor-pointer">
+                        <div class="block">
+                            <div class="relative overflow-hidden">
+                                <div class="w-full h-full aspect-square">
+                                    <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=400&fit=crop" 
+                                         alt="Test Product" 
+                                         class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover/productItem:scale-105">
+                                </div>
+                            </div>
+                            <div class="mt-3 md:mt-4">
+                                <h4 class="text-sm text-gray-900 line-clamp-2">Test Product Name</h4>
+                                <div class="mt-0.5 md:mt-1 space-y-0.5 md:space-y-1">
+                                    <div class="flex items-center flex-wrap gap-1.5">
+                                        <p class="text-base font-bold text-black m-0">45,000원</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // Check if CSS is actually loaded
+        const computed = window.getComputedStyle(document.querySelector('.grid'));
+        console.log('Grid display:', computed.display);
+        console.log('Grid template columns:', computed.gridTemplateColumns);
+        
+        // Check if classes exist
+        const testElement = document.querySelector('.text-lg');
+        const fontSize = window.getComputedStyle(testElement).fontSize;
+        console.log('Text-lg font size:', fontSize);
+    </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+.review-score-skin {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+  
+  // Simple mode - 인라인 표시
+  &.simple {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    
+    .star-icon {
+      color: #ffa502;
+      display: flex;
+      align-items: center;
+    }
+    
+    .average-rating {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffa502;
+    }
+    
+    .review-count {
+      font-size: 0.75rem;
+      color: rgba(0, 0, 0, 0.6);
+      
+      &.clickable {
+        background: none;
+        border: none;
+        padding: 0;
+        text-decoration: underline;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        
+        &:hover {
+          color: #000;
+        }
+      }
+    }
+    
+    &.no-reviews {
+      .no-reviews-message {
+        font-size: 0.75rem;
+        color: rgba(0, 0, 0, 0.4);
+      }
+    }
+  }
+  
+  // Detailed mode - 중간 크기
+  &.detailed {
+    .rating-summary {
+      text-align: center;
+      padding: 1.5rem;
+      background: #f8f8f8;
+      border-radius: 8px;
+      
+      .average-section {
+        .average-number {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+        }
+        
+        .stars-row {
+          display: flex;
+          justify-content: center;
+          gap: 0.125rem;
+          margin-bottom: 0.5rem;
+          color: #ffa502;
+          
+          svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
+        
+        .total-reviews {
+          font-size: 0.875rem;
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+    }
+  }
+  
+  // Full mode - 전체 통계
+  &.full {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    
+    @media (min-width: 768px) {
+      padding: 2.5rem;
+    }
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      
+      @media (min-width: 768px) {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+      }
+    }
+    
+    .review-statistics {
+      display: grid;
+      gap: 2rem;
+      
+      @media (min-width: 768px) {
+        grid-template-columns: 200px 1fr;
+        gap: 3rem;
+      }
+    }
+    
+    .rating-summary {
+      text-align: center;
+      
+      @media (min-width: 768px) {
+        text-align: left;
+      }
+      
+      .average-section {
+        .average-number {
+          font-size: 3rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          
+          @media (min-width: 768px) {
+            font-size: 3.5rem;
+          }
+        }
+        
+        .stars-row {
+          display: flex;
+          justify-content: center;
+          gap: 0.25rem;
+          margin-bottom: 0.75rem;
+          color: #ffa502;
+          
+          @media (min-width: 768px) {
+            justify-content: flex-start;
+          }
+          
+          svg {
+            width: 24px;
+            height: 24px;
+            
+            @media (min-width: 768px) {
+              width: 28px;
+              height: 28px;
+            }
+          }
+        }
+        
+        .total-reviews {
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+    }
+    
+    .rating-distribution {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      
+      .distribution-row {
+        display: grid;
+        grid-template-columns: 40px 1fr auto;
+        gap: 0.75rem;
+        align-items: center;
+        
+        .star-label {
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-align: right;
+        }
+        
+        .progress-bar {
+          height: 8px;
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+          overflow: hidden;
+          
+          .progress-fill {
+            height: 100%;
+            background: #ffa502;
+            border-radius: 4px;
+            transition: width 0.6s ease-out;
+          }
+        }
+        
+        .count-info {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          
+          .percentage {
+            font-weight: 500;
+            min-width: 40px;
+            text-align: right;
+          }
+          
+          .count {
+            color: rgba(0, 0, 0, 0.6);
+          }
+        }
+      }
+    }
+    
+    .view-all-reviews {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      background: white;
+      border: 1px solid #000;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      @media (min-width: 768px) {
+        width: auto;
+      }
+      
+      &:hover {
+        background: #000;
+        color: white;
+      }
+    }
+  }
+}
