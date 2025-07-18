@@ -1,12 +1,7 @@
 import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, Scrollbar } from 'swiper/modules';
-import { gsap } from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Swiper as SwiperType } from 'swiper';
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
@@ -30,7 +25,7 @@ interface ExtendedProductSliderProps extends ProductSliderProps {
     autoplaySpeed?: number;
 }
 
-export const ProductSlider: React.FC<ExtendedProductSliderProps> = ({ 
+export const ProductSliderSimple: React.FC<ExtendedProductSliderProps> = ({ 
     data, 
     desktopSlidesPerView = 3, 
     mobileSlidesPerView = 1,
@@ -48,51 +43,11 @@ export const ProductSlider: React.FC<ExtendedProductSliderProps> = ({
     const navigationNextRef = useRef<HTMLDivElement>(null);
     const swiperRef = useRef<SwiperType | null>(null);
 
-    useGSAP(() => {
-        if (!sliderRef.current) return;
-
-        ScrollTrigger.create({
-            trigger: sliderRef.current,
-            start: 'top 95%',
-            end: 'bottom 5%',
-            onEnter: () => {
-                // 뷰포트 진입 시 fade-in 및 autoplay 시작
-                gsap.to(sliderRef.current, {
-                    opacity: 1,
-                    duration: 0.9,
-                    ease: 'power2.out',
-                });
-
-                if (autoplay && swiperRef.current && swiperRef.current.autoplay) {
-                    swiperRef.current.autoplay.start();
-                }
-            },
-            onLeave: () => {
-                // 뷰포트 하단 이탈 시 autoplay 중지
-                if (swiperRef.current && swiperRef.current.autoplay) {
-                    swiperRef.current.autoplay.stop();
-                }
-            },
-            onEnterBack: () => {
-                // 뷰포트 재진입 시 autoplay 재시작
-                if (autoplay && swiperRef.current && swiperRef.current.autoplay) {
-                    swiperRef.current.autoplay.start();
-                }
-            },
-            onLeaveBack: () => {
-                // 뷰포트 상단 이탈 시 autoplay 중지
-                if (swiperRef.current && swiperRef.current.autoplay) {
-                    swiperRef.current.autoplay.stop();
-                }
-            },
-        });
-    }, [sliderRef.current]);
 
     return (
         <div
             className="productSlider relative w-full h-full"
             ref={sliderRef}
-            style={{ opacity: 1 }}
         >
             <Swiper
                 modules={[Navigation, Autoplay, Scrollbar]}

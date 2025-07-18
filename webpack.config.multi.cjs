@@ -48,6 +48,7 @@ function createConfig(key, component) {
         amd: 'react-dom',
         root: 'ReactDOM'
       },
+      // Swiper, GSAP, ScrollTrigger는 번들에 포함하도록 externals에서 제외
     },
     module: {
       rules: [
@@ -97,7 +98,7 @@ function createConfig(key, component) {
         new TerserPlugin({
           terserOptions: {
             compress: {
-              drop_console: true,
+              drop_console: false,
             },
           },
         }),

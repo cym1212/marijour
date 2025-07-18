@@ -3,35 +3,65 @@ import { SliderTitle } from '@/components/ui/slider/SliderTitle';
 import { ProductSlider } from '@/components/ui/product/ProductSlider';
 import type { ProductItemProps } from '@/types/product';
 
-// 웹빌더 ProductItem을 ProductItemProps로 변환하는 함수
-const mapWebBuilderProduct = (product: any): ProductItemProps => {
+// 웹빌더 문서에 맞춘 ProductItem 인터페이스
+interface ProductItem {
+    id: number | string;
+    title: string;
+    newPrice: number;
+    oldPrice?: number;
+    image?: string;
+    thumbnail?: string;
+    stockCount: number;
+    description?: string;
+    category?: string;
+    rating?: number;
+    discountPercent?: number;
+    isInStock?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    companyId?: number;
+    hasOptions?: boolean;
+    config?: {
+        img_url?: string;
+        main_image?: string;
+        stock_count?: string | number;
+        default_price?: string | number;
+        discounted_price?: string | number;
+        [key: string]: any;
+    };
+    [key: string]: any;
+}
+
+// 웹빌더 ProductItem을 내부 ProductItemProps로 변환하는 함수
+const mapWebBuilderProduct = (product: ProductItem): ProductItemProps => {
     // 할인율 계산 함수
-    const calculateDiscountRate = (original: number, sale: number): number => {
+    const calculateDiscountRate = (original: number, sale?: number): number => {
         if (!original || !sale || original <= sale) return 0;
         return Math.round(((original - sale) / original) * 100);
     };
 
-    const price = product.config?.discounted_price || product.salePrice || product.price || 0;
-    const originalPrice = product.config?.default_price || product.price || 0;
+    // 웹빌더 새 문서 구조에 맞춰 가격 처리
+    const currentPrice = product.newPrice || 0;
+    const originalPrice = product.oldPrice || currentPrice;
     
     return {
         id: product.id,
-        name: product.title || product.name || '',
-        price: price,
-        originalPrice: originalPrice > price ? originalPrice : undefined,
-        discountRate: calculateDiscountRate(originalPrice, price),
-        thumbnailUrl: product.config?.img_url || product.image || product.thumbnail || '',
-        starRating: product.starRating || 0,
-        reviewCount: product.reviewCount || 0,
-        badges: product.badges || []
+        name: product.title || '',
+        price: currentPrice,
+        originalPrice: product.oldPrice ? originalPrice : undefined,
+        discountRate: calculateDiscountRate(originalPrice, currentPrice),
+        thumbnailUrl: product.image || product.thumbnail || '',
+        starRating: product.rating || 0,
+        reviewCount: 0, // 문서에 없는 필드는 기본값
+        badges: [] // 문서에 없는 필드는 기본값
     };
 };
 
-// 웹빌더 스킨 Props 인터페이스 (문서에 맞게 수정)
-interface ProductSliderSkinProps {
+// 웹빌더 스킨 Props 인터페이스 (문서의 SkinProps)
+interface SkinProps {
     data?: {
-        products?: any[];
-        allProducts?: any[];
+        products?: ProductItem[];
+        allProducts?: ProductItem[];
         loading?: boolean;
         currentSlide?: number;
         totalSlides?: number;
@@ -45,8 +75,8 @@ interface ProductSliderSkinProps {
         handleSlideChange?: (slideIndex: number) => void;
         handlePrevSlide?: () => void;
         handleNextSlide?: () => void;
-        handleAddToCart?: (product: any) => void;
-        handleProductClick?: (product: any) => void;
+        handleAddToCart?: (product: ProductItem) => void;
+        handleProductClick?: (product: ProductItem) => void;
         handleMouseEnter?: () => void;
         handleMouseLeave?: () => void;
     };
@@ -151,7 +181,7 @@ const defaultProducts: ProductItemProps[] = [
 ];
 
 // 기본 props
-const defaultProps: ProductSliderSkinProps = {
+const defaultProps: SkinProps = {
     data: {
         products: defaultProducts,
         allProducts: defaultProducts,
@@ -196,7 +226,7 @@ const defaultProps: ProductSliderSkinProps = {
     }
 };
 
-const ProductSliderSkin: React.FC<ProductSliderSkinProps> = (props) => {
+const ProductSliderSkin: React.FC<SkinProps> = (props) => {
     // props가 없으면 기본값 사용
     const { 
         data = defaultProps.data, 
@@ -204,38 +234,117 @@ const ProductSliderSkin: React.FC<ProductSliderSkinProps> = (props) => {
         options = defaultProps.options
     } = props || defaultProps;
     
-    const { products, loading } = data!;
-    const { sliderTitle, sliderDescription, showTitle, mobileSlidesPerView, desktopSlidesPerView } = options!;
+    const { allProducts, loading } = data!;
+    
+    // options에서 설정값 추출
+    const {
+        sliderTitle,
+        showTitle,
+        showPrice,
+        showAddToCart,
+        showNavigation,
+        showPagination,
+        autoplay,
+        autoplaySpeed,
+        mobileSlidesPerView,
+        desktopSlidesPerView
+    } = options || {};
+
+    
+    console.log('[ProductSliderSkin] 받은 options:', options);
+    console.log('[ProductSliderSkin] showTitle:', showTitle);
+    console.log('[ProductSliderSkin] sliderTitle:', sliderTitle);
+    console.log('[ProductSliderSkin] showPrice:', showPrice);
+    console.log('[ProductSliderSkin] showAddToCart:', showAddToCart);
+    console.log('[ProductSliderSkin] 전체 상품 개수:', allProducts?.length);
+    
+    // allProducts를 사용하여 전체 상품을 Swiper에 전달
+    const mappedProducts = (allProducts || []).map(product => {
+        const mapped = mapWebBuilderProduct(product);
+        return mapped;
+    });
+
 
     if (loading) {
         return <div>로딩 중...</div>;
     }
 
-    // products가 이미 ProductItemProps[] 형식인지 확인
-    const isProductItemProps = (product: any): boolean => {
-        return product && 'name' in product && 'price' in product;
-    };
-    
-    // 웹빌더 형식인 경우에만 변환, 아니면 그대로 사용
-    const mappedProducts = (products || []).map(product => 
-        isProductItemProps(product) ? product : mapWebBuilderProduct(product)
-    );
-
     return (
-        <section className="globalWrapper py-10 md:py-15 mb-5">
-            <div className="py-5 md:py-0">
-                {showTitle && sliderTitle && (
-                    <SliderTitle
-                        title={sliderTitle}
-                        description={sliderDescription || ''}
-                    />
-                )}
-                <ProductSlider
-                    data={mappedProducts}
-                    mobileSlidesPerView={mobileSlidesPerView}
-                    desktopSlidesPerView={desktopSlidesPerView}
-                />
-            </div>
+        <section style={{ 
+            maxWidth: '1400px', 
+            margin: '0 auto', 
+            padding: '40px 20px',
+            background: 'white',
+            minHeight: '400px'
+        }}>
+
+            {/* 제목 표시 */}
+            {showTitle && sliderTitle && (
+                <div style={{
+                    fontSize: '32px',
+                    fontWeight: 'bold',
+                    marginBottom: '30px',
+                    color: '#333'
+                }}>
+                    {sliderTitle}
+                </div>
+            )}
+            
+
+            
+            {mappedProducts.length > 0 ? (
+                (() => {
+                    try {
+                        return (
+                            <ProductSlider
+                                data={mappedProducts}
+                                desktopSlidesPerView={desktopSlidesPerView || 3}
+                                mobileSlidesPerView={mobileSlidesPerView || 1}
+                                onProductClick={(product) => {
+                                    const originalProduct = allProducts?.find(p => p.id === product.id);
+                                    if (originalProduct && actions?.handleProductClick) {
+                                        actions.handleProductClick(originalProduct);
+                                    }
+                                }}
+                                onAddToCart={(product) => {
+                                    console.log('[ProductSliderSkin] Add to cart:', product);
+                                    const originalProduct = allProducts?.find(p => p.id === product.id);
+                                    if (originalProduct && actions?.handleAddToCart) {
+                                        actions.handleAddToCart(originalProduct);
+                                    }
+                                }}
+                                showPrice={showPrice}
+                                showAddToCart={showAddToCart}
+                                showNavigation={showNavigation}
+                                showPagination={showPagination}
+                                autoplay={autoplay}
+                                autoplaySpeed={autoplaySpeed || 3000}
+                            />
+                        );
+                    } catch (error) {
+                        console.error('[ProductSliderSkin] ProductSlider 렌더링 오류:', error);
+                        return (
+                            <div style={{
+                                background: 'red', 
+                                color: 'white', 
+                                padding: '20px',
+                                fontSize: '16px'
+                            }}>
+                                ❌ ProductSlider 렌더링 오류: {error instanceof Error ? error.message : String(error)}
+                            </div>
+                        );
+                    }
+                })()
+            ) : (
+                <div style={{
+                    background: 'red', 
+                    color: 'white', 
+                    padding: '20px',
+                    fontSize: '16px'
+                }}>
+                    ❌ 매핑된 상품 데이터가 없습니다!
+                </div>
+            )}
         </section>
     );
 };

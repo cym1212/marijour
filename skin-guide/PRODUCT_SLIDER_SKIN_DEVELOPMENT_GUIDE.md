@@ -8,21 +8,31 @@
 
 ```typescript
 interface ProductItem {
-  id: number;
-  title?: string;         // 상품명 (title 또는 name 사용)
-  name?: string;          
-  price?: number;         // 정가
-  salePrice?: number;     // 할인가
-  image?: string;         // 상품 이미지 URL
-  thumbnail?: string;     // 썸네일 이미지 URL
-  stock_count?: number;   // 재고 수량
-  config?: {
-    default_price?: number;      // 기본 가격
-    discounted_price?: number;   // 할인 가격
-    img_url?: string;           // 이미지 URL
-    stock_count?: number;       // 재고 수량
-  };
-  [key: string]: any;     // 추가 커스텀 필드
+    id: number | string;    // 상품 ID
+    title: string;          // 상품명 (title 필드 사용)
+    newPrice: number;       // 현재 판매가
+    oldPrice?: number;      // 원가/정가
+    image?: string;         // 상품 이미지 URL
+    thumbnail?: string;     // 썸네일 이미지 URL
+    stockCount: number;     // 재고 수량 (stockCount 필드 사용)
+    description?: string;   // 상품 설명
+    category?: string;      // 카테고리
+    rating?: number;        // 평점
+    discountPercent?: number; // 할인율
+    isInStock?: boolean;    // 재고 있음 여부
+    createdAt?: string;     // 생성일
+    updatedAt?: string;     // 수정일
+    companyId?: number;     // 회사 ID
+    hasOptions?: boolean;   // 옵션 있음 여부
+    config?: {              // 추가 설정 정보
+        img_url?: string;
+        main_image?: string;
+        stock_count?: string | number;
+        default_price?: string | number;
+        discounted_price?: string | number;
+        [key: string]: any;
+    };
+    [key: string]: any;     // 추가 커스텀 필드
 }
 ```
 
@@ -34,8 +44,8 @@ interface ProductItem {
 interface SkinProps {
   // 컴포넌트 로직에서 전달된 데이터
   data: {
-    products: ProductItem[];      // 현재 슬라이드의 상품들
-    allProducts: ProductItem[];   // 전체 상품 목록
+    products: ProductItem[];      // 현재 슬라이드의 상품들 (외부 스킨 호환용, 변환된 데이터)
+    allProducts: ProductItem[];   // 전체 상품 목록 (실제로 사용하는 필드)
     loading: boolean;
     currentSlide: number;
     totalSlides: number;
@@ -113,26 +123,40 @@ const MyProductSliderSkin: React.FC<SkinProps> = ({
   
   // 데이터 추출
   const { 
-    products,
+    allProducts,      // 전체 상품 목록
     loading,
     currentSlide,
-    totalSlides
+    totalSlides,
+    itemsPerSlide,
+    showStock
   } = data;
   
-  // 옵션 추출
+  // 옵션 추출 (실제 사용하는 모든 옵션)
   const {
     sliderTitle,
     showTitle,
+    titleFontSize,
+    titleFontWeight,
+    titleColor,
     showPrice,
-    priceColor
+    showAddToCart,
+    showNavigation,
+    showPagination,
+    priceColor,
+    cartButtonColor,
+    navigationColor,
+    paginationColor
   } = options;
   
-  // 액션 사용
+  // 액션 사용 (모든 액션)
   const {
-    handleNextSlide,
+    handleSlideChange,
     handlePrevSlide,
+    handleNextSlide,
+    handleAddToCart,
     handleProductClick,
-    handleAddToCart
+    handleMouseEnter,
+    handleMouseLeave
   } = actions;
   
   if (loading) {
@@ -145,19 +169,30 @@ const MyProductSliderSkin: React.FC<SkinProps> = ({
       
       <button onClick={handlePrevSlide}>이전</button>
       
-      {products.map(product => (
-        <div key={product.id} onClick={() => handleProductClick(product)}>
-          <h3>{product.name || product.title}</h3>
-          {showPrice && (
-            <p style={{ color: priceColor }}>
-              {product.price?.toLocaleString()}원
-            </p>
-          )}
-          <button onClick={() => handleAddToCart(product)}>
-            장바구니 담기
-          </button>
-        </div>
-      ))}
+      {/* 전체 상품에서 현재 슬라이드의 상품만 표시 */}
+      {allProducts
+        .slice(currentSlide * itemsPerSlide, (currentSlide + 1) * itemsPerSlide)
+        .map(product => (
+          <div key={product.id} onClick={() => handleProductClick(product)}>
+            <h3>{product.title}</h3>
+            {showPrice && (
+              <p style={{ color: priceColor }}>
+                {product.newPrice?.toLocaleString()}원
+              </p>
+            )}
+            {showStock && (
+              <p>재고: {product.stockCount}개</p>
+            )}
+            {showAddToCart && (
+              <button onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(product);
+              }}>
+                장바구니 담기
+              </button>
+            )}
+          </div>
+        ))}
       
       <button onClick={handleNextSlide}>다음</button>
     </div>
@@ -169,15 +204,15 @@ export default MyProductSliderSkin;
 
 ## 상품 데이터 처리
 
-상품 데이터는 config 필드와 일반 필드 모두를 지원해야 합니다:
+상품 데이터는 다음과 같이 사용합니다:
 
 ```typescript
-// 상품 정보 추출 (config 필드 우선)
-const price = product.config?.default_price || product.price;
-const salePrice = product.config?.discounted_price || product.salePrice;
-const image = product.config?.img_url || product.image || product.thumbnail;
-const stock = product.config?.stock_count ?? product.stock_count;
-const name = product.title || product.name;
+// 상품 정보 추출
+const title = product.title;         // 상품명
+const price = product.newPrice;      // 현재 판매가
+const originalPrice = product.oldPrice; // 원가
+const image = product.image || product.thumbnail || '/images/product-placeholder.png';  // 이미지
+const stock = product.stockCount;    // 재고
 ```
 
 ## 외부 스킨 개발 및 배포
@@ -213,16 +248,16 @@ module.exports = {
 import { registerComponentSkin } from '@withcookie/webbuilder-sdk';
 
 registerComponentSkin({
-  id: 'custom-product-slider',
-  name: '커스텀 상품 슬라이더',
-  componentTypes: ['product-slider'],  // 지원하는 컴포넌트 타입
-  umdUrl: 'https://cdn.example.com/skins/product-slider-skin.js',
-  globalName: 'ProductSliderCustomSkin',
-  cssUrls: ['https://cdn.example.com/skins/product-slider-skin.css'],
-  preview: 'https://cdn.example.com/skins/preview.png',
-  description: '모던한 디자인의 상품 슬라이더',
-  version: '1.0.0',
-  author: 'Your Name'
+    id: 'custom-product-slider',
+    name: '커스텀 상품 슬라이더',
+    componentTypes: ['product-slider'],  // 지원하는 컴포넌트 타입
+    umdUrl: 'https://cdn.example.com/skins/product-slider-skin.js',
+    globalName: 'ProductSliderCustomSkin',
+    cssUrls: ['https://cdn.example.com/skins/product-slider-skin.css'],
+    preview: 'https://cdn.example.com/skins/preview.png',
+    description: '모던한 디자인의 상품 슬라이더',
+    version: '1.0.0',
+    author: 'Your Name'
 });
 ```
 

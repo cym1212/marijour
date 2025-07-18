@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+// import { Link } from 'react-router'; // 웹빌더 환경 호환성을 위해 제거
 
 import { CartIcon } from '@/components/icons';
 import { ReviewScore } from '@/components/ui/product/ReviewScore';
@@ -9,11 +9,17 @@ import { TextBadge } from '@/components/ui/Badge';
 import type { ProductItemProps } from '@/types/product';
 
 export function ProductItem({ id, name, discountRate, price, originalPrice, starRating, reviewCount, thumbnailUrl, badges, isFadeAnimation }: ProductItemProps) {
+    const handleProductClick = () => {
+        // 웹빌더 환경에서는 별도의 클릭 핸들러로 처리
+        console.log('Product clicked:', id);
+        // 추후 외부에서 전달받은 클릭 핸들러 호출 가능
+    };
+
     return (
         <>
             <div className={`productItem group/productItem cursor-pointer ${isFadeAnimation ? 'opacity-0' : ''}`}>
-                <Link
-                    to={`/products/${id}`}
+                <div
+                    onClick={handleProductClick}
                     className="block"
                 >
                     {/* 썸네일 */}
@@ -61,7 +67,7 @@ export function ProductItem({ id, name, discountRate, price, originalPrice, star
                             </div>
                         )}
                     </div>
-                </Link>
+                </div>
             </div>
         </>
     );
