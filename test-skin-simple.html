@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Slider Skin Test</title>
+    <!-- 빌드된 CSS 파일 -->
+    <link rel="stylesheet" href="./dist/product-slider/product-slider-skin.css">
+    
+    <!-- Tailwind CSS CDN (테스트용) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind 설정
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#89a1be',
+                        'toss-pay': '#4780ef',
+                        success: '#47c288',
+                        error: '#ff2e00',
+                        black: '#292e2f'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 기본 스타일 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Product Slider Skin 테스트</h1>
+        
+        <!-- 여기에 ProductSlider 컴포넌트가 렌더링될 예정 -->
+        <div id="product-slider-root"></div>
+    </div>
+
+    <!-- React 및 ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- 빌드된 스킨 파일 (Swiper 포함) -->
+    <script src="./dist/product-slider/product-slider-skin.umd.js"></script>
+    
+    <!-- 테스트 스크립트 -->
+    <script>
+        // 컴포넌트 렌더링
+        document.addEventListener('DOMContentLoaded', function() {
+            const root = document.getElementById('product-slider-root');
+            
+            // ProductSliderSkin이 전역 객체로 노출되었는지 확인
+            if (window.ProductSliderSkin) {
+                const ProductSlider = window.ProductSliderSkin;
+                
+                // props 없이 컴포넌트 렌더링 (기본값 사용)
+                const element = React.createElement(ProductSlider);
+                
+                // 또는 명시적으로 props 전달 테스트
+                // const element = React.createElement(ProductSlider, {
+                //     options: {
+                //         sliderTitle: '베스트 상품',
+                //         sliderDescription: '마리쥬르 베스트 상품을 소개합니다.',
+                //         showTitle: true
+                //     }
+                // });
+                
+                const root18 = ReactDOM.createRoot(root);
+                root18.render(element);
+                console.log('ProductSlider 컴포넌트가 성공적으로 렌더링되었습니다.');
+            } else {
+                console.error('ProductSliderSkin을 찾을 수 없습니다. 빌드 파일을 확인해주세요.');
+                root.innerHTML = '<p style="color: red;">ProductSliderSkin을 로드할 수 없습니다.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, Scrollbar } from 'swiper/modules';
 import { gsap } from 'gsap';
@@ -16,9 +16,13 @@ import 'swiper/css/scrollbar';
 import { SliderNavigationButton } from '@/components/ui/slider/SliderNavigationButton';
 import { ProductItem } from '@/components/ui/product/ProductItem';
 
-import type { ProductSliderProps } from '@/types/product';
+import type { ProductItemProps, ProductSliderProps } from '@/types/product';
 
-export function ProductSlider({ data, desktopSlidesPerView = 3, mobileSlidesPerView = 1 }: ProductSliderProps) {
+export const ProductSlider: React.FC<ProductSliderProps> = ({ 
+    data, 
+    desktopSlidesPerView = 3, 
+    mobileSlidesPerView = 1 
+}) => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const navigationPrevRef = useRef<HTMLDivElement>(null);
     const navigationNextRef = useRef<HTMLDivElement>(null);
@@ -105,18 +109,18 @@ export function ProductSlider({ data, desktopSlidesPerView = 3, mobileSlidesPerV
                 }}
                 className="h-full group !pb-10"
             >
-                {data.map((slide, idx) => (
-                    <SwiperSlide key={slide.id + idx}>
+                {data.map((product, idx) => (
+                    <SwiperSlide key={product.id + idx}>
                         <ProductItem
-                            id={slide.id}
-                            name={slide.name}
-                            discountRate={slide.discountRate}
-                            price={slide.price}
-                            originalPrice={slide.originalPrice}
-                            starRating={slide.starRating}
-                            reviewCount={slide.reviewCount}
-                            thumbnailUrl={slide.thumbnailUrl}
-                            badges={slide.badges}
+                            id={product.id}
+                            name={product.name}
+                            discountRate={product.discountRate}
+                            price={product.price}
+                            originalPrice={product.originalPrice}
+                            starRating={product.starRating}
+                            reviewCount={product.reviewCount}
+                            thumbnailUrl={product.thumbnailUrl}
+                            badges={product.badges}
                         />
                     </SwiperSlide>
                 ))}
@@ -137,4 +141,4 @@ export function ProductSlider({ data, desktopSlidesPerView = 3, mobileSlidesPerV
             </Swiper>
         </div>
     );
-}
+};
