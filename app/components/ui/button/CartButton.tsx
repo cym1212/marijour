@@ -49,19 +49,19 @@ export function CartButton({ children, colorType, tailwind, onAddProductCallBack
             </ColorButton>
 
             {/* 토스트 알림들 */}
-            {toasts.map((toast) => (
-                <Toast
-                    key={toast.id}
-                    isVisible={toast.isVisible}
-                    onAnimationComplete={() => handleCloseToast(toast.id)}
-                    message="상품을 장바구니에 담았습니다."
-                    duration={3000}
-                    actionButton={{
-                        text: '장바구니 이동',
-                        onClick: handleCartRedirect,
-                    }}
-                />
-            ))}
+            {/*{toasts.map((toast) => (*/}
+            {/*    <Toast*/}
+            {/*        key={toast.id}*/}
+            {/*        isVisible={toast.isVisible}*/}
+            {/*        onAnimationComplete={() => handleCloseToast(toast.id)}*/}
+            {/*        message="상품을 장바구니에 담았습니다."*/}
+            {/*        duration={3000}*/}
+            {/*        actionButton={{*/}
+            {/*            text: '장바구니 이동',*/}
+            {/*            onClick: handleCartRedirect,*/}
+            {/*        }}*/}
+            {/*    />*/}
+            {/*))}*/}
         </>
     );
 }

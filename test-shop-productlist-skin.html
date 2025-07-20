@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Product List Skin Test</title>
+    <!-- 빌드된 CSS 파일 -->
+    <link rel="stylesheet" href="./dist/shop-product-list/shop-product-list-skin.css">
+    <script>
+        // Tailwind 설정
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#89a1be',
+                        'toss-pay': '#4780ef',
+                        success: '#47c288',
+                        error: '#ff2e00',
+                        black: '#292e2f'
+                    },
+                    spacing: {
+                        '7.5': '1.875rem',
+                        '15': '3.75rem'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 기본 스타일 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        /* 원본 사이트의 globalWrapper 스타일 재현 */
+        .globalWrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .globalWrapper {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+        }
+        
+        /* ProductItem hover 효과 */
+        .productItem {
+            transition: opacity 0.3s ease;
+        }
+        
+        .group\/productItem:hover .group-hover\/productItem\:scale-105 {
+            transform: scale(1.05);
+        }
+        
+        /* 기타 필요한 스타일 */
+        .line-clamp-2 {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+        
+        .noScrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .noScrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .hover-white:hover {
+            color: white;
+        }
+        
+        .hover-black:hover {
+            color: #000;
+        }
+        
+        .hover-bg-primary-80:hover {
+            background-color: rgba(137, 161, 190, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1 style="text-align: center; padding: 2rem;">Shop Product List Skin 테스트</h1>
+        
+        <!-- 여기에 ShopProductList 컴포넌트가 렌더링될 예정 -->
+        <div id="shop-product-list-root"></div>
+    </div>
+
+    <!-- React 및 ReactDOM CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- 빌드된 스킨 파일 -->
+    <script src="./dist/shop-product-list/shop-product-list-skin.umd.js"></script>
+    
+    <!-- 테스트 스크립트 -->
+    <script>
+        // 테스트용 상품 데이터 (가이드 문서의 Product 인터페이스에 맞춤)
+        const mockProducts = [
+            {
+                id: 1,
+                title: '레고트 누프레임 커플잔 2P',
+                newPrice: 32000,
+                oldPrice: 40000,
+                image: '/images/product-1.jpg',
+                rating: 4.5,
+                reviewCount: 120,
+                badges: ['Best']
+            },
+            {
+                id: 2,
+                title: '모던 스톤웨어 접시 세트',
+                newPrice: 25500,
+                oldPrice: 30000,
+                image: '/images/product-2.jpg',
+                rating: 4.3,
+                reviewCount: 85,
+                badges: ['New']
+            },
+            {
+                id: 3,
+                title: '에코 우드 컵 4P 세트',
+                newPrice: 18000,
+                oldPrice: 20000,
+                image: '/images/product-3.jpg',
+                rating: 4.8,
+                reviewCount: 200
+            },
+            {
+                id: 4,
+                title: '클래식 도자기 찻잔 세트',
+                newPrice: 15000,
+                oldPrice: 20000,
+                image: '/images/product-4.jpg',
+                rating: 4.2,
+                reviewCount: 60,
+                badges: ['Best', 'New']
+            },
+            {
+                id: 5,
+                title: '프리미엄 코르크 컵받침 세트',
+                newPrice: 14000,
+                oldPrice: 20000,
+                image: '/images/product-1.jpg',
+                rating: 4.7,
+                reviewCount: 150,
+                badges: ['Best']
+            },
+            {
+                id: 6,
+                title: '럭셔리 실버 커틀러리 세트',
+                newPrice: 65600,
+                oldPrice: 80000,
+                image: '/images/product-2.jpg',
+                rating: 4.9,
+                reviewCount: 95,
+                badges: ['Premium']
+            },
+            {
+                id: 7,
+                title: '대나무 브레드보드 라지',
+                newPrice: 22000,
+                oldPrice: 25000,
+                image: '/images/product-3.jpg',
+                rating: 4.4,
+                reviewCount: 180,
+                badges: ['Eco']
+            },
+            {
+                id: 8,
+                title: '핸드메이드 세라믹 볼 세트',
+                newPrice: 31200,
+                oldPrice: 40000,
+                image: '/images/product-4.jpg',
+                rating: 4.6,
+                reviewCount: 110,
+                badges: ['Handmade']
+            }
+        ];
+
+        // 컴포넌트 렌더링
+        document.addEventListener('DOMContentLoaded', function() {
+            const root = document.getElementById('shop-product-list-root');
+            
+            // ShopProductListSkin이 전역 객체로 노출되었는지 확인
+            if (window.ShopProductListSkin) {
+                const ShopProductListSkin = window.ShopProductListSkin;
+                
+                // Mock actions
+                const mockActions = {
+                    handleAddToCart: (product) => {
+                        console.log('장바구니에 추가:', product);
+                        alert(`${product.title}을(를) 장바구니에 추가했습니다.`);
+                    },
+                    handleCategoryChange: (categoryId) => {
+                        console.log('카테고리 변경:', categoryId);
+                    },
+                    handleSearch: (query) => {
+                        console.log('검색:', query);
+                    },
+                    handleSortChange: (sortBy, sortOrder) => {
+                        console.log('정렬 변경:', sortBy, sortOrder);
+                    },
+                    handlePageChange: (page) => {
+                        console.log('페이지 변경:', page);
+                    },
+                    handleLoadMore: () => {
+                        console.log('더보기 클릭');
+                    }
+                };
+
+                // Mock utils
+                const mockUtils = {
+                    t: (key) => key,
+                    navigate: (path) => {
+                        console.log('Navigate to:', path);
+                        window.location.href = path;
+                    },
+                    formatCurrency: (amount) => `${amount.toLocaleString()}원`,
+                    formatDate: (date) => new Date(date).toLocaleDateString(),
+                    getAssetUrl: (path) => path,
+                    cx: (...classes) => classes.filter(Boolean).join(' ')
+                };
+
+                // SkinProps 구성
+                const props = {
+                    data: {
+                        id: 'shop-product-list-test',
+                        type: 'product-list',
+                        props: {},
+                        products: mockProducts,
+                        loading: false,
+                        totalProducts: mockProducts.length,
+                        currentPage: 1,
+                        totalPages: 1,
+                        selectedCategory: null,
+                        searchQuery: '',
+                        sortBy: 'created',
+                        sortOrder: 'desc',
+                        isUserLoggedIn: true,
+                        isAdminMode: false,
+                        itemsPerRow: 4,
+                        showStock: false,
+                        theme: {},
+                        isMobile: false,
+                        mobileProducts: [],
+                        mobilePage: 1,
+                        isLoadingMore: false,
+                        loadMoreButtonRef: { current: null }
+                    },
+                    actions: mockActions,
+                    options: {
+                        itemsPerRow: 4,
+                        showStock: false,
+                        showPrice: true,
+                        showAddToCart: true,
+                        showPagination: false,
+                        className: '',
+                        priceColor: '#000',
+                        cartButtonColor: '#89a1be',
+                        stockTextColor: '#666'
+                    },
+                    mode: 'production',
+                    utils: mockUtils,
+                    app: {
+                        isUserLoggedIn: true
+                    }
+                };
+                
+                const element = React.createElement(ShopProductListSkin, props);
+                
+                const root18 = ReactDOM.createRoot(root);
+                root18.render(element);
+                console.log('ShopProductListSkin 컴포넌트가 성공적으로 렌더링되었습니다.');
+            } else {
+                console.error('ShopProductListSkin을 찾을 수 없습니다. 빌드 파일을 확인해주세요.');
+                root.innerHTML = '<p style="color: red;">ShopProductListSkin을 로드할 수 없습니다.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

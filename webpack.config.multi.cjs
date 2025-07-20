@@ -9,6 +9,11 @@ const components = {
     entry: './app/components/ui/product/ProductSliderSkin.tsx',
     name: 'ProductSliderSkin',
     filename: 'product-slider-skin'
+  },
+  'shop-product-list': {
+    entry: './app/components/ui/product/ShopProductListSkin.tsx',
+    name: 'ShopProductListSkin',
+    filename: 'shop-product-list-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
   // 'key-visual-slider': {

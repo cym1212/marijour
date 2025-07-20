@@ -9,7 +9,8 @@
         "typecheck": "react-router typegen && tsc",
         "build:skin": "webpack --config webpack.config.cjs --mode production",
         "build:skin:all": "COMPONENT=all webpack --config webpack.config.multi.cjs",
-        "build:skin:product-slider": "COMPONENT=product-slider webpack --config webpack.config.multi.cjs"
+        "build:skin:product-slider": "COMPONENT=product-slider webpack --config webpack.config.multi.cjs",
+        "build:skin:shop-product-list": "COMPONENT=shop-product-list webpack --config webpack.config.multi.cjs"
     },
     "dependencies": {
         "@gsap/react": "^2.1.2",
