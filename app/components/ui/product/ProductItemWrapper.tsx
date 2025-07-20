@@ -21,11 +21,16 @@ export function ProductItemWrapper({
     useEffect(() => {
         if (!wrapperRef.current) return;
 
-        // Link 클릭 이벤트 가로채기
-        const handleLinkClick = (e: MouseEvent) => {
-            const link = (e.target as HTMLElement).closest('a');
-            if (link && onProductClick) {
-                e.preventDefault();
+        // 상품 클릭 이벤트 가로채기 (div 클릭 포함)
+        const handleProductClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const link = target.closest('a');
+            const productDiv = target.closest('.productItem');
+            const cartButton = target.closest('button');
+            
+            // 장바구니 버튼 클릭이 아닌 경우에만 상품 클릭 처리
+            if (!cartButton && (link || productDiv) && onProductClick) {
+                if (link) e.preventDefault();
                 onProductClick(productProps);
             }
         };
@@ -40,12 +45,12 @@ export function ProductItemWrapper({
             }
         };
 
-        wrapperRef.current.addEventListener('click', handleLinkClick);
+        wrapperRef.current.addEventListener('click', handleProductClick);
         wrapperRef.current.addEventListener('click', handleCartClick, true);
 
         return () => {
             if (wrapperRef.current) {
-                wrapperRef.current.removeEventListener('click', handleLinkClick);
+                wrapperRef.current.removeEventListener('click', handleProductClick);
                 wrapperRef.current.removeEventListener('click', handleCartClick, true);
             }
         };

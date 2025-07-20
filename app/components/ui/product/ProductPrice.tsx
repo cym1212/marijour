@@ -10,9 +10,9 @@ import type { ProductPriceProps } from '@/types/product';
 export function ProductPrice({ discountRate, price, originalPrice, lineBreak }: ProductPriceProps) {
     return (
         <div className="flex flex-wrap items-center gap-1.5">
-            {discountRate && <em className="text-xs text-primary font-bold bg-primary/10 px-1 py-0.5 rounded">{discountRate}%</em>}
+            {discountRate > 0 && <em className="text-xs text-primary font-bold bg-primary/10 px-1 py-0.5 rounded">{discountRate}%</em>}
             <p className="font-bold">{price.toLocaleString()}원</p>
-            {originalPrice && <del className={`text-sm font-bold text-black/40 ${lineBreak ? 'w-full md:w-auto -mt-0.5 md:mt-0' : 'w-auto'}`}>{originalPrice.toLocaleString()}원</del>}
+            {originalPrice && discountRate > 0 && <del className={`text-sm font-bold text-black/40 ${lineBreak ? 'w-full md:w-auto -mt-0.5 md:mt-0' : 'w-auto'}`}>{originalPrice.toLocaleString()}원</del>}
         </div>
     );
 }

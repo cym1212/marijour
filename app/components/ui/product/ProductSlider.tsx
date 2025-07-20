@@ -90,7 +90,7 @@ export const ProductSlider: React.FC<ExtendedProductSliderProps> = ({
 
     return (
         <div
-            className="productSlider relative w-full h-full"
+            className="productSlider relative w-full h-full group"
             ref={sliderRef}
             style={{ opacity: 1 }}
         >
@@ -130,21 +130,23 @@ export const ProductSlider: React.FC<ExtendedProductSliderProps> = ({
                         swiper.autoplay.stop();
                     }
                 }}
-                className="h-full group !pb-10"
+                className="h-full !pb-10"
             >
                 {data.map((product, idx) => (
                     <SwiperSlide key={`${product.id}_slide_${idx}`}>
-                        {onProductClick || onAddToCart ? (
-                            <ProductItemWrapper
-                                {...product}
-                                onProductClick={onProductClick}
-                                onAddToCart={onAddToCart}
-                                showPrice={showPrice}
-                                showAddToCart={showAddToCart}
-                            />
-                        ) : (
-                            <ProductItem {...product} />
-                        )}
+                        <div className="w-full h-full">
+                            {onProductClick || onAddToCart ? (
+                                <ProductItemWrapper
+                                    {...product}
+                                    onProductClick={onProductClick}
+                                    onAddToCart={onAddToCart}
+                                    showPrice={showPrice}
+                                    showAddToCart={showAddToCart}
+                                />
+                            ) : (
+                                <ProductItem {...product} />
+                            )}
+                        </div>
                     </SwiperSlide>
                 ))}
 

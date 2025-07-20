@@ -23,14 +23,12 @@ export function ProductItem({ id, name, discountRate, price, originalPrice, star
                     className="block"
                 >
                     {/* 썸네일 */}
-                    <div className="relative overflow-hidden">
-                        <div className="w-full h-full aspect-square">
-                            <img
-                                src={thumbnailUrl}
-                                alt={name}
-                                className="w-full h-full object-cover transition-transform duration-300 east-out group-hover/productItem:scale-105"
-                            />
-                        </div>
+                    <div className="relative overflow-hidden aspect-square">
+                        <img
+                            src={thumbnailUrl}
+                            alt={name}
+                            className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover/productItem:scale-105"
+                        />
                         <div className="absolute bottom-3 md:bottom-4 right-3 md:right-4">
                             <CartButton
                                 colorType="primary"

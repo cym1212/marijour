@@ -43,13 +43,14 @@ const mapWebBuilderProduct = (product: ProductItem): ProductItemProps => {
     // 웹빌더 새 문서 구조에 맞춰 가격 처리
     const currentPrice = product.newPrice || 0;
     const originalPrice = product.oldPrice || currentPrice;
+    const discountRate = calculateDiscountRate(originalPrice, currentPrice);
     
     return {
         id: product.id,
         name: product.title || '',
         price: currentPrice,
-        originalPrice: product.oldPrice ? originalPrice : undefined,
-        discountRate: calculateDiscountRate(originalPrice, currentPrice),
+        originalPrice: discountRate > 0 ? originalPrice : undefined,
+        discountRate: discountRate > 0 ? discountRate : undefined,
         thumbnailUrl: product.image || product.thumbnail || '',
         starRating: product.rating || 0,
         reviewCount: 0, // 문서에 없는 필드는 기본값
@@ -256,6 +257,8 @@ const ProductSliderSkin: React.FC<SkinProps> = (props) => {
     console.log('[ProductSliderSkin] sliderTitle:', sliderTitle);
     console.log('[ProductSliderSkin] showPrice:', showPrice);
     console.log('[ProductSliderSkin] showAddToCart:', showAddToCart);
+    console.log('[ProductSliderSkin] showNavigation:', showNavigation);
+    console.log('[ProductSliderSkin] showPagination:', showPagination);
     console.log('[ProductSliderSkin] 전체 상품 개수:', allProducts?.length);
     
     // allProducts를 사용하여 전체 상품을 Swiper에 전달
@@ -296,30 +299,38 @@ const ProductSliderSkin: React.FC<SkinProps> = (props) => {
                 (() => {
                     try {
                         return (
-                            <ProductSlider
-                                data={mappedProducts}
-                                desktopSlidesPerView={desktopSlidesPerView || 3}
-                                mobileSlidesPerView={mobileSlidesPerView || 1}
-                                onProductClick={(product) => {
-                                    const originalProduct = allProducts?.find(p => p.id === product.id);
-                                    if (originalProduct && actions?.handleProductClick) {
-                                        actions.handleProductClick(originalProduct);
-                                    }
-                                }}
-                                onAddToCart={(product) => {
-                                    console.log('[ProductSliderSkin] Add to cart:', product);
-                                    const originalProduct = allProducts?.find(p => p.id === product.id);
-                                    if (originalProduct && actions?.handleAddToCart) {
-                                        actions.handleAddToCart(originalProduct);
-                                    }
-                                }}
-                                showPrice={showPrice}
-                                showAddToCart={showAddToCart}
-                                showNavigation={showNavigation}
-                                showPagination={showPagination}
-                                autoplay={autoplay}
-                                autoplaySpeed={autoplaySpeed || 3000}
-                            />
+                            <div style={{ height: '100%', minHeight: '350px' }}>
+                                <ProductSlider
+                                    data={mappedProducts}
+                                    desktopSlidesPerView={desktopSlidesPerView || 3}
+                                    mobileSlidesPerView={mobileSlidesPerView || 1}
+                                    onProductClick={(product) => {
+                                        console.log('[ProductSliderSkin] onProductClick 호출됨:', product);
+                                        const originalProduct = allProducts?.find(p => p.id === product.id);
+                                        console.log('[ProductSliderSkin] 찾은 원본 상품:', originalProduct);
+                                        console.log('[ProductSliderSkin] actions:', actions);
+                                        if (originalProduct && actions?.handleProductClick) {
+                                            console.log('[ProductSliderSkin] actions.handleProductClick 호출!');
+                                            actions.handleProductClick(originalProduct);
+                                        } else {
+                                            console.log('[ProductSliderSkin] actions.handleProductClick 호출 실패');
+                                        }
+                                    }}
+                                    onAddToCart={(product) => {
+                                        console.log('[ProductSliderSkin] Add to cart:', product);
+                                        const originalProduct = allProducts?.find(p => p.id === product.id);
+                                        if (originalProduct && actions?.handleAddToCart) {
+                                            actions.handleAddToCart(originalProduct);
+                                        }
+                                    }}
+                                    showPrice={showPrice}
+                                    showAddToCart={showAddToCart}
+                                    showNavigation={showNavigation}
+                                    showPagination={showPagination}
+                                    autoplay={autoplay}
+                                    autoplaySpeed={autoplaySpeed || 3000}
+                                />
+                            </div>
                         );
                     } catch (error) {
                         console.error('[ProductSliderSkin] ProductSlider 렌더링 오류:', error);
