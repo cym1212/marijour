@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SkinProps } from '@withcookie/webbuilder-sdk';
-import { CartIcon } from '@/components/icons';
+import { CartIcon, DubbleArrowIcon, ArrowIcon } from '@/components/icons';
 import { ReviewScore } from '@/components/ui/product/ReviewScore';
 import { ProductPrice } from '@/components/ui/product/ProductPrice';
 import { CartButton } from '@/components/ui/button/CartButton';
@@ -62,9 +62,15 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
   const products = data.products || [];
   const loading = data.loading || false;
   const totalProducts = data.totalProducts || products.length;
+  const currentPage = data.currentPage || 1;
+  const totalPages = data.totalPages || 1;
+  const isMobile = data.isMobile || false;
+  const isLoadingMore = data.isLoadingMore || false;
+  const mobilePage = data.mobilePage || 1;
+  const mobileProducts = data.mobileProducts || products;
   
   // 액션 사용
-  const { handleAddToCart, handleProductClick } = actions;
+  const { handleAddToCart, handleProductClick, handlePageChange, handleLoadMore } = actions;
 
   // GSAP 애니메이션
   useGSAP(() => {
@@ -97,18 +103,17 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
     return <div className="loading-spinner text-center py-10">{t('로딩 중...')}</div>;
   }
 
+  // 모바일 여부에 따른 상품 목록 선택
+  const displayProducts = isMobile ? mobileProducts : products;
+
   return (
     <div className="shopContainer">
-      {products.length > 0 ? (
+      {displayProducts.length > 0 ? (
         <>
-          <section className="globalWrapper w-full pb-2">
-            <div className="mt-1">
-              <p className="text-xs md:text-sm text-black/60">TOTAL {totalProducts} ITEMS</p>
-            </div>
-          </section>
+        
           <section className="productsContainer globalWrapper w-full pb-5 md:pb-10 mb-5 md:mb-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-5 gap-y-10 md:gap-y-15">
-              {products.map((product: Product) => {
+              {displayProducts.map((product: Product) => {
                 // 가이드 문서의 Product 인터페이스에 맞게 데이터 변환
                 const productData = {
                   id: product.id,
@@ -202,6 +207,100 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
             description="이 카테고리에는 아직 상품이 등록되지 않았습니다.
             곧 새로운 상품들을 만나보실 수 있습니다."
           />
+        </section>
+      )}
+      
+      {/* 페이징 UI (PC에서만, 모바일은 무한스크롤) */}
+      {!isMobile && totalPages > 1 && (
+        <section className="globalWrapper w-full pb-10">
+          <nav
+            className="flex items-center justify-center space-x-1"
+            aria-label="페이지네이션"
+          >
+            {/* 첫 페이지로 이동 */}
+            <button
+              className={`p-2 ${currentPage === 1 ? 'text-black/40 cursor-not-allowed' : 'text-black hover-black-40'}`}
+              onClick={() => handlePageChange && handlePageChange(1)}
+              disabled={currentPage === 1}
+              aria-label="첫 페이지로 이동"
+            >
+              <DubbleArrowIcon
+                rotate="-90"
+                tailwind="w-[16px] h-[16px]"
+              />
+            </button>
+
+            {/* 이전 페이지 */}
+            <button
+              className={`p-2 ${currentPage === 1 ? 'text-black/40 cursor-not-allowed' : 'text-black hover-black-40'}`}
+              onClick={() => handlePageChange && handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              aria-label="이전 페이지"
+            >
+              <ArrowIcon
+                rotate="-90"
+                tailwind="w-[16px] h-[16px]"
+              />
+            </button>
+
+            {/* 페이지 번호들 */}
+            <div className="flex items-center space-x-1 px-1">
+              {[...Array(totalPages)].map((_, index) => {
+                const pageNum = index + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    className={`px-2.5 text-sm ${pageNum === currentPage ? 'font-bold text-primary' : 'text-black/40 hover-primary'}`}
+                    onClick={() => handlePageChange && handlePageChange(pageNum)}
+                    aria-label={`${pageNum}페이지로 이동`}
+                    aria-current={pageNum === currentPage ? 'page' : undefined}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 다음 페이지 */}
+            <button
+              className={`p-2 ${currentPage === totalPages ? 'text-black/40 cursor-not-allowed' : 'text-black hover-black-40'}`}
+              onClick={() => handlePageChange && handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              aria-label="다음 페이지"
+            >
+              <ArrowIcon
+                rotate="90"
+                tailwind="w-[16px] h-[16px]"
+              />
+            </button>
+
+            {/* 마지막 페이지로 이동 */}
+            <button
+              className={`p-2 ${currentPage === totalPages ? 'text-black/40 cursor-not-allowed' : 'text-black hover-black-40'}`}
+              onClick={() => handlePageChange && handlePageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              aria-label="마지막 페이지로 이동"
+            >
+              <DubbleArrowIcon
+                rotate="90"
+                tailwind="w-[16px] h-[16px]"
+              />
+            </button>
+          </nav>
+        </section>
+      )}
+      
+      {/* 더보기 버튼 (모바일) */}
+      {isMobile && mobilePage < totalPages && (
+        <section className="globalWrapper w-full pb-10">
+          <button 
+            ref={data.loadMoreButtonRef}
+            onClick={() => handleLoadMore && handleLoadMore()}
+            disabled={isLoadingMore}
+            className="load-more-button w-full py-3 text-center border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            {isLoadingMore ? t('로딩 중...') : t('더보기')}
+          </button>
         </section>
       )}
     </div>
