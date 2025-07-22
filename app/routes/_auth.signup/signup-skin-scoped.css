@@ -1,0 +1,388 @@
+/* Signup Skin Scoped CSS - 다른 요소에 영향을 주지 않도록 격리된 스타일 */
+
+/* 폰트 임포트 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&display=swap');
+
+/* 회원가입 컨테이너에만 적용되는 스타일 */
+.signupContainer {
+  /* CSS 변수 정의 */
+  --color-primary: #89a1be;
+  --color-black: #292e2f;
+  --font-sans: 'Pretendard', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Noto Serif KR', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  
+  /* 기본 스타일 */
+  opacity: 0;
+  font-family: var(--font-sans);
+  color: var(--color-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 회원가입 컨테이너 내부의 모든 요소에 box-sizing 적용 */
+.signupContainer * {
+  box-sizing: border-box;
+}
+
+/* globalWrapper 스타일 */
+.signupContainer .globalWrapper {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.signupContainer .w-full {
+  width: 100%;
+}
+
+.signupContainer .max-w-\[480px\] {
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Padding */
+.signupContainer .py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.signupContainer .py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .signupContainer .md\:py-13 {
+    padding-top: 3.25rem;
+    padding-bottom: 3.25rem;
+  }
+  
+  .signupContainer .globalWrapper {
+    padding: 0 2.5rem;
+  }
+}
+
+/* Typography */
+.signupContainer .font-serif {
+  font-family: var(--font-serif);
+}
+
+.signupContainer .text-3xl {
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+}
+
+@media (min-width: 768px) {
+  .signupContainer .text-3xl {
+    font-size: 2.25rem;
+  }
+}
+
+.signupContainer .text-center {
+  text-align: center;
+}
+
+.signupContainer .text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.signupContainer .text-base {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.signupContainer .text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.signupContainer .text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.signupContainer .text-primary {
+  color: var(--color-primary);
+}
+
+.signupContainer .text-black\/60 {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.signupContainer .font-medium {
+  font-weight: 500;
+}
+
+/* Margins */
+.signupContainer .mb-5 {
+  margin-bottom: 1.25rem;
+}
+
+.signupContainer .mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+/* Form Layout */
+.signupContainer form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1.25rem;
+}
+
+/* Input and Button Container Width */
+.signupContainer .w-full.space-y-2 {
+  width: 100%;
+  max-width: 400px;
+}
+
+.signupContainer .flex {
+  display: flex;
+}
+
+.signupContainer .flex-col {
+  flex-direction: column;
+}
+
+.signupContainer .items-center {
+  align-items: center;
+}
+
+.signupContainer .justify-center {
+  justify-content: center;
+}
+
+.signupContainer .justify-between {
+  justify-content: space-between;
+}
+
+.signupContainer .gap-6 {
+  gap: 1.5rem;
+}
+
+.signupContainer .gap-2 {
+  gap: 0.5rem;
+}
+
+.signupContainer .gap-1 {
+  gap: 0.25rem;
+}
+
+.signupContainer .pt-5 {
+  padding-top: 1.25rem;
+}
+
+/* Spacing for form elements */
+.signupContainer .space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.signupContainer .space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+/* Input Styles - 회원가입 컨테이너 내부의 input만 스타일링 */
+.signupContainer input[type="email"],
+.signupContainer input[type="password"],
+.signupContainer input[type="text"],
+.signupContainer input[type="tel"] {
+  width: 100%;
+  padding: 0.875rem 1.125rem; /* py-3.5 px-4.5 */
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  color: var(--color-black);
+  transition: all 0.2s;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  display: block;
+}
+
+.signupContainer input[type="email"]:focus,
+.signupContainer input[type="password"]:focus,
+.signupContainer input[type="text"]:focus,
+.signupContainer input[type="tel"]:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.signupContainer input[type="email"]:disabled,
+.signupContainer input[type="password"]:disabled,
+.signupContainer input[type="text"]:disabled,
+.signupContainer input[type="tel"]:disabled {
+  border-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.03);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.signupContainer input[type="email"]::placeholder,
+.signupContainer input[type="password"]::placeholder,
+.signupContainer input[type="text"]::placeholder,
+.signupContainer input[type="tel"]::placeholder {
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+/* Checkbox Styles */
+.signupContainer input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+/* Label Styles */
+.signupContainer label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Button Styles - 회원가입 컨테이너 내부의 button만 스타일링 */
+.signupContainer button {
+  width: 100%;
+  padding: 0.875rem 1.125rem; /* py-3.5 px-4.5 */
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  box-sizing: border-box;
+}
+
+.signupContainer button[type="submit"] {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.signupContainer button[type="submit"]:hover:not(:disabled) {
+  background-color: rgba(137, 161, 190, 0.8);
+}
+
+.signupContainer button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.signupContainer button[type="button"] {
+  background-color: white;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.signupContainer button[type="button"]:hover {
+  background-color: rgba(137, 161, 190, 0.1);
+}
+
+/* Link Styles - 회원가입 컨테이너 내부의 링크만 스타일링 */
+.signupContainer a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.signupContainer .hover-primary-80:hover {
+  color: rgba(137, 161, 190, 0.8);
+}
+
+/* Divider */
+.signupContainer .w-\[1px\] {
+  width: 1px;
+}
+
+.signupContainer .h-\[0\.875rem\] {
+  height: 0.875rem;
+}
+
+.signupContainer .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Border Styles */
+.signupContainer .border {
+  border-width: 1px;
+}
+
+.signupContainer .border-t {
+  border-top-width: 1px;
+}
+
+.signupContainer .border-b {
+  border-bottom-width: 1px;
+}
+
+.signupContainer .border-gray-300 {
+  border-color: #d1d5db;
+}
+
+.signupContainer .border-black\/20 {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Warning Label (에러 메시지) */
+.signupContainer .warning-label {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Success Message */
+.signupContainer .signup-success {
+  text-align: center;
+  padding: 2rem;
+}
+
+.signupContainer .signup-success p {
+  font-size: 1.125rem;
+  color: #28a745;
+  font-weight: 500;
+}
+
+/* Button padding classes */
+.signupContainer .px-4\.5 {
+  padding-left: 1.125rem;
+  padding-right: 1.125rem;
+}
+
+.signupContainer .py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
+
+/* Agreement Section */
+.signupContainer .agreement-section {
+  width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  padding-top: 1rem;
+}
+
+.signupContainer .agreement-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.signupContainer .agreement-all {
+  font-weight: 500;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem;
+}

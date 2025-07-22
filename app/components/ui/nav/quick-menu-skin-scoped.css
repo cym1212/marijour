@@ -1,0 +1,186 @@
+/* Quick Menu Skin Scoped CSS */
+/* 원본 Tailwind 클래스를 정확히 CSS로 변환 */
+
+/* nav - quick-menu globalWrapper overflow-hidden flex justify-center */
+.qm-skin-quick-menu.qm-skin-globalWrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.25rem; /* px-5 */
+}
+
+@media (min-width: 768px) {
+    .qm-skin-quick-menu.qm-skin-globalWrapper {
+        padding: 0 2.5rem; /* md:px-10 */
+    }
+}
+
+.qm-skin-overflow-hidden {
+    overflow: hidden;
+}
+
+.qm-skin-flex {
+    display: flex;
+}
+
+.qm-skin-justify-center {
+    justify-content: center;
+}
+
+/* ul - flex items-center justify-start gap-3 md:gap-6 overflow-x-auto mx-auto noScrollbar */
+.qm-skin-items-center {
+    align-items: center;
+}
+
+.qm-skin-justify-start {
+    justify-content: flex-start;
+}
+
+.qm-skin-gap-3 {
+    gap: 0.75rem; /* gap-3 = 12px */
+}
+
+@media (min-width: 768px) {
+    .qm-skin-md-gap-6 {
+        gap: 1.5rem; /* md:gap-6 = 24px */
+    }
+}
+
+.qm-skin-overflow-x-auto {
+    overflow-x: auto;
+}
+
+.qm-skin-mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* noScrollbar */
+.qm-skin-noScrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.qm-skin-noScrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.qm-skin-noScrollbar::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.qm-skin-noScrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+/* li - shrink-0 md:shrink group/quickMenu */
+.qm-skin-shrink-0 {
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .qm-skin-md-shrink {
+        flex-shrink: 1;
+    }
+}
+
+/* a - flex flex-col items-center justify-center */
+.qm-skin-flex-col {
+    flex-direction: column;
+}
+
+.qm-skin-items-center {
+    align-items: center;
+}
+
+.qm-skin-justify-center {
+    justify-content: center;
+}
+
+/* Link 스타일 */
+.qm-skin-flex.qm-skin-flex-col.qm-skin-items-center.qm-skin-justify-center {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* div - overflow-hidden rounded-full w-auto max-h-[3.5rem] md:max-h-[5rem] aspect-square */
+.qm-skin-overflow-hidden {
+    overflow: hidden;
+}
+
+.qm-skin-rounded-full {
+    border-radius: 50%;
+}
+
+.qm-skin-w-auto {
+    width: auto;
+}
+
+.qm-skin-max-h-3-5rem {
+    max-height: 3.5rem; /* 56px */
+}
+
+@media (min-width: 768px) {
+    .qm-skin-md-max-h-5rem {
+        max-height: 5rem; /* 80px */
+    }
+}
+
+.qm-skin-aspect-square {
+    aspect-ratio: 1;
+}
+
+/* img - w-full h-full object-cover transition-transform duration-300 ease-out group-hover/quickMenu:scale-110 */
+.qm-skin-w-full {
+    width: 100%;
+}
+
+.qm-skin-h-full {
+    height: 100%;
+}
+
+.qm-skin-object-cover {
+    object-fit: cover;
+}
+
+.qm-skin-transition-transform {
+    transition-property: transform;
+}
+
+.qm-skin-duration-300 {
+    transition-duration: 0.3s;
+}
+
+.qm-skin-ease-out {
+    transition-timing-function: ease-out;
+}
+
+.qm-skin-group:hover .qm-skin-group-hover-scale-110 {
+    transform: scale(1.1);
+}
+
+/* span - leading-body mt-2 text-xs md:text-base */
+.qm-skin-leading-body {
+    line-height: 1.6; /* leading-body */
+}
+
+.qm-skin-mt-2 {
+    margin-top: 0.5rem; /* mt-2 = 8px */
+}
+
+.qm-skin-text-xs {
+    font-size: 0.75rem; /* text-xs = 12px */
+}
+
+@media (min-width: 768px) {
+    .qm-skin-md-text-base {
+        font-size: 1rem; /* md:text-base = 16px */
+    }
+}
+
+/* 폰트 설정 */
+.qm-skin-leading-body {
+    font-family: 'Pretendard', sans-serif;
+}

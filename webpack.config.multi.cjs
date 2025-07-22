@@ -14,13 +14,33 @@ const components = {
     entry: './app/components/ui/product/ShopProductListSkin.tsx',
     name: 'ShopProductListSkin',
     filename: 'shop-product-list-skin'
+  },
+  'login': {
+    entry: './app/routes/_auth.login/index.tsx',
+    name: 'Login',
+    filename: 'login-skin'
+  },
+  'signup': {
+    entry: './app/routes/_auth.signup/index.tsx',
+    name: 'Signup',
+    filename: 'signup-skin'
+  },
+  'notice': {
+    entry: './app/components/ui/notice/NoticeSkin.tsx',
+    name: 'NoticeSkin',
+    filename: 'notice-skin'
+  },
+  'key-visual-slider': {
+    entry: './app/components/ui/slider/KeyVisualSliderSkin.tsx',
+    name: 'KeyVisualSlider',
+    filename: 'key-visual-slider-skin'
+  },
+  'quick-menu': {
+    entry: './app/components/ui/nav/QuickMenuSkin.tsx',
+    name: 'QuickMenu',
+    filename: 'quick-menu-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
-  // 'key-visual-slider': {
-  //   entry: './app/components/ui/slider/KeyVisualSliderSkin.tsx',
-  //   name: 'KeyVisualSliderSkin',
-  //   filename: 'key-visual-slider-skin'
-  // },
 };
 
 // CLI에서 컴포넌트 이름 가져오기

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Skin Test - 공지사항 스킨 테스트</title>
+    <link rel="stylesheet" href="./dist/notice/notice-skin.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 테스트 컨트롤 패널 */
+        .test-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .test-controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+
+        .test-controls button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .test-controls button:hover {
+            background: #e8e8e8;
+        }
+
+        .test-controls button.active {
+            background: #333;
+            color: white;
+        }
+
+        .test-controls .divider {
+            border-top: 1px solid #eee;
+            margin: 15px 0;
+        }
+
+        .test-controls label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .test-controls select {
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* 다크 테마 테스트 */
+        body.dark-theme {
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notice Skin 컨테이너 -->
+    <div id="notice-skin-root"></div>
+
+    <!-- 테스트 컨트롤 패널 -->
+    <div class="test-controls">
+        <h3>테스트 컨트롤</h3>
+        
+        <label>뷰 모드</label>
+        <button id="viewListBtn" class="active">리스트 보기</button>
+        <button id="viewDetailBtn">상세 보기</button>
+        
+        <div class="divider"></div>
+        
+        <label>테마</label>
+        <button id="themeLight" class="active">라이트 테마</button>
+        <button id="themeDark">다크 테마</button>
+        
+        <div class="divider"></div>
+        
+        <label>옵션</label>
+        <button id="toggleAnimation">애니메이션 토글</button>
+        <button id="togglePagination">페이지네이션 토글</button>
+        <button id="toggleContent">내용 미리보기 토글</button>
+        
+        <div class="divider"></div>
+        
+        <label>페이지 선택</label>
+        <select id="pageSelect">
+            <option value="1">1 페이지</option>
+            <option value="2">2 페이지</option>
+            <option value="3">3 페이지</option>
+        </select>
+    </div>
+
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Notice Skin UMD -->
+    <script src="./dist/notice/notice-skin.umd.js"></script>
+
+    <script>
+        // NoticeSkin 번들에 샘플 데이터가 내장되어 있음
+        // 1. 데이터를 전달하지 않으면 자동으로 샘플 데이터 사용
+        // 2. NoticeSkin.SAMPLE_DATA로 샘플 데이터 접근 가능
+
+        // 초기 상태
+        let currentState = {
+            view: 'list',
+            currentPage: 1,
+            selectedNotice: null,
+            theme: 'light',
+            animation: true,
+            showPagination: true,
+            showContent: true,
+            itemsPerPage: 5
+        };
+
+        // 렌더링 함수
+        function renderNoticeSkin() {
+            const root = document.getElementById('notice-skin-root');
+            
+            // Props 구성 - 데이터를 전달하지 않으면 내장된 샘플 데이터를 자동으로 사용
+            const props = {
+                data: {
+                    // notices를 비워두면 컴포넌트가 자동으로 샘플 데이터 사용
+                    selectedNotice: currentState.selectedNotice,
+                    currentPage: currentState.currentPage,
+                    itemsPerPage: currentState.itemsPerPage,
+                    view: currentState.view,
+                    theme: currentState.theme === 'dark' ? {
+                        backgroundColor: '#1a1a1a',
+                        textColor: '#ffffff'
+                    } : {}
+                },
+                actions: {
+                    handleNoticeClick: (notice) => {
+                        currentState.selectedNotice = notice;
+                        currentState.view = 'detail';
+                        renderNoticeSkin();
+                    },
+                    handlePageChange: (page) => {
+                        currentState.currentPage = page;
+                        renderNoticeSkin();
+                    },
+                    handleGoBack: () => {
+                        currentState.view = 'list';
+                        currentState.selectedNotice = null;
+                        renderNoticeSkin();
+                    },
+                    handleShare: () => {
+                        alert('공유하기 기능이 호출되었습니다.');
+                    },
+                    handlePrint: () => {
+                        window.print();
+                    }
+                },
+                options: {
+                    showPagination: currentState.showPagination,
+                    showContent: currentState.showContent,
+                    animation: currentState.animation,
+                    contentLineClamp: 2,
+                    showBackButton: true,
+                    showShareButton: true,
+                    showPrintButton: true
+                }
+            };
+
+            // React 렌더링
+            const element = React.createElement(NoticeSkin, props);
+            ReactDOM.render(element, root);
+            
+            // 테마 적용
+            if (currentState.theme === 'dark') {
+                root.querySelector('.notice-skin-container').setAttribute('data-theme', 'dark');
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        // 이벤트 핸들러
+        document.getElementById('viewListBtn').addEventListener('click', function() {
+            currentState.view = 'list';
+            currentState.selectedNotice = null;
+            document.getElementById('viewListBtn').classList.add('active');
+            document.getElementById('viewDetailBtn').classList.remove('active');
+            renderNoticeSkin();
+        });
+
+        document.getElementById('viewDetailBtn').addEventListener('click', function() {
+            // 샘플 데이터의 첫 번째 항목을 상세 뷰로 표시
+            const sampleData = NoticeSkin.SAMPLE_DATA || [];
+            if (currentState.view === 'list' && sampleData.length > 0) {
+                currentState.selectedNotice = sampleData[0];
+                currentState.view = 'detail';
+                document.getElementById('viewDetailBtn').classList.add('active');
+                document.getElementById('viewListBtn').classList.remove('active');
+                renderNoticeSkin();
+            }
+        });
+
+        document.getElementById('themeLight').addEventListener('click', function() {
+            currentState.theme = 'light';
+            document.getElementById('themeLight').classList.add('active');
+            document.getElementById('themeDark').classList.remove('active');
+            renderNoticeSkin();
+        });
+
+        document.getElementById('themeDark').addEventListener('click', function() {
+            currentState.theme = 'dark';
+            document.getElementById('themeDark').classList.add('active');
+            document.getElementById('themeLight').classList.remove('active');
+            renderNoticeSkin();
+        });
+
+        document.getElementById('toggleAnimation').addEventListener('click', function() {
+            currentState.animation = !currentState.animation;
+            this.textContent = currentState.animation ? '애니메이션 끄기' : '애니메이션 켜기';
+            renderNoticeSkin();
+        });
+
+        document.getElementById('togglePagination').addEventListener('click', function() {
+            currentState.showPagination = !currentState.showPagination;
+            this.textContent = currentState.showPagination ? '페이지네이션 숨기기' : '페이지네이션 보이기';
+            renderNoticeSkin();
+        });
+
+        document.getElementById('toggleContent').addEventListener('click', function() {
+            currentState.showContent = !currentState.showContent;
+            this.textContent = currentState.showContent ? '내용 미리보기 숨기기' : '내용 미리보기 보이기';
+            renderNoticeSkin();
+        });
+
+        document.getElementById('pageSelect').addEventListener('change', function(e) {
+            currentState.currentPage = parseInt(e.target.value);
+            renderNoticeSkin();
+        });
+
+        // 초기 렌더링
+        renderNoticeSkin();
+    </script>
+</body>
+</html>

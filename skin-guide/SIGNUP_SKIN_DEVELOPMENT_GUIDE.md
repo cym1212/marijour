@@ -1,81 +1,976 @@
-# 외부 회원가입 스킨 개발 가이드
+# 회원가입 스킨 개발 가이드
 
-## 목차
-1. [개요](#개요)
-2. [시작하기](#시작하기)
-3. [기본 스킨 템플릿](#기본-스킨-템플릿)
-4. [Props 상세 설명](#props-상세-설명)
-5. [스타일링 가이드](#스타일링-가이드)
-6. [빌드 및 배포](#빌드-및-배포)
-7. [테스트 방법](#테스트-방법)
-8. [실전 예제](#실전-예제)
-9. [속성 패널에서 스킨 선택하기](#속성-패널에서-스킨-선택하기)
-10. [주의사항 및 팁](#주의사항-및-팁)
+이 가이드는 웹빌더의 회원가입(Signup) 컴포넌트를 위한 커스텀 스킨을 개발할 때 데이터를 주고받는 방법을 설명합니다.
 
-## 개요
+## 데이터 구조
 
-WithCookie WebBuilder의 회원가입 컴포넌트는 외부 스킨을 지원합니다. 이를 통해 개발자는 자신만의 독특한 회원가입 UI를 만들어 적용할 수 있습니다. 이 가이드는 외부 회원가입 스킨을 개발하는 전체 과정을 상세히 설명합니다.
+### 회원가입 폼 데이터 (SignupFormData)
 
-### 외부 스킨의 장점
-- **커스터마이징**: 프로젝트에 맞는 고유한 디자인 적용
-- **재사용성**: 한 번 만든 스킨을 여러 프로젝트에서 사용
-- **독립적 개발**: WithCookie 코드 수정 없이 별도 개발
-- **쉬운 배포**: CDN을 통한 간편한 배포 및 업데이트
-
-### 회원가입 컴포넌트의 특징
-- 다양한 필드 타입 지원 (기본 필드, 커스텀 필드, 특수 필드)
-- 실시간 유효성 검사
-- 조건부 필드 표시
-- 회사별 맞춤 설정 지원
-
-## 시작하기
-
-### 1. 프로젝트 생성
-
-```bash
-# 프로젝트 디렉토리 생성
-mkdir my-signup-skin
-cd my-signup-skin
-
-# package.json 초기화
-npm init -y
-
-# 필요한 패키지 설치
-npm install --save-dev webpack webpack-cli babel-loader @babel/core @babel/preset-react
-```
-
-### 2. 프로젝트 구조
-
-```
-my-signup-skin/
-├── src/
-│   └── index.jsx        # 메인 스킨 컴포넌트
-├── dist/               # 빌드 결과물
-├── package.json
-├── webpack.config.js
-├── .babelrc
-└── README.md
-```
-
-### 3. 설정 파일
-
-**.babelrc**
-```json
-{
-  "presets": ["@babel/preset-react"]
+```typescript
+interface SignupFormData {
+  // 기본 필드
+  user_id: string;           // 아이디 (2-20자)
+  password: string;          // 비밀번호
+  phone: string;             // 핸드폰 번호
+  name: string;              // 이름
+  referral_code: string;     // 추천인 코드
+  email: string;             // 이메일
+  birthday: string;          // 생년월일
+  address: string;           // 주소
+  
+  // 특수 필드 (회사별)
+  upperer_code: string;      // 상위 코드 (SPECIFIED 정책)
+  center_code: string;       // 센터/리더 코드 (회사 24, 26)
+  left_or_right: string;     // 좌/우 선택 (SPECIFIED 정책)
+  trxWithdrawAddress: string;// TRX 지갑 주소 (회사 24)
+  bscWithdrawAddress: string;// USDT-BNB 지갑 주소 (회사 24, 26)
+  
+  // 커스텀 필드
+  var01: string;             // 커스텀 필드 01
+  var02: string;             // 커스텀 필드 02
+  var03: string;             // 커스텀 필드 03
+  var04: string;             // 커스텀 필드 04
+  var05: string;             // 커스텀 필드 05
+  var06: string;             // 커스텀 필드 06
+  var07: string;             // 커스텀 필드 07
+  var08: string;             // 커스텀 필드 08
+  var09: string;             // 커스텀 필드 09
+  var10: string;             // 커스텀 필드 10
+  
+  // 시스템 필드
+  referral_code_from_url: boolean;  // URL에서 추천인 코드를 가져왔는지 여부
 }
 ```
 
-**webpack.config.js**
-```javascript
-const path = require('path');
+### 기본 필드 설정 (BasicFieldsConfig)
 
+```typescript
+interface BasicFieldsConfig {
+  userId: boolean;      // 아이디 필드 표시 여부
+  password: boolean;    // 비밀번호 필드 표시 여부
+  name: boolean;        // 이름 필드 표시 여부
+  phone: boolean;       // 핸드폰 번호 필드 표시 여부
+  email: boolean;       // 이메일 필드 표시 여부
+  birthday: boolean;    // 생년월일 필드 표시 여부
+  address: boolean;     // 주소 필드 표시 여부
+  referralCode: boolean;// 추천인 코드 필드 표시 여부
+}
+```
+
+### 커스텀 필드 설정 (VarFieldConfig)
+
+```typescript
+interface VarFieldConfig {
+  show: boolean;        // 필드 표시 여부
+  label: string;        // 필드 라벨
+  type: 'input' | 'select' | 'radio' | 'document' | 'account' | 'ssn';  // 필드 타입
+  options?: Array<{     // select, radio 타입의 경우 옵션 목록
+    value: string;
+    label: string;
+  }>;
+  required: boolean;    // 필수 여부
+  content?: string;     // document 타입의 경우 표시할 내용
+}
+```
+
+## SkinProps 인터페이스
+
+실제 스킨이 받는 props는 다음과 같은 구조입니다:
+
+```typescript
+interface SkinProps {
+  // ComponentSkinWrapper에서 병합된 데이터
+  data: {
+    // 원본 컴포넌트 데이터
+    id: string;
+    type: string;
+    props: Record<string, any>;
+    componentProps?: Record<string, any>;
+    style?: React.CSSProperties;
+    
+    // SignupLogic에서 반환된 data 객체의 모든 필드가 직접 포함됨
+    formData: SignupFormData;                    // 폼 입력 데이터
+    validationErrors: Record<string, string>;    // 유효성 검사 에러
+    loading: boolean;                            // 로딩 상태
+    signUpSuccess: boolean;                      // 회원가입 성공 여부
+    signUpError: string | null;                  // 회원가입 에러 메시지
+    theme: {                                     // 테마 설정
+      primary?: string;
+      primaryDark?: string;
+      secondary?: string;
+      [key: string]: any;
+    };
+    withcookieData: any;                         // 위드쿠키 전역 데이터
+    showSSNField: boolean;                       // 주민등록번호 필드 표시 여부
+    
+    // SignupLogic에서 반환된 기타 데이터
+    [key: string]: any;
+  };
+  
+  // SignupLogic에서 반환된 액션들
+  actions: {
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;  // 입력 변경 핸들러
+    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;                                               // 폼 제출 핸들러
+    handleBlur: (field: string) => void;                                                                       // 필드 블러 핸들러
+    handleRadioChange: (fieldName: string, value: string) => void;                                             // 라디오 버튼 변경 핸들러
+    handleCheckboxChange: (fieldName: string, label: string, isChecked: boolean) => void;                      // 체크박스 변경 핸들러
+    validateField: (id: string, value: string) => void;                                                        // 필드 유효성 검사
+    validateForm: () => boolean;                                                                               // 전체 폼 유효성 검사
+  };
+  
+  // 프로퍼티 패널에서 설정한 옵션들
+  options: {
+    basicFields?: BasicFieldsConfig;             // 기본 필드 표시 설정
+    varFields?: Record<string, VarFieldConfig>;  // 커스텀 필드 설정 (var01 ~ var10)
+    padding?: string;                            // 패딩
+    backgroundColor?: string;                    // 배경색
+    borderRadius?: string;                       // 테두리 둥글기
+    style?: React.CSSProperties;                 // 추가 스타일
+    [key: string]: any;
+  };
+  
+  // 렌더링 모드
+  mode: 'editor' | 'preview' | 'production';
+  
+  // 유틸리티 함수들
+  utils: {
+    t: (key: string, params?: Record<string, any>) => string;  // 번역
+    navigate: (path: string) => void;                          // 라우팅
+    formatCurrency: (amount: number, currency?: string) => string;
+    formatDate: (date: string | Date, format?: string) => string;
+    getAssetUrl: (path: string) => string;
+    cx: (...classes: (string | undefined | null | false)[]) => string;
+  };
+  
+  // 앱 전역 정보
+  app?: {
+    user?: any;                   // 사용자 정보
+    company?: any;                // 회사 정보
+    currentLanguage?: string;     // 현재 언어
+    theme?: any;                  // 테마 정보
+    isUserLoggedIn?: boolean;     // 로그인 여부
+  };
+  
+  // 에디터 관련 정보 (에디터 모드에서만)
+  editor?: {
+    isSelected: boolean;         // 선택 상태
+    onSelect: () => void;        // 선택 핸들러
+    onEdit: () => void;          // 편집 핸들러
+    onDelete: () => void;        // 삭제 핸들러
+    dragHandleProps?: any;       // 드래그 핸들 props
+  };
+}
+```
+
+## 데이터 소스
+
+회원가입 컴포넌트는 다음과 같은 방식으로 데이터를 받습니다:
+
+1. **Property Panel**: 에디터에서 설정한 필드 표시 옵션 (options.basicFields, options.varFields)
+2. **Form State**: 사용자 입력 상태 (data.formData로 전달)
+3. **Redux State**: 회원가입 상태 및 에러 정보 (data 객체에 병합)
+4. **URL Parameters**: 추천인 코드 (`/signup/{referralCode}` 형식으로 자동 추출)
+5. **Company Settings**: 회사별 특수 필드 표시 여부
+
+## 기본 사용 예제
+
+```typescript
+import React from 'react';
+import { SkinProps } from '@withcookie/webbuilder-sdk';
+
+const MySignupSkin: React.FC<SkinProps> = ({ 
+  data, 
+  actions, 
+  options, 
+  mode, 
+  utils,
+  app 
+}) => {
+  const { t, cx } = utils;
+  
+  // 데이터 추출
+  const { 
+    formData,
+    validationErrors,
+    loading,
+    signUpSuccess,
+    signUpError,
+    theme,
+    showSSNField
+  } = data;
+  
+  // 옵션 추출
+  const {
+    basicFields = {
+      userId: true,
+      password: true,
+      name: true,
+      phone: true,
+      email: true,
+      birthday: true,
+      address: true,
+      referralCode: true
+    },
+    varFields = {},
+    padding = '20px',
+    backgroundColor = '#ffffff',
+    borderRadius = '8px',
+    style = {}
+  } = options;
+  
+  // 액션 사용
+  const {
+    handleChange,
+    handleSubmit,
+    handleBlur,
+    handleRadioChange,
+    handleCheckboxChange,
+    validateField,
+    validateForm
+  } = actions;
+  
+  // 회사 정보
+  const companyId = app?.company?.id || data?.withcookieData?.skin?.company?.id;
+  const paymentPolicy = data?.withcookieData?.company?.payment_policy;
+  
+  // 특수 필드 표시 여부
+  const showCenterCode = companyId === 24 || companyId === 26;
+  const showUppererCode = paymentPolicy === 'SPECIFIED';
+  const showTrxWallet = companyId === 24;
+  const showBscWallet = companyId === 24 || companyId === 26;
+  
+  if (signUpSuccess) {
+    return (
+      <div className="signup-success">
+        <h2>{t('회원가입 완료!')}</h2>
+        <p>{t('3초 후 홈페이지로 이동합니다...')}</p>
+      </div>
+    );
+  }
+  
+  return (
+    <div 
+      className={cx('signup-form', options.className)}
+      style={{
+        padding,
+        backgroundColor,
+        borderRadius,
+        ...style
+      }}
+    >
+      <h2>{t('회원가입')}</h2>
+      
+      <form onSubmit={handleSubmit}>
+        {/* 아이디 필드 */}
+        {basicFields.userId && (
+          <div className="form-group">
+            <label htmlFor="user_id">
+              {t('아이디')} <span className="required">*</span>
+            </label>
+            <input 
+              id="user_id"
+              name="user_id"
+              type="text" 
+              placeholder={t("아이디 입력 (2~20자)")}
+              required 
+              className={validationErrors?.user_id ? 'error' : ''}
+              value={formData?.user_id || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('user_id')}
+              minLength={2}
+              maxLength={20}
+            />
+            {validationErrors?.user_id && (
+              <div className="error-message">
+                {validationErrors.user_id}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 비밀번호 필드 */}
+        {basicFields.password && (
+          <div className="form-group">
+            <label htmlFor="password">
+              {t('비밀번호')} <span className="required">*</span>
+            </label>
+            <input 
+              id="password"
+              name="password"
+              type="password" 
+              placeholder={t("비밀번호 입력")}
+              required 
+              className={validationErrors?.password ? 'error' : ''}
+              value={formData?.password || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('password')}
+            />
+            {validationErrors?.password && (
+              <div className="error-message">
+                {validationErrors.password}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 이름 필드 */}
+        {basicFields.name && (
+          <div className="form-group">
+            <label htmlFor="name">
+              {t('이름')} <span className="required">*</span>
+            </label>
+            <input 
+              id="name"
+              name="name"
+              type="text" 
+              placeholder={t("이름 입력")}
+              required 
+              className={validationErrors?.name ? 'error' : ''}
+              value={formData?.name || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('name')}
+            />
+            {validationErrors?.name && (
+              <div className="error-message">
+                {validationErrors.name}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 핸드폰 번호 필드 */}
+        {basicFields.phone && (
+          <div className="form-group">
+            <label htmlFor="phone">
+              {t('핸드폰 번호')} <span className="required">*</span>
+            </label>
+            <input 
+              id="phone"
+              name="phone"
+              type="tel" 
+              placeholder={t("핸드폰 번호 입력")}
+              required 
+              className={validationErrors?.phone ? 'error' : ''}
+              value={formData?.phone || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('phone')}
+            />
+            {validationErrors?.phone && (
+              <div className="error-message">
+                {validationErrors.phone}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 이메일 필드 */}
+        {basicFields.email && (
+          <div className="form-group">
+            <label htmlFor="email">
+              {t('이메일')}
+            </label>
+            <input 
+              id="email"
+              name="email"
+              type="email" 
+              placeholder={t("이메일 입력")}
+              className={validationErrors?.email ? 'error' : ''}
+              value={formData?.email || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('email')}
+            />
+            {validationErrors?.email && (
+              <div className="error-message">
+                {validationErrors.email}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 생년월일 필드 */}
+        {basicFields.birthday && (
+          <div className="form-group">
+            <label htmlFor="birthday">
+              {t('생년월일')}
+            </label>
+            <input 
+              id="birthday"
+              name="birthday"
+              type="date" 
+              className={validationErrors?.birthday ? 'error' : ''}
+              value={formData?.birthday || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('birthday')}
+            />
+            {validationErrors?.birthday && (
+              <div className="error-message">
+                {validationErrors.birthday}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 주소 필드 */}
+        {basicFields.address && (
+          <div className="form-group">
+            <label htmlFor="address">
+              {t('주소')}
+            </label>
+            <input 
+              id="address"
+              name="address"
+              type="text" 
+              placeholder={t("주소 입력")}
+              className={validationErrors?.address ? 'error' : ''}
+              value={formData?.address || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('address')}
+            />
+            {validationErrors?.address && (
+              <div className="error-message">
+                {validationErrors.address}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 추천인 코드 필드 */}
+        {basicFields.referralCode && (
+          <div className="form-group">
+            <label htmlFor="referral_code">
+              {t('추천인 코드')}
+            </label>
+            <input 
+              id="referral_code"
+              name="referral_code"
+              type="text" 
+              placeholder={t("추천인 코드 입력")}
+              className={validationErrors?.referral_code ? 'error' : ''}
+              value={formData?.referral_code || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('referral_code')}
+              readOnly={formData?.referral_code_from_url}  // URL에서 가져온 경우 읽기 전용
+            />
+            {validationErrors?.referral_code && (
+              <div className="error-message">
+                {validationErrors.referral_code}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 회사별 특수 필드 */}
+        {/* 센터/리더 코드 (회사 24, 26) */}
+        {showCenterCode && (
+          <div className="form-group">
+            <label htmlFor="center_code">
+              {t('리더 코드')} <span className="required">*</span>
+            </label>
+            <input 
+              id="center_code"
+              name="center_code"
+              type="text" 
+              placeholder={t("리더 코드 입력")}
+              required 
+              className={validationErrors?.center_code ? 'error' : ''}
+              value={formData?.center_code || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('center_code')}
+            />
+            {validationErrors?.center_code && (
+              <div className="error-message">
+                {validationErrors.center_code}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 상위 코드 (SPECIFIED 정책) */}
+        {showUppererCode && (
+          <div className="form-group">
+            <label htmlFor="upperer_code">
+              {t('상위 코드')} <span className="required">*</span>
+            </label>
+            <input 
+              id="upperer_code"
+              name="upperer_code"
+              type="text" 
+              placeholder={t("상위 코드 입력")}
+              required 
+              className={validationErrors?.upperer_code ? 'error' : ''}
+              value={formData?.upperer_code || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('upperer_code')}
+            />
+            {validationErrors?.upperer_code && (
+              <div className="error-message">
+                {validationErrors.upperer_code}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 좌/우 선택 (SPECIFIED 정책) */}
+        {showUppererCode && (
+          <div className="form-group">
+            <label>{t('좌/우 선택')} <span className="required">*</span></label>
+            <div className="radio-group">
+              <label>
+                <input 
+                  type="radio"
+                  name="left_or_right"
+                  value="left"
+                  checked={formData?.left_or_right === 'left'}
+                  onChange={() => handleRadioChange('left_or_right', 'left')}
+                />
+                {t('좌')}
+              </label>
+              <label>
+                <input 
+                  type="radio"
+                  name="left_or_right"
+                  value="right"
+                  checked={formData?.left_or_right === 'right'}
+                  onChange={() => handleRadioChange('left_or_right', 'right')}
+                />
+                {t('우')}
+              </label>
+            </div>
+            {validationErrors?.left_or_right && (
+              <div className="error-message">
+                {validationErrors.left_or_right}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TRX 지갑 주소 (회사 24) */}
+        {showTrxWallet && (
+          <div className="form-group">
+            <label htmlFor="trxWithdrawAddress">
+              {t('TRX 지갑 주소')}
+            </label>
+            <input 
+              id="trxWithdrawAddress"
+              name="trxWithdrawAddress"
+              type="text" 
+              placeholder={t("TRX 지갑 주소 입력")}
+              className={validationErrors?.trxWithdrawAddress ? 'error' : ''}
+              value={formData?.trxWithdrawAddress || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('trxWithdrawAddress')}
+            />
+            {validationErrors?.trxWithdrawAddress && (
+              <div className="error-message">
+                {validationErrors.trxWithdrawAddress}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* BSC(USDT-BNB) 지갑 주소 (회사 24, 26) */}
+        {showBscWallet && (
+          <div className="form-group">
+            <label htmlFor="bscWithdrawAddress">
+              {t('USDT-BNB 지갑 주소')}
+            </label>
+            <input 
+              id="bscWithdrawAddress"
+              name="bscWithdrawAddress"
+              type="text" 
+              placeholder={t("USDT-BNB 지갑 주소 입력")}
+              className={validationErrors?.bscWithdrawAddress ? 'error' : ''}
+              value={formData?.bscWithdrawAddress || ''}
+              onChange={handleChange}
+              onBlur={() => handleBlur('bscWithdrawAddress')}
+            />
+            {validationErrors?.bscWithdrawAddress && (
+              <div className="error-message">
+                {validationErrors.bscWithdrawAddress}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 커스텀 필드 렌더링 */}
+        {Object.entries(varFields).map(([fieldKey, fieldConfig]) => {
+          if (!fieldConfig.show) return null;
+          
+          const fieldName = fieldKey; // var01, var02, etc.
+          const fieldValue = formData?.[fieldName] || '';
+          
+          return (
+            <div key={fieldName} className="form-group">
+              <label htmlFor={fieldName}>
+                {fieldConfig.label}
+                {fieldConfig.required && <span className="required">*</span>}
+              </label>
+              
+              {/* input 타입 */}
+              {fieldConfig.type === 'input' && (
+                <input 
+                  id={fieldName}
+                  name={fieldName}
+                  type="text" 
+                  placeholder={fieldConfig.label}
+                  required={fieldConfig.required}
+                  className={validationErrors?.[fieldName] ? 'error' : ''}
+                  value={fieldValue}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur(fieldName)}
+                />
+              )}
+              
+              {/* select 타입 */}
+              {fieldConfig.type === 'select' && (
+                <select
+                  id={fieldName}
+                  name={fieldName}
+                  required={fieldConfig.required}
+                  className={validationErrors?.[fieldName] ? 'error' : ''}
+                  value={fieldValue}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur(fieldName)}
+                >
+                  <option value="">{t('선택하세요')}</option>
+                  {fieldConfig.options?.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+              
+              {/* radio 타입 */}
+              {fieldConfig.type === 'radio' && (
+                <div className="radio-group">
+                  {fieldConfig.options?.map(option => (
+                    <label key={option.value}>
+                      <input 
+                        type="radio"
+                        name={fieldName}
+                        value={option.value}
+                        checked={fieldValue === option.value}
+                        onChange={() => handleRadioChange(fieldName, option.value)}
+                      />
+                      {option.label}
+                    </label>
+                  ))}
+                </div>
+              )}
+              
+              {/* document 타입 */}
+              {fieldConfig.type === 'document' && (
+                <div className="document-content">
+                  <div dangerouslySetInnerHTML={{ __html: fieldConfig.content || '' }} />
+                  <input 
+                    type="hidden"
+                    id={fieldName}
+                    name={fieldName}
+                    value="agreed"
+                  />
+                </div>
+              )}
+              
+              {/* account 타입 */}
+              {fieldConfig.type === 'account' && (
+                <input 
+                  id={fieldName}
+                  name={fieldName}
+                  type="text" 
+                  placeholder={t("계좌번호 입력")}
+                  required={fieldConfig.required}
+                  className={validationErrors?.[fieldName] ? 'error' : ''}
+                  value={fieldValue}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur(fieldName)}
+                />
+              )}
+              
+              {/* ssn 타입 (주민등록번호) */}
+              {fieldConfig.type === 'ssn' && showSSNField && (
+                <input 
+                  id={fieldName}
+                  name={fieldName}
+                  type="text" 
+                  placeholder={t("주민등록번호 입력")}
+                  required={fieldConfig.required}
+                  className={validationErrors?.[fieldName] ? 'error' : ''}
+                  value={fieldValue}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur(fieldName)}
+                  maxLength={14}
+                />
+              )}
+              
+              {validationErrors?.[fieldName] && (
+                <div className="error-message">
+                  {validationErrors[fieldName]}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* 회원가입 에러 메시지 */}
+        {signUpError && (
+          <div className="signup-error">
+            {typeof signUpError === 'string' ? t(signUpError) : JSON.stringify(signUpError)}
+          </div>
+        )}
+
+        {/* 회원가입 버튼 */}
+        <button 
+          type="submit" 
+          className="signup-button"
+          style={{ 
+            backgroundColor: theme?.primary || '#007bff',
+            color: '#ffffff'
+          }}
+          disabled={loading}
+        >
+          {loading ? t('처리 중...') : t('회원가입')}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default MySignupSkin;
+```
+
+## 커스텀 필드 타입별 처리 가이드
+
+### input 타입
+```typescript
+<input 
+  id={fieldName}
+  name={fieldName}
+  type="text" 
+  placeholder={fieldConfig.label}
+  required={fieldConfig.required}
+  value={formData?.[fieldName] || ''}
+  onChange={handleChange}
+  onBlur={() => handleBlur(fieldName)}
+/>
+```
+
+### select 타입
+```typescript
+<select
+  id={fieldName}
+  name={fieldName}
+  required={fieldConfig.required}
+  value={formData?.[fieldName] || ''}
+  onChange={handleChange}
+>
+  <option value="">{t('선택하세요')}</option>
+  {fieldConfig.options?.map(option => (
+    <option key={option.value} value={option.value}>
+      {option.label}
+    </option>
+  ))}
+</select>
+```
+
+### radio 타입
+```typescript
+<div className="radio-group">
+  {fieldConfig.options?.map(option => (
+    <label key={option.value}>
+      <input 
+        type="radio"
+        name={fieldName}
+        value={option.value}
+        checked={formData?.[fieldName] === option.value}
+        onChange={() => handleRadioChange(fieldName, option.value)}
+      />
+      {option.label}
+    </label>
+  ))}
+</div>
+```
+
+### document 타입
+```typescript
+// 약관 등의 문서를 표시하고 동의 여부를 저장
+<div className="document-content">
+  <div dangerouslySetInnerHTML={{ __html: fieldConfig.content || '' }} />
+  <label>
+    <input 
+      type="checkbox"
+      onChange={(e) => handleCheckboxChange(fieldName, 'agreed', e.target.checked)}
+    />
+    {t('동의합니다')}
+  </label>
+</div>
+```
+
+### account 타입
+```typescript
+// 계좌번호 입력 (숫자와 하이픈만 허용하는 패턴 적용 가능)
+<input 
+  id={fieldName}
+  name={fieldName}
+  type="text" 
+  pattern="[0-9-]+"
+  placeholder={t("계좌번호 입력 (예: 123-456-789)")}
+  required={fieldConfig.required}
+  value={formData?.[fieldName] || ''}
+  onChange={handleChange}
+/>
+```
+
+### ssn 타입
+```typescript
+// 주민등록번호 입력 (보안상 마스킹 처리 권장)
+{fieldConfig.type === 'ssn' && showSSNField && (
+  <input 
+    id={fieldName}
+    name={fieldName}
+    type="text" 
+    placeholder={t("주민등록번호 입력")}
+    pattern="[0-9]{6}-[0-9]{7}"
+    maxLength={14}
+    required={fieldConfig.required}
+    value={formData?.[fieldName] || ''}
+    onChange={handleChange}
+  />
+)}
+```
+
+## 회사별 특수 처리
+
+### 회사 ID별 특수 필드
+
+```typescript
+// 회사 정보 확인
+const companyId = app?.company?.id || data?.withcookieData?.skin?.company?.id;
+const paymentPolicy = data?.withcookieData?.company?.payment_policy;
+
+// 회사별 필드 표시
+const specialFields = {
+  // 회사 24
+  company24: companyId === 24,
+  showTrxWallet: companyId === 24,
+  showBscWallet: companyId === 24 || companyId === 26,
+  showCenterCode: companyId === 24 || companyId === 26,
+  
+  // 회사 26
+  company26: companyId === 26,
+  
+  // SPECIFIED 정책
+  showUppererCode: paymentPolicy === 'SPECIFIED',
+  showLeftRight: paymentPolicy === 'SPECIFIED'
+};
+```
+
+## 추천인 코드 처리
+
+### URL에서 추천인 코드 자동 추출
+
+```typescript
+// URL 패턴: /signup/{referralCode}
+// 예: /signup/ABC123 → referral_code 필드에 'ABC123' 자동 입력
+
+// URL에서 가져온 추천인 코드는 읽기 전용
+{basicFields.referralCode && (
+  <input 
+    id="referral_code"
+    name="referral_code"
+    type="text" 
+    value={formData?.referral_code || ''}
+    onChange={handleChange}
+    readOnly={formData?.referral_code_from_url}  // URL에서 가져온 경우 true
+    style={{
+      backgroundColor: formData?.referral_code_from_url ? '#f5f5f5' : 'white'
+    }}
+  />
+)}
+```
+
+## 유효성 검사
+
+### 필드별 유효성 검사 규칙
+
+```typescript
+// 실시간 유효성 검사 (onBlur 이벤트)
+onBlur={() => handleBlur('field_name')}
+
+// 유효성 검사 규칙
+const validationRules = {
+  user_id: {
+    required: true,
+    minLength: 2,
+    maxLength: 20,
+    pattern: /^[a-zA-Z0-9_]+$/,
+    message: '아이디는 2-20자의 영문, 숫자, 언더스코어만 사용 가능합니다.'
+  },
+  password: {
+    required: true,
+    minLength: 8,
+    message: '비밀번호는 8자 이상이어야 합니다.'
+  },
+  email: {
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    message: '올바른 이메일 형식이 아닙니다.'
+  },
+  phone: {
+    required: true,
+    pattern: /^[0-9-]+$/,
+    message: '핸드폰 번호는 숫자와 하이픈만 입력 가능합니다.'
+  }
+};
+```
+
+## 폼 제출 및 응답 처리
+
+### 성공 시 처리
+
+```typescript
+// 회원가입 성공 시
+if (signUpSuccess) {
+  return (
+    <div className="signup-success">
+      <h2>{t('회원가입이 완료되었습니다!')}</h2>
+      <p>{t('3초 후 홈페이지로 이동합니다...')}</p>
+    </div>
+  );
+}
+
+// SignupLogic에서 3초 후 자동으로 홈으로 리다이렉트
+```
+
+### 에러 처리
+
+```typescript
+// 전체 에러 메시지
+{signUpError && (
+  <div className="signup-error">
+    {t(signUpError)}
+  </div>
+)}
+
+// 필드별 에러 메시지
+{validationErrors?.field_name && (
+  <div className="field-error">
+    {validationErrors.field_name}
+  </div>
+)}
+```
+
+## 외부 스킨 개발 및 배포
+
+### 1. UMD 번들 빌드 설정
+
+```javascript
+// webpack.config.js
 module.exports = {
-  entry: './src/index.jsx',
+  entry: './src/index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'my-signup-skin.umd.js',
-    library: 'MyCustomSignupSkin',
+    filename: 'signup-skin.js',
+    library: 'SignupCustomSkin',  // 전역 변수명
     libraryTarget: 'umd',
     globalObject: 'this'
   },
@@ -83,1603 +978,123 @@ module.exports = {
     'react': 'React',
     'react-dom': 'ReactDOM'
   },
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-react']
-          }
-        }
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['.js', '.jsx']
-  }
+  // ... 기타 설정
 };
 ```
 
-**package.json (scripts 추가)**
-```json
-{
-  "name": "my-signup-skin",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch",
-    "serve": "npx http-server dist -p 3001 --cors"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@babel/preset-react": "^7.18.0",
-    "babel-loader": "^9.1.0",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.0"
-  }
-}
-```
+### 2. 스킨 등록 방법
 
-## 기본 스킨 템플릿
-
-### JavaScript 파일 (src/index.jsx)
-
-웹빌더 속성 패널의 모든 옵션을 활용하고, 기본 스킨과 동일한 디자인을 구현한 완전한 템플릿입니다:
-
-```jsx
-import React from 'react';
-
-const MyCustomSignupSkin = ({ 
-  data, 
-  actions, 
-  options, 
-  mode, 
-  utils,
-  app,
-  editor 
-}) => {
-  // 유틸리티 함수
-  const { t, cx, navigate, formatCurrency, formatDate, getAssetUrl } = utils;
-  
-  // 회원가입 로직에서 제공하는 데이터
-  const { 
-    formData,          // 폼 데이터 객체
-    validationErrors,  // 유효성 검사 오류
-    loading,           // 로딩 상태
-    signUpSuccess,     // 회원가입 성공 여부
-    signUpError,       // 회원가입 오류
-    isSpecifiedLegPolicy, // SPECIFIED 정책 사용 여부
-    policies,          // 정책 데이터
-    companyId,         // 회사 ID
-    theme,             // 테마 정보
-    basicFields,       // 기본 필드 표시 설정
-    varFields          // 커스텀 필드 설정
-  } = data;
-  
-  // 회원가입 로직에서 제공하는 액션
-  const {
-    handleChange,       // input 변경 핸들러
-    handleSubmit,       // 폼 제출 핸들러
-    handleBlur,         // 포커스 아웃 핸들러
-    handleRadioChange,  // 라디오 버튼 변경
-    handleCheckboxChange, // 체크박스 변경
-    validateField,      // 필드 유효성 검사
-    validateForm        // 전체 폼 유효성 검사
-  } = actions;
-  
-  // 속성 패널에서 설정한 옵션
-  const {
-    title = t('회원가입'),
-    referralCode: defaultReferralCode,
-    // 스타일 옵션
-    backgroundColor = '#ffffff',
-    borderRadius = '10px',
-    boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)',
-    maxWidth = '1200px',
-    margin = '0 auto'
-  } = options;
-  
-  // 특수 회사 ID 체크 (지갑 주소 필드용)
-  const isSpecialCompany = companyId === 190 || companyId === 290;
-  
-  // 컨테이너 스타일
-  const containerStyle = {
-    backgroundColor,
-    borderRadius,
-    boxShadow,
-    maxWidth,
-    margin,
-    padding: '30px'
-  };
-  
-  // 그리드 레이아웃 스타일
-  const gridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '15px',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: '1fr'
-    }
-  };
-  
-  // 필드 렌더링 함수
-  const renderField = (fieldId, label, type = 'text', required = false, options = []) => {
-    const hasError = validationErrors && validationErrors[fieldId];
-    
-    // 특수 필드 타입 처리
-    if (type === 'account') {
-      return (
-        <div className="signup-form-group">
-          <label htmlFor={fieldId}>
-            {label} {required && <span className="required">*</span>}
-          </label>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <select 
-              id={`${fieldId}_bank`}
-              name={`${fieldId}_bank`}
-              value={formData[`${fieldId}_bank`] || ''}
-              onChange={handleChange}
-              style={{ flex: 1 }}
-            >
-              <option value="">은행 선택</option>
-              <option value="004">KB국민은행</option>
-              <option value="088">신한은행</option>
-              <option value="020">우리은행</option>
-              <option value="081">하나은행</option>
-              <option value="089">케이뱅크</option>
-              <option value="090">카카오뱅크</option>
-              <option value="092">토스뱅크</option>
-            </select>
-            <input
-              id={fieldId}
-              name={fieldId}
-              type="text"
-              placeholder="계좌번호"
-              value={formData[fieldId] || ''}
-              onChange={handleChange}
-              onBlur={() => handleBlur(fieldId)}
-              style={{ flex: 2 }}
-            />
-          </div>
-          {hasError && <span className="error-message">{hasError}</span>}
-        </div>
-      );
-    }
-    
-    if (type === 'ssn') {
-      return (
-        <div className="signup-form-group">
-          <label htmlFor={fieldId}>
-            {label} {required && <span className="required">*</span>}
-          </label>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <input
-              id={`${fieldId}_front`}
-              name={`${fieldId}_front`}
-              type="text"
-              placeholder="앞자리"
-              maxLength="6"
-              value={formData[`${fieldId}_front`] || ''}
-              onChange={handleChange}
-              style={{ flex: 1 }}
-            />
-            <span>-</span>
-            <input
-              id={fieldId}
-              name={fieldId}
-              type="password"
-              placeholder="뒷자리"
-              maxLength="7"
-              value={formData[fieldId] || ''}
-              onChange={handleChange}
-              onBlur={() => handleBlur(fieldId)}
-              style={{ flex: 1 }}
-            />
-          </div>
-          {hasError && <span className="error-message">{hasError}</span>}
-        </div>
-      );
-    }
-    
-    if (type === 'document') {
-      return (
-        <div className="signup-form-group" style={{ gridColumn: '1 / -1' }}>
-          <label>{label}</label>
-          <div className="document-container">
-            <div className="document-content" style={{ 
-              height: '200px', 
-              overflowY: 'auto',
-              border: '1px solid #ddd',
-              padding: '10px',
-              marginBottom: '10px',
-              backgroundColor: '#f9f9f9'
-            }}>
-              {options.content || '동의 내용이 여기에 표시됩니다.'}
-            </div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <input
-                type="checkbox"
-                id={fieldId}
-                name={fieldId}
-                checked={formData[fieldId] === '1'}
-                onChange={(e) => handleCheckboxChange(fieldId, label, e.target.checked)}
-              />
-              {required ? t('위 내용에 동의합니다 (필수)') : t('위 내용에 동의합니다 (선택)')}
-            </label>
-          </div>
-          {hasError && <span className="error-message">{hasError}</span>}
-        </div>
-      );
-    }
-    
-    if (type === 'select') {
-      return (
-        <div className="signup-form-group">
-          <label htmlFor={fieldId}>
-            {label} {required && <span className="required">*</span>}
-          </label>
-          <select
-            id={fieldId}
-            name={fieldId}
-            value={formData[fieldId] || ''}
-            onChange={handleChange}
-            onBlur={() => handleBlur(fieldId)}
-            className={hasError ? 'error' : ''}
-          >
-            <option value="">선택하세요</option>
-            {options.map((opt, idx) => (
-              <option key={idx} value={opt}>{opt}</option>
-            ))}
-          </select>
-          {hasError && <span className="error-message">{hasError}</span>}
-        </div>
-      );
-    }
-    
-    if (type === 'radio') {
-      return (
-        <div className="signup-form-group">
-          <label>{label} {required && <span className="required">*</span>}</label>
-          <div style={{ display: 'flex', gap: '15px' }}>
-            {options.map((opt, idx) => (
-              <label key={idx} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <input
-                  type="radio"
-                  name={fieldId}
-                  value={opt}
-                  checked={formData[fieldId] === opt}
-                  onChange={(e) => handleRadioChange(fieldId, e.target.value)}
-                />
-                {opt}
-              </label>
-            ))}
-          </div>
-          {hasError && <span className="error-message">{hasError}</span>}
-        </div>
-      );
-    }
-    
-    // 기본 input 필드
-    return (
-      <div className="signup-form-group">
-        <label htmlFor={fieldId}>
-          {label} {required && <span className="required">*</span>}
-        </label>
-        <input
-          id={fieldId}
-          name={fieldId}
-          type={type}
-          value={formData[fieldId] || ''}
-          onChange={handleChange}
-          onBlur={() => handleBlur(fieldId)}
-          className={hasError ? 'error' : ''}
-          placeholder={`${label}${required ? ' (필수)' : ''}`}
-        />
-        {hasError && <span className="error-message">{hasError}</span>}
-      </div>
-    );
-  };
-  
-  // 회원가입 성공 화면
-  if (signUpSuccess) {
-    return (
-      <div style={containerStyle}>
-        <div style={{ textAlign: 'center', padding: '50px 0' }}>
-          <h2 style={{ color: '#4CAF50', marginBottom: '20px' }}>
-            {t('회원가입이 완료되었습니다!')}
-          </h2>
-          <p style={{ fontSize: '16px', color: '#666', marginBottom: '30px' }}>
-            {t('회원가입을 축하합니다. 로그인 후 서비스를 이용해 주세요.')}
-          </p>
-          <button 
-            onClick={() => navigate('/')}
-            style={{
-              padding: '12px 30px',
-              fontSize: '16px',
-              backgroundColor: theme?.primaryColor || '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-          >
-            {t('홈으로 이동')}
-          </button>
-        </div>
-      </div>
-    );
-  }
-  
-  return (
-    <div style={containerStyle}>
-      <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#333' }}>
-        {title}
-      </h2>
-      
-      {signUpError && (
-        <div style={{
-          padding: '15px',
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          borderRadius: '4px',
-          marginBottom: '20px'
-        }}>
-          {typeof signUpError === 'object' ? signUpError.msg || JSON.stringify(signUpError) : signUpError}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit}>
-        {/* 회원 정보 섹션 */}
-        <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ 
-            fontSize: '18px', 
-            fontWeight: '600', 
-            marginBottom: '20px',
-            paddingBottom: '10px',
-            borderBottom: '2px solid #f0f0f0'
-          }}>
-            {t('회원 정보')}
-          </h3>
-          
-          <div style={gridStyle}>
-            {/* 기본 필드들 */}
-            {basicFields.userId && renderField('user_id', t('아이디'), 'text', true)}
-            {basicFields.password && renderField('password', t('비밀번호'), 'password', true)}
-            {basicFields.name && renderField('name', t('이름'), 'text', true)}
-            {basicFields.phone && renderField('phone', t('핸드폰 번호'), 'tel', true)}
-            {basicFields.email && renderField('email', t('이메일'), 'email', false)}
-            {basicFields.birthday && renderField('birthday', t('생년월일'), 'date', false)}
-            {basicFields.address && renderField('address', t('주소'), 'text', false)}
-            
-            {/* 추천인 코드 */}
-            {basicFields.referralCode && (
-              <div className="signup-form-group">
-                <label htmlFor="referral_code">
-                  {t('추천인 코드')}
-                </label>
-                <input
-                  id="referral_code"
-                  name="referral_code"
-                  type="text"
-                  value={formData.referral_code || defaultReferralCode || ''}
-                  onChange={handleChange}
-                  readOnly={!!defaultReferralCode}
-                  style={defaultReferralCode ? { backgroundColor: '#f0f0f0' } : {}}
-                />
-              </div>
-            )}
-            
-            {/* SPECIFIED 정책 필드 */}
-            {isSpecifiedLegPolicy && (
-              <>
-                <div className="signup-form-group">
-                  <label htmlFor="upperer_code">
-                    {t('후원인 코드')} <span className="required">*</span>
-                  </label>
-                  <input
-                    id="upperer_code"
-                    name="upperer_code"
-                    type="text"
-                    value={formData.upperer_code || ''}
-                    onChange={handleChange}
-                    onBlur={() => handleBlur('upperer_code')}
-                    className={validationErrors?.upperer_code ? 'error' : ''}
-                  />
-                  {validationErrors?.upperer_code && (
-                    <span className="error-message">{validationErrors.upperer_code}</span>
-                  )}
-                </div>
-                
-                <div className="signup-form-group">
-                  <label>
-                    {t('좌/우')} <span className="required">*</span>
-                  </label>
-                  <div style={{ display: 'flex', gap: '15px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <input
-                        type="radio"
-                        name="left_or_right"
-                        value="left"
-                        checked={formData.left_or_right === 'left'}
-                        onChange={(e) => handleRadioChange('left_or_right', e.target.value)}
-                      />
-                      {t('좌')}
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <input
-                        type="radio"
-                        name="left_or_right"
-                        value="right"
-                        checked={formData.left_or_right === 'right'}
-                        onChange={(e) => handleRadioChange('left_or_right', e.target.value)}
-                      />
-                      {t('우')}
-                    </label>
-                  </div>
-                  {validationErrors?.left_or_right && (
-                    <span className="error-message">{validationErrors.left_or_right}</span>
-                  )}
-                </div>
-              </>
-            )}
-            
-            {/* 특수 회사 전용 지갑 주소 필드 */}
-            {isSpecialCompany && (
-              <>
-                <div className="signup-form-group">
-                  <label htmlFor="trxWithdrawAddress">
-                    {t('TRX 지갑 주소')}
-                  </label>
-                  <input
-                    id="trxWithdrawAddress"
-                    name="trxWithdrawAddress"
-                    type="text"
-                    value={formData.trxWithdrawAddress || ''}
-                    onChange={handleChange}
-                    placeholder="TRX 지갑 주소를 입력하세요"
-                  />
-                </div>
-                
-                <div className="signup-form-group">
-                  <label htmlFor="bscWithdrawAddress">
-                    {t('BSC 지갑 주소')}
-                  </label>
-                  <input
-                    id="bscWithdrawAddress"
-                    name="bscWithdrawAddress"
-                    type="text"
-                    value={formData.bscWithdrawAddress || ''}
-                    onChange={handleChange}
-                    placeholder="BSC 지갑 주소를 입력하세요"
-                  />
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-        
-        {/* 추가 정보 섹션 (커스텀 필드) */}
-        {Object.keys(varFields).filter(key => varFields[key].show).length > 0 && (
-          <div style={{ marginBottom: '30px' }}>
-            <h3 style={{ 
-              fontSize: '18px', 
-              fontWeight: '600', 
-              marginBottom: '20px',
-              paddingBottom: '10px',
-              borderBottom: '2px solid #f0f0f0'
-            }}>
-              {t('추가 정보')}
-            </h3>
-            
-            <div style={gridStyle}>
-              {Object.entries(varFields).map(([fieldId, config]) => {
-                if (!config.show) return null;
-                
-                return (
-                  <React.Fragment key={fieldId}>
-                    {renderField(
-                      fieldId,
-                      config.label,
-                      config.type,
-                      config.required,
-                      config.options || [config]
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
-        )}
-        
-        {/* 제출 버튼 */}
-        <div style={{ textAlign: 'center', marginTop: '30px' }}>
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: '15px 40px',
-              fontSize: '16px',
-              fontWeight: '600',
-              backgroundColor: theme?.primaryColor || '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              transition: 'all 0.2s'
-            }}
-          >
-            {loading ? t('처리 중...') : t('회원가입')}
-          </button>
-        </div>
-      </form>
-      
-      {/* CSS 스타일 */}
-      <style jsx>{`
-        .signup-form-group {
-          margin-bottom: 20px;
-        }
-        
-        .signup-form-group label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: 600;
-          color: #333;
-          font-size: 14px;
-        }
-        
-        .signup-form-group input[type="text"],
-        .signup-form-group input[type="password"],
-        .signup-form-group input[type="email"],
-        .signup-form-group input[type="tel"],
-        .signup-form-group input[type="date"],
-        .signup-form-group select {
-          width: 100%;
-          padding: 10px 15px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 14px;
-          transition: border-color 0.2s;
-        }
-        
-        .signup-form-group input[type="text"]:focus,
-        .signup-form-group input[type="password"]:focus,
-        .signup-form-group input[type="email"]:focus,
-        .signup-form-group input[type="tel"]:focus,
-        .signup-form-group input[type="date"]:focus,
-        .signup-form-group select:focus {
-          outline: none;
-          border-color: #007bff;
-        }
-        
-        .signup-form-group input.error,
-        .signup-form-group select.error {
-          border-color: #dc3545;
-        }
-        
-        .signup-form-group .error-message {
-          display: block;
-          color: #dc3545;
-          font-size: 12px;
-          margin-top: 5px;
-        }
-        
-        .signup-form-group .required {
-          color: #dc3545;
-        }
-        
-        @media (max-width: 768px) {
-          .signup-form-group {
-            grid-column: 1 / -1;
-          }
-        }
-      `}</style>
-    </div>
-  );
-};
-
-// UMD 내보내기
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MyCustomSignupSkin;
-} else {
-  window.MyCustomSignupSkin = MyCustomSignupSkin;
-}
-```
-
-## 웹빌더 속성 패널 연동
-
-### 회원가입 컴포넌트 속성 패널에서 설정 가능한 옵션들
-
-웹빌더 에디터에서 회원가입 컴포넌트를 선택하면 우측 속성 패널에서 다음 옵션들을 실시간으로 설정할 수 있습니다:
-
-#### 스킨 설정
-- **컴포넌트 스킨**: 기본 스킨 또는 등록된 외부 스킨 선택
-
-#### 기본 설정
-- **제목**: 회원가입 폼 상단에 표시될 제목 텍스트 (기본값: '회원가입')
-- **기본 추천인 코드**: 자동으로 입력될 추천인 코드
-
-#### 회원정보 필드 표시 설정
-- **아이디**: 표시 여부 설정
-- **비밀번호**: 표시 여부 설정
-- **이름**: 표시 여부 설정
-- **핸드폰 번호**: 표시 여부 설정
-- **이메일**: 표시 여부 설정
-- **생년월일**: 표시 여부 설정
-- **주소**: 표시 여부 설정
-- **추천인 코드**: 표시 여부 설정
-
-#### 커스텀 필드 설정 (var01~var10)
-각 커스텀 필드에 대해 다음을 설정할 수 있습니다:
-- **표시**: 필드 표시 여부
-- **필드명**: 필드 레이블
-- **타입**: input / select / radio / document / account / ssn 중 선택
-- **동의 내용**: document 타입일 경우 표시할 내용
-- **필수 여부**: 필수 입력 여부
-- **옵션**: select나 radio 타입일 경우 선택 옵션 목록
-
-#### 스타일 설정
-- **배경색**: 폼 컨테이너 배경색
-- **테두리 둥글기**: 폼 컨테이너 모서리 둥글기
-- **그림자**: 폼 컨테이너 그림자 효과
-- **최대 너비**: 폼의 최대 너비
-- **여백**: 폼 컨테이너 여백
-
-### 실시간 옵션 반영 메커니즘
-
-#### 데이터 흐름
-```
-속성 패널에서 옵션 변경
-        ↓
-ComponentProps 업데이트 
-        ↓
-ComponentRenderer가 새로운 props로 리렌더링
-        ↓  
-스킨 컴포넌트가 변경된 options로 즉시 업데이트
-```
-
-#### 구현 원리
-```jsx
-// 1. 속성 패널에서 옵션 변경 시 (SignupProperties.js)
-const handleFieldToggle = (fieldName) => {
-  handleComponentPropsChange(fieldName, !componentProps[fieldName]);
-  // 즉시 프리뷰에 반영됨
-};
-
-// 2. 스킨에서 실시간으로 받는 방식
-const MySignupSkin = ({ data, options }) => {
-  const { basicFields, varFields } = data;
-  
-  // basicFields와 varFields가 변경되면 React가 자동으로 리렌더링
-  return (
-    <div>
-      {basicFields.userId && <input placeholder="아이디" />}
-      {basicFields.password && <input placeholder="비밀번호" />}
-      {/* ... */}
-    </div>
-  );
-};
-```
-
-### 속성 패널 ↔ options/data 완전 매핑표
-
-| 속성 패널 섹션 | 속성명 | 데이터 위치 | 타입 | 설명 |
-|---|---|---|---|---|
-| **기본 설정** | | | | |
-| | 제목 | `options.title` | string | 폼 제목 |
-| | 기본 추천인 코드 | `options.referralCode` | string | 기본 추천인 코드 |
-| **회원정보 필드** | | | | |
-| | 아이디 | `data.basicFields.userId` | boolean | 표시 여부 |
-| | 비밀번호 | `data.basicFields.password` | boolean | 표시 여부 |
-| | 이름 | `data.basicFields.name` | boolean | 표시 여부 |
-| | 핸드폰 번호 | `data.basicFields.phone` | boolean | 표시 여부 |
-| | 이메일 | `data.basicFields.email` | boolean | 표시 여부 |
-| | 생년월일 | `data.basicFields.birthday` | boolean | 표시 여부 |
-| | 주소 | `data.basicFields.address` | boolean | 표시 여부 |
-| | 추천인 코드 | `data.basicFields.referralCode` | boolean | 표시 여부 |
-| **커스텀 필드** | | | | |
-| | var01~var10 | `data.varFields.var01` 등 | object | 커스텀 필드 설정 |
-| **스타일 설정** | | | | |
-| | 배경색 | `options.backgroundColor` | string | 컨테이너 배경색 |
-| | 테두리 둥글기 | `options.borderRadius` | string | 모서리 둥글기 |
-| | 그림자 | `options.boxShadow` | string | 그림자 효과 |
-| | 최대 너비 | `options.maxWidth` | string | 최대 너비 |
-| | 여백 | `options.margin` | string | 컨테이너 여백 |
-
-### 커스텀 필드 타입별 구현 가이드
-
-#### 1. input 타입 (기본)
-```jsx
-<input
-  type="text"
-  value={formData[fieldId] || ''}
-  onChange={handleChange}
-  onBlur={() => handleBlur(fieldId)}
-/>
-```
-
-#### 2. select 타입
-```jsx
-<select value={formData[fieldId] || ''} onChange={handleChange}>
-  <option value="">선택하세요</option>
-  {config.options.map(opt => (
-    <option key={opt} value={opt}>{opt}</option>
-  ))}
-</select>
-```
-
-#### 3. radio 타입
-```jsx
-{config.options.map(opt => (
-  <label key={opt}>
-    <input
-      type="radio"
-      name={fieldId}
-      value={opt}
-      checked={formData[fieldId] === opt}
-      onChange={(e) => handleRadioChange(fieldId, e.target.value)}
-    />
-    {opt}
-  </label>
-))}
-```
-
-#### 4. document 타입 (동의서)
-```jsx
-<div className="document-content">
-  {config.content}
-</div>
-<input
-  type="checkbox"
-  checked={formData[fieldId] === '1'}
-  onChange={(e) => handleCheckboxChange(fieldId, config.label, e.target.checked)}
-/>
-```
-
-#### 5. account 타입 (은행계좌)
-```jsx
-<select name={`${fieldId}_bank`} onChange={handleChange}>
-  {/* 은행 옵션들 */}
-</select>
-<input
-  name={fieldId}
-  type="text"
-  placeholder="계좌번호"
-  onChange={handleChange}
-/>
-```
-
-#### 6. ssn 타입 (주민등록번호)
-```jsx
-<input
-  name={`${fieldId}_front`}
-  maxLength="6"
-  placeholder="앞자리"
-/>
-<input
-  name={fieldId}
-  type="password"
-  maxLength="7"
-  placeholder="뒷자리"
-/>
-```
-
-## Props 상세 설명
-
-### data 객체
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `formData` | `object` | 모든 폼 필드의 현재 값 |
-| `validationErrors` | `object` | 필드별 유효성 검사 오류 메시지 |
-| `loading` | `boolean` | 회원가입 요청 진행 중 여부 |
-| `signUpSuccess` | `boolean` | 회원가입 성공 여부 |
-| `signUpError` | `any` | 회원가입 실패 시 에러 정보 |
-| `isSpecifiedLegPolicy` | `boolean` | SPECIFIED 정책 사용 여부 |
-| `policies` | `object` | 정책 정보 |
-| `companyId` | `number` | 현재 회사 ID |
-| `theme` | `object` | 테마 정보 (primaryColor, secondaryColor) |
-| `basicFields` | `object` | 기본 필드 표시 설정 |
-| `varFields` | `object` | 커스텀 필드 설정 |
-
-#### formData 상세 구조
 ```javascript
-{
-  // 기본 필드
-  user_id: string,
-  password: string,
-  phone: string,
-  name: string,
-  referral_code: string,
-  email: string,
-  birthday: string,
-  address: string,
-  
-  // SPECIFIED 정책 필드
-  upperer_code: string,    // 후원인 코드
-  center_code: string,     // 센터 코드
-  left_or_right: string,   // 좌/우 선택
-  
-  // 커스텀 필드
-  var01~var10: string,
-  
-  // 특수 회사 전용 필드
-  trxWithdrawAddress: string,  // TRX 지갑 주소
-  bscWithdrawAddress: string   // BSC 지갑 주소
-}
-```
+import { registerComponentSkin } from '@withcookie/webbuilder-sdk';
 
-#### varFields 구조 예시
-```javascript
-{
-  var01: {
-    show: true,
-    label: "직업",
-    type: "select",
-    required: true,
-    options: ["회사원", "자영업", "학생", "기타"]
-  },
-  var02: {
-    show: true,
-    label: "개인정보 수집 동의",
-    type: "document",
-    content: "개인정보 수집 및 이용에 대한 안내...",
-    required: true
-  }
-}
-```
-
-### actions 객체
-
-| 함수 | 설명 | 사용법 |
-|------|------|--------|
-| `handleChange` | input 값 변경 처리 | `onChange={handleChange}` |
-| `handleSubmit` | 폼 제출 처리 | `onSubmit={handleSubmit}` |
-| `handleBlur` | 필드 포커스 아웃 시 유효성 검사 | `onBlur={() => handleBlur(fieldId)}` |
-| `handleRadioChange` | 라디오 버튼 변경 | `onChange={(e) => handleRadioChange(fieldId, value)}` |
-| `handleCheckboxChange` | 체크박스 변경 | `onChange={(e) => handleCheckboxChange(fieldId, label, checked)}` |
-| `validateField` | 특정 필드 유효성 검사 | `validateField(fieldId, value)` |
-| `validateForm` | 전체 폼 유효성 검사 | `const isValid = validateForm()` |
-
-### options 객체
-
-| 속성 | 타입 | 기본값 | 설명 |
-|------|------|--------|------|
-| `title` | `string` | '회원가입' | 회원가입 폼 제목 |
-| `referralCode` | `string` | '' | 기본 추천인 코드 |
-| `backgroundColor` | `string` | '#ffffff' | 폼 배경색 |
-| `borderRadius` | `string` | '10px' | 테두리 둥글기 |
-| `boxShadow` | `string` | '0 2px 8px rgba(0, 0, 0, 0.1)' | 그림자 효과 |
-| `maxWidth` | `string` | '1200px' | 폼 최대 너비 |
-| `margin` | `string` | '0 auto' | 폼 여백 |
-
-### utils 객체
-
-| 함수 | 설명 | 예시 |
-|------|------|------|
-| `t(key)` | 다국어 번역 | `t('회원가입')` |
-| `cx(...classes)` | 클래스명 조합 | `cx('base', isActive && 'active')` |
-| `navigate(path)` | 페이지 이동 | `navigate('/')` |
-| `formatCurrency(amount)` | 통화 포맷 | `formatCurrency(10000)` |
-| `formatDate(date)` | 날짜 포맷 | `formatDate(new Date())` |
-| `getAssetUrl(path)` | 에셋 URL 생성 | `getAssetUrl('/images/logo.png')` |
-
-### 기타 Props
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `mode` | `'editor' \| 'preview' \| 'production'` | 현재 렌더링 모드 |
-| `app` | `object` | 앱 전역 정보 (user, company 등) |
-| `editor` | `object` | 에디터 모드에서만 제공되는 추가 정보 |
-
-## 스타일링 가이드
-
-### 1. 인라인 스타일 사용
-
-```jsx
-const formStyle = {
-  backgroundColor: options.backgroundColor || '#ffffff',
-  borderRadius: options.borderRadius || '10px',
-  boxShadow: options.boxShadow || '0 2px 8px rgba(0, 0, 0, 0.1)',
-  maxWidth: options.maxWidth || '1200px',
-  margin: options.margin || '0 auto',
-  padding: '30px'
-};
-
-<div style={formStyle}>
-  {/* 폼 내용 */}
-</div>
-```
-
-### 2. CSS 파일 분리 (권장)
-
-**dist/my-signup-skin.css**
-```css
-.signup-container {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 30px;
-}
-
-.signup-title {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.signup-section {
-  margin-bottom: 30px;
-}
-
-.signup-section-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #f0f0f0;
-}
-
-.signup-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-}
-
-.signup-form-group {
-  margin-bottom: 20px;
-}
-
-.signup-form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
-}
-
-.signup-form-group input[type="text"],
-.signup-form-group input[type="password"],
-.signup-form-group input[type="email"],
-.signup-form-group input[type="tel"],
-.signup-form-group input[type="date"],
-.signup-form-group select {
-  width: 100%;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-}
-
-.signup-form-group input:focus,
-.signup-form-group select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.signup-form-group .error {
-  border-color: #dc3545;
-}
-
-.signup-form-group .error-message {
-  display: block;
-  color: #dc3545;
-  font-size: 12px;
-  margin-top: 5px;
-}
-
-.signup-form-group .required {
-  color: #dc3545;
-}
-
-.document-container {
-  margin-top: 10px;
-}
-
-.document-content {
-  height: 200px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #f9f9f9;
-  border-radius: 4px;
-}
-
-.signup-submit-button {
-  padding: 15px 40px;
-  font-size: 16px;
-  font-weight: 600;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.signup-submit-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
-.signup-submit-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.signup-success {
-  text-align: center;
-  padding: 50px 0;
-}
-
-.signup-success h2 {
-  color: #4CAF50;
-  margin-bottom: 20px;
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .signup-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .signup-container {
-    padding: 20px;
-    margin: 10px;
-  }
-  
-  .document-container {
-    grid-column: 1;
-  }
-}
-```
-
-**스킨 등록 시 CSS 파일 포함**
-```javascript
 registerComponentSkin({
-  id: 'my-custom-signup',
-  name: '나의 커스텀 회원가입',
-  componentTypes: ['signup'],
-  umdUrl: 'https://cdn.example.com/my-signup-skin.umd.js',
-  cssUrls: [
-    'https://cdn.example.com/my-signup-skin.css'  // CSS 파일 추가
-  ],
-  globalName: 'MyCustomSignupSkin'
+  id: 'custom-signup',
+  name: '커스텀 회원가입',
+  componentTypes: ['signup'],  // 지원하는 컴포넌트 타입
+  umdUrl: 'https://cdn.example.com/skins/signup-skin.js',
+  globalName: 'SignupCustomSkin',
+  cssUrls: ['https://cdn.example.com/skins/signup-skin.css'],
+  preview: 'https://cdn.example.com/skins/preview.png',
+  description: '모던한 디자인의 회원가입 폼',
+  version: '1.0.0',
+  author: 'Your Name'
 });
 ```
 
-### 3. 반응형 디자인
+## 주의사항
 
-```jsx
-// 그리드 시스템
-const gridStyle = {
-  display: 'grid',
-  gridTemplateColumns: window.innerWidth > 768 ? 'repeat(2, 1fr)' : '1fr',
-  gap: '15px'
-};
+1. **필드 ID 정확성**: 모든 input의 id와 name은 정확히 일치해야 합니다
+   - 기본 필드: `user_id`, `password`, `phone`, `name`, `email`, `birthday`, `address`, `referral_code`
+   - 특수 필드: `center_code`, `upperer_code`, `left_or_right`, `trxWithdrawAddress`, `bscWithdrawAddress`
+   - 커스텀 필드: `var01` ~ `var10`
 
-// 미디어 쿼리 적용
-const isMobile = window.innerWidth < 768;
-const containerStyle = {
-  padding: isMobile ? '20px' : '30px',
-  margin: isMobile ? '10px' : '0 auto'
-};
-```
+2. **필수 필드 처리**: required 속성이 true인 필드는 반드시 입력받아야 합니다
 
-## 빌드 및 배포
+3. **회사별 분기**: 회사 ID에 따라 특수 필드가 표시되어야 합니다
 
-### 1. 개발 모드
+4. **추천인 코드**: URL에서 가져온 추천인 코드는 수정할 수 없게 처리해야 합니다
 
-```bash
-# 파일 변경 감지 및 자동 빌드
-npm run dev
+5. **에디터 모드**: 에디터 모드에서는 실제 회원가입이 수행되지 않습니다
 
-# 별도 터미널에서 로컬 서버 실행
-npm run serve
-```
+6. **유효성 검사**: handleBlur를 사용하여 실시간 유효성 검사를 수행합니다
 
-### 2. 프로덕션 빌드
+7. **커스텀 필드**: varFields 설정에 따라 동적으로 필드를 렌더링해야 합니다
 
-```bash
-npm run build
-```
+8. **다국어 지원**: utils.t() 함수를 사용하여 모든 텍스트를 번역 가능하게 합니다
 
-### 3. 배포 옵션
+## 액션 상세 설명
 
-#### GitHub Pages
-```bash
-# gh-pages 설치
-npm install --save-dev gh-pages
+### handleChange
+- **용도**: 입력 필드 값 변경 처리
+- **매개변수**: `React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>`
+- **동작**: 폼 데이터 업데이트
 
-# package.json에 스크립트 추가
-"deploy": "gh-pages -d dist"
+### handleSubmit
+- **용도**: 회원가입 폼 제출 처리
+- **매개변수**: `React.FormEvent<HTMLFormElement>`
+- **동작**: 전체 유효성 검사 후 회원가입 API 호출
 
-# 배포
-npm run deploy
-```
+### handleBlur
+- **용도**: 필드 포커스 아웃 시 유효성 검사
+- **매개변수**: `field: string` (필드명)
+- **동작**: 해당 필드의 유효성 검사 수행
 
-#### AWS S3
-```bash
-# AWS CLI 사용
-aws s3 cp dist/my-signup-skin.umd.js s3://my-bucket/skins/ --acl public-read
-aws s3 cp dist/my-signup-skin.css s3://my-bucket/skins/ --acl public-read
-```
+### handleRadioChange
+- **용도**: 라디오 버튼 값 변경 처리
+- **매개변수**: `fieldName: string, value: string`
+- **동작**: 라디오 버튼 선택값 업데이트
 
-#### CDN (jsDelivr + GitHub)
-```
-# JavaScript 파일
-https://cdn.jsdelivr.net/gh/username/repo@version/dist/my-signup-skin.umd.js
+### handleCheckboxChange
+- **용도**: 체크박스 값 변경 처리
+- **매개변수**: `fieldName: string, label: string, isChecked: boolean`
+- **동작**: 체크박스 선택 상태 업데이트
 
-# CSS 파일
-https://cdn.jsdelivr.net/gh/username/repo@version/dist/my-signup-skin.css
-```
+### validateField
+- **용도**: 특정 필드의 유효성 검사
+- **매개변수**: `id: string, value: string`
+- **동작**: 필드별 유효성 규칙에 따라 검사
 
-### 4. CORS 설정
+### validateForm
+- **용도**: 전체 폼 유효성 검사
+- **반환값**: `boolean` (유효하면 true)
+- **동작**: 모든 필드의 유효성을 검사하여 결과 반환
 
-외부 스킨 호스팅 시 CORS 헤더 설정 필요:
-```
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: GET
-```
+## 스타일링 가이드
 
-## 테스트 방법
+### 반응형 디자인
+```css
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .signup-form {
+    padding: 15px;
+    width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+}
 
-### 1. 로컬 테스트
-
-```javascript
-// 개발 환경에서 테스트용 등록
-import { registerComponentSkin } from '@withcookie/webbuilder';
-
-if (process.env.NODE_ENV === 'development') {
-  registerComponentSkin({
-    id: 'my-custom-signup-dev',
-    name: '개발용: 나의 커스텀 회원가입',
-    componentTypes: ['signup'],
-    umdUrl: 'http://localhost:3001/my-signup-skin.umd.js',
-    cssUrls: ['http://localhost:3001/my-signup-skin.css'],
-    globalName: 'MyCustomSignupSkin'
-  });
+/* 태블릿 대응 */
+@media (max-width: 1024px) {
+  .signup-form {
+    max-width: 500px;
+    margin: 0 auto;
+  }
 }
 ```
 
-### 2. 브라우저 콘솔 확인
-
-```javascript
-// 스킨이 로드되었는지 확인
-console.log(window.MyCustomSignupSkin);
-
-// Props 구조 확인
-const TestSkin = (props) => {
-  console.log('Received props:', props);
-  console.log('Form data:', props.data.formData);
-  console.log('Options:', props.options);
-  console.log('Basic fields:', props.data.basicFields);
-  console.log('Var fields:', props.data.varFields);
-  
-  return window.MyCustomSignupSkin(props);
-};
-```
-
-### 3. 에러 디버깅
-
-```jsx
-// 개발 중 디버깅을 위한 로그
-const MyCustomSignupSkin = (props) => {
-  // Props 전체 구조 확인
-  console.log('Props:', props);
-  
-  // 특정 데이터 확인
-  console.log('Company ID:', props.data.companyId);
-  console.log('Is SPECIFIED policy:', props.data.isSpecifiedLegPolicy);
-  console.log('Validation errors:', props.data.validationErrors);
-  
-  // ... 나머지 코드
-};
-```
-
-## 실전 예제
-
-### 1. 모던 카드 스타일 회원가입
-
-```jsx
-const ModernCardSignup = ({ data, actions, options, utils }) => {
-  const { t } = utils;
-  
-  const cardStyle = {
-    maxWidth: '800px',
-    margin: '40px auto',
-    backgroundColor: '#fff',
-    borderRadius: '16px',
-    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-    overflow: 'hidden'
-  };
-  
-  const headerStyle = {
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: '40px',
-    textAlign: 'center',
-    color: 'white'
-  };
-  
-  const bodyStyle = {
-    padding: '40px'
-  };
-  
-  // ... 컴포넌트 구현
-};
-```
-
-### 2. 스텝 방식 회원가입
-
-```jsx
-const StepSignup = ({ data, actions, options, utils }) => {
-  const [currentStep, setCurrentStep] = React.useState(1);
-  const totalSteps = 3;
-  
-  const stepContainerStyle = {
-    maxWidth: '600px',
-    margin: '0 auto'
-  };
-  
-  const progressStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '40px'
-  };
-  
-  const stepStyle = (stepNumber) => ({
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    backgroundColor: currentStep >= stepNumber ? '#007bff' : '#e0e0e0',
-    color: 'white',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 'bold'
-  });
-  
-  // 단계별 필드 그룹핑
-  const renderStep = () => {
-    switch(currentStep) {
-      case 1:
-        return (
-          <div>
-            <h3>{t('기본 정보')}</h3>
-            {/* 아이디, 비밀번호, 이름 필드 */}
-          </div>
-        );
-      case 2:
-        return (
-          <div>
-            <h3>{t('연락처 정보')}</h3>
-            {/* 전화번호, 이메일, 주소 필드 */}
-          </div>
-        );
-      case 3:
-        return (
-          <div>
-            <h3>{t('추가 정보')}</h3>
-            {/* 커스텀 필드들 */}
-          </div>
-        );
-    }
-  };
-  
-  // ... 컴포넌트 구현
-};
-```
-
-### 3. 다크 테마 회원가입
-
-```jsx
-const DarkThemeSignup = ({ data, actions, options, utils }) => {
-  const containerStyle = {
-    minHeight: '100vh',
-    backgroundColor: '#1a1a1a',
-    color: '#ffffff',
-    padding: '40px 20px'
-  };
-  
-  const formStyle = {
-    maxWidth: '800px',
-    margin: '0 auto',
-    backgroundColor: '#2d2d2d',
-    border: '1px solid #404040',
-    borderRadius: '12px',
-    padding: '40px'
-  };
-  
-  const inputStyle = {
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #404040',
-    color: '#ffffff',
-    padding: '12px 16px',
-    borderRadius: '6px'
-  };
-  
-  // ... 컴포넌트 구현
-};
-```
-
-## 속성 패널에서 스킨 선택하기
-
-WithCookie WebBuilder는 에디터의 속성 패널에서 손쉽게 스킨을 선택할 수 있는 UI를 제공합니다.
-
-### 스킨 선택 UI
-
-회원가입 컴포넌트를 선택하면 속성 패널 상단에 "컴포넌트 스킨" 섹션이 표시됩니다:
-
-```
-┌─────────────────────────────────┐
-│ 🛡️ 컴포넌트 스킨                │
-├─────────────────────────────────┤
-│ [기본 스킨          ▼]         │
-│                                 │
-│ 사용 가능한 스킨:              │
-│ • 기본 스킨                    │
-│ • 나의 커스텀 회원가입         │
-│ • 모던 카드 회원가입           │
-│                                 │
-│ [🛒 더 많은 스킨 구매하기]      │
-└─────────────────────────────────┘
-```
-
-### 구현 방식
-
-WithCookie는 공통 스킨 선택 컴포넌트인 `SkinSelector`를 제공합니다:
-
-```jsx
-// SignupProperties.js에서 사용 예시
-import { SkinSelector } from '../CommonProperties';
-
-const SignupProperties = () => {
-  // ... 기타 코드
-  
-  return (
-    <>
-      {/* 스킨 선택 UI - 공통 컴포넌트 사용 */}
-      <SkinSelector 
-        selectedComponent={selectedComponent}
-        onSkinChange={(skinId) => handleComponentPropsChange('skin', skinId)}
-      />
-      
-      {/* 나머지 속성 설정 UI */}
-    </>
-  );
-};
-```
-
-### 스킨 적용 과정
-
-1. **스킨 선택**: 속성 패널에서 원하는 스킨 선택
-2. **즉시 반영**: 선택과 동시에 에디터 캔버스에 실시간 반영
-3. **설정 저장**: 선택된 스킨 ID가 컴포넌트 속성에 저장
-4. **프로덕션 적용**: 배포 시 선택된 스킨으로 렌더링
-
-## 주의사항 및 팁
-
-### 필수 요구사항
-
-1. **input ID 속성**: 반드시 정확한 필드 ID 사용
-   ```jsx
-   <input id="user_id" name="user_id" ... />
-   <input id="password" name="password" ... />
-   ```
-
-2. **이벤트 핸들러**: 제공된 핸들러 사용
-   ```jsx
-   <form onSubmit={handleSubmit}>
-     <input onChange={handleChange} onBlur={() => handleBlur(fieldId)} />
-   </form>
-   ```
-
-3. **특수 필드 처리**: account, ssn, document 타입 구현 필수
-   ```jsx
-   // account 타입: 은행 선택 + 계좌번호
-   // ssn 타입: 앞자리 + 뒷자리
-   // document 타입: 내용 표시 + 동의 체크박스
-   ```
-
-4. **조건부 필드**: 회사별/정책별 특수 필드 처리
-   ```jsx
-   {isSpecifiedLegPolicy && (
-     // 후원인 코드, 좌/우 선택 필드
-   )}
-   
-   {(companyId === 190 || companyId === 290) && (
-     // 지갑 주소 필드
-   )}
-   ```
-
-### 성능 최적화
-
-1. **조건부 렌더링**: 불필요한 렌더링 방지
-   ```jsx
-   {basicFields.userId && renderField('user_id', ...)}
-   {varFields.var01.show && renderField('var01', ...)}
-   ```
-
-2. **스타일 객체 캐싱**: 컴포넌트 외부에 정의
-   ```jsx
-   const styles = {
-     container: { ... },
-     form: { ... },
-     grid: { ... }
-   };
-   
-   const MySignupSkin = (props) => {
-     return <div style={styles.container}>...</div>;
-   };
-   ```
-
-3. **메모이제이션**: 복잡한 계산 결과 캐싱
-   ```jsx
-   const visibleFields = React.useMemo(() => {
-     return Object.entries(varFields).filter(([_, config]) => config.show);
-   }, [varFields]);
-   ```
-
-### 접근성 고려
-
-1. **레이블 연결**: for 속성 사용
-   ```jsx
-   <label htmlFor="user_id">아이디</label>
-   <input id="user_id" />
-   ```
-
-2. **필수 필드 표시**: 시각적 + 시맨틱 표시
-   ```jsx
-   <label>
-     이름 <span className="required" aria-label="필수">*</span>
-   </label>
-   <input required aria-required="true" />
-   ```
-
-3. **에러 메시지**: ARIA 속성 활용
-   ```jsx
-   <input aria-invalid={!!error} aria-describedby={`${fieldId}-error`} />
-   <span id={`${fieldId}-error`} role="alert">{error}</span>
-   ```
-
-### 유효성 검사 처리
-
-1. **실시간 검사**: onBlur 이벤트 활용
-   ```jsx
-   onBlur={() => handleBlur(fieldId)}
-   ```
-
-2. **제출 시 검사**: 전체 폼 유효성 확인
-   ```jsx
-   const handleFormSubmit = (e) => {
-     e.preventDefault();
-     if (validateForm()) {
-       handleSubmit(e);
-     }
-   };
-   ```
-
-3. **에러 표시**: 필드별 에러 메시지
-   ```jsx
-   {validationErrors[fieldId] && (
-     <span className="error-message">{validationErrors[fieldId]}</span>
-   )}
-   ```
-
-### 다국어 지원
-
-```jsx
-// 항상 t() 함수 사용
-<label>{t('아이디')}</label>
-<button>{t('회원가입')}</button>
-
-// 동적 메시지
-<div>{t(signUpError)}</div>
-```
-
-### 디버깅 팁
-
-1. **Props 확인**: 개발 시 콘솔 로깅
-2. **네트워크 확인**: 스킨 파일 로드 상태
-3. **에러 추적**: try-catch로 에러 처리
-4. **상태 모니터링**: React DevTools 활용
-
-## API 호출 처리
-
-### ❌ 하지 말아야 할 것
-
-스킨에서 직접 API를 호출하지 마세요:
-
-```jsx
-// 잘못된 예시
-const MySignupSkin = ({ data, actions, utils }) => {
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // ❌ 스킨에서 직접 API 호출하지 마세요
-    try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        body: JSON.stringify(formData)
-      });
-      // ...
-    } catch (error) {
-      // ...
-    }
-  };
-};
-```
-
-### ✅ 올바른 방법
-
-Logic에서 제공하는 액션 사용:
-
-```jsx
-// 올바른 예시
-const MySignupSkin = ({ data, actions, utils }) => {
-  // ✅ Logic에서 제공하는 액션 사용
-  const { handleSubmit } = actions;
-  
-  return (
-    <form onSubmit={handleSubmit}>
-      {/* 폼 필드들 */}
-    </form>
-  );
-};
-```
-
-## 문제 해결
-
-### 스킨이 로드되지 않을 때
-
-1. 브라우저 개발자 도구 > Network 탭 확인
-2. CORS 에러 확인
-3. 전역 변수명 확인: `window.MyCustomSignupSkin`
-4. UMD 빌드 설정 확인
-
-### 필드가 표시되지 않을 때
-
-1. `basicFields`와 `varFields` 데이터 확인
-2. 속성 패널에서 필드 표시 설정 확인
-3. 조건부 렌더링 로직 확인
-
-### 유효성 검사가 작동하지 않을 때
-
-1. 필드 ID가 정확한지 확인
-2. `handleBlur` 함수 호출 확인
-3. `validationErrors` 객체 구조 확인
-
-### Props가 undefined일 때
-
-1. 컴포넌트 등록 시 globalName 확인
-2. 빌드 설정의 library 이름 확인
-3. 개발자 도구에서 props 로깅
-
-## 결론
-
-이 가이드를 따라 자신만의 독특한 회원가입 스킨을 만들 수 있습니다. 기본 템플릿을 시작으로 점진적으로 커스터마이징하며, 테스트를 통해 안정성을 확보하세요. 
-
-중요한 점은:
-- 속성 패널의 모든 설정이 실시간으로 반영되도록 구현
-- 다양한 필드 타입(account, ssn, document 등) 지원
-- 회사별/정책별 조건부 필드 처리
-- 유효성 검사와 에러 처리 구현
-
-추가 지원이 필요하면 WithCookie 개발팀에 문의하거나 [공식 문서](https://docs.withcookie.com)를 참고하세요.
-
----
-
-**버전**: 1.0.0  
-**최종 업데이트**: 2024년 12월  
-**작성자**: WithCookie 개발팀
+### 접근성 고려사항
+- 모든 입력 필드에 label 연결
+- 필수 필드 시각적 표시 (*)
+- 에러 메시지 명확하게 표시
+- 키보드 네비게이션 지원
+- 적절한 색상 대비
+
+## 성능 최적화 팁
+
+1. **조건부 렌더링**: 표시되지 않는 필드는 렌더링하지 않음
+2. **메모이제이션**: React.memo 활용하여 불필요한 리렌더링 방지
+3. **이벤트 핸들러**: 인라인 함수 대신 actions 사용
+4. **동적 import**: 특수 기능은 필요시에만 로드
+5. **폼 상태 최적화**: 필요한 필드만 상태로 관리

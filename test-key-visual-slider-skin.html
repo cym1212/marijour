@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Visual Slider Skin Test</title>
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- Skin CSS -->
+    <link rel="stylesheet" href="./dist/key-visual-slider/key-visual-slider-skin.css">
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Pretendard';
+            src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* 슬라이더 컨테이너 높이 설정 - 원본과 동일 */
+        #slider-root {
+            width: 100%;
+            height: 68.4vh;
+        }
+        
+        @media (max-width: 767px) {
+            #slider-root {
+                height: 69.3vmax;
+            }
+        }
+        
+        /* 테스트 컨트롤 */
+        .test-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .test-controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        
+        .test-controls button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .test-controls button:hover {
+            background: #e8e8e8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Key Visual Slider 컨테이너 -->
+    <div id="slider-root"></div>
+    
+    <!-- 테스트 컨트롤 -->
+    <div class="test-controls">
+        <h3>테스트 컨트롤</h3>
+        <button id="useCustomData">커스텀 데이터 사용</button>
+        <button id="useSampleData">샘플 데이터로 리셋</button>
+        <button id="addSlide">슬라이드 추가</button>
+        <button id="removeSlide">슬라이드 제거</button>
+    </div>
+
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
+    
+    <!-- Swiper -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Key Visual Slider Skin UMD -->
+    <script src="./dist/key-visual-slider/key-visual-slider-skin.umd.js"></script>
+
+    <script>
+        // 슬라이더 렌더링 - 기본값만 표시
+        const root = document.getElementById('slider-root');
+        const element = React.createElement(KeyVisualSlider);
+        ReactDOM.render(element, root);
+    </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Menu Skin Test</title>
+    
+    <!-- Skin CSS -->
+    <link rel="stylesheet" href="./dist/quick-menu/quick-menu-skin.css">
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Pretendard';
+            src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 2rem 0;
+        }
+        
+        /* 테스트 컨테이너 */
+        #quick-menu-root {
+            width: 100%;
+            padding: 2rem 0;
+            border: 1px dashed #ccc;
+            background: #f9f9f9;
+        }
+        
+        /* 테스트 컨트롤 */
+        .test-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .test-controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        
+        .test-controls button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .test-controls button:hover {
+            background: #e8e8e8;
+        }
+        
+        /* 반응형 테스트를 위한 컨테이너 크기 조정 */
+        .container-mobile {
+            max-width: 375px;
+            margin: 0 auto;
+        }
+        
+        .container-tablet {
+            max-width: 768px;
+            margin: 0 auto;
+        }
+        
+        .container-desktop {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .info {
+            text-align: center;
+            margin: 2rem 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>Quick Menu Skin Test</h1>
+        <p>빠른 메뉴 네비게이션 컴포넌트 테스트</p>
+    </div>
+
+    <!-- Quick Menu 컨테이너 -->
+    <div id="quick-menu-root"></div>
+    
+    <!-- 테스트 컨트롤 -->
+    <div class="test-controls">
+        <h3>테스트 컨트롤</h3>
+        <button id="setMobile">모바일 뷰 (375px)</button>
+        <button id="setTablet">태블릿 뷰 (768px)</button>
+        <button id="setDesktop">데스크톱 뷰 (1400px)</button>
+        <button id="resetView">기본 뷰</button>
+    </div>
+
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
+    
+    <!-- Quick Menu Skin UMD -->
+    <script src="./dist/quick-menu/quick-menu-skin.umd.js"></script>
+
+    <script>
+        // 퀵 메뉴 렌더링
+        const root = document.getElementById('quick-menu-root');
+        const element = React.createElement(QuickMenu);
+        ReactDOM.render(element, root);
+        
+        // 테스트 컨트롤
+        const container = document.getElementById('quick-menu-root');
+        
+        document.getElementById('setMobile').addEventListener('click', () => {
+            container.className = 'container-mobile';
+        });
+        
+        document.getElementById('setTablet').addEventListener('click', () => {
+            container.className = 'container-tablet';
+        });
+        
+        document.getElementById('setDesktop').addEventListener('click', () => {
+            container.className = 'container-desktop';
+        });
+        
+        document.getElementById('resetView').addEventListener('click', () => {
+            container.className = '';
+        });
+    </script>
+</body>
+</html>
