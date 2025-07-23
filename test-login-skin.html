@@ -5,377 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Skin Test</title>
     
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- CSS 로드 -->
+    <link rel="stylesheet" href="./dist/login/login-skin.css">
     
-    <!-- GSAP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#89a1be',
-                        'toss-pay': '#4780ef',
-                        success: '#47c288',
-                        error: '#ff2e00',
-                        black: '#292e2f'
-                    },
-                    fontFamily: {
-                        sans: ['Pretendard', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                        serif: ['Noto Serif KR', 'ui-serif', 'Georgia', 'serif']
-                    },
-                    spacing: {
-                        '4.5': '1.125rem',
-                        '3.5': '0.875rem',
-                        '13': '3.25rem'
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- 폰트 로드 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <!-- 기본 스타일 리셋 -->
     <style>
-        /* 테스트 페이지 전용 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f5f5f5;
         }
         
+        /* 루트 컨테이너 스타일 */
         #login-root {
-            width: 100%;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        /* 원본 프로젝트의 글로벌 스타일 */
-        * {
-            box-sizing: border-box;
-        }
-        
-        html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-        }
-        
-        body {
-            font-family: 'Pretendard', 'Inter', ui-sans-serif, system-ui, sans-serif;
-            color: #292e2f;
-        }
-        
-        .globalWrapper {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-left: 1.25rem;
-            padding-right: 1.25rem;
-        }
-        
-        @media (min-width: 768px) {
-            .globalWrapper {
-                padding-left: 2.5rem;
-                padding-right: 2.5rem;
-            }
-        }
-        
-        /* Hover 클래스들 */
-        .hover-primary-80 {
-            transition-property: color;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-        }
-        .hover-primary-80:hover {
-            color: rgba(137, 161, 190, 0.8);
-        }
-        
-        .hover-bg-primary-80 {
-            transition-property: background-color;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-        }
-        .hover-bg-primary-80:hover {
-            background-color: rgba(137, 161, 190, 0.8);
-        }
-        
-        .hover-bg-primary-10 {
-            transition-property: background-color;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-        }
-        .hover-bg-primary-10:hover {
-            background-color: rgba(137, 161, 190, 0.1);
-        }
-        
-        /* 테스트 컨트롤 패널 */
-        .test-controls {
+        .test-info {
             position: fixed;
-
-            top: 10px;
-            right: 10px;
-            background: white;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 300px;
-            z-index: 1000;
-        }
-        
-        .test-controls h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        .test-controls button {
-            display: block;
-            width: 100%;
-            padding: 8px 12px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
             background: white;
-            cursor: pointer;
-            text-align: left;
-            font-size: 14px;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
         }
         
-        .test-controls button:hover {
-            background: #f0f0f0;
+        .test-info h2 {
+            margin-bottom: 10px;
+            color: #333;
         }
         
-        .test-controls .status {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 4px;
-            font-size: 12px;
+        .test-info p {
+            color: #666;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
-    <!-- 로그인 스킨이 렌더링될 루트 요소 -->
-    <div id="login-root"></div>
-    
-    <!-- 테스트 컨트롤 패널 -->
-    <div class="test-controls">
-        <h3>테스트 컨트롤</h3>
-        <button onclick="simulateLogin()">로그인 시뮬레이션</button>
-        <button onclick="simulateError()">에러 시뮬레이션</button>
-        <button onclick="simulateValidationError()">유효성 검사 에러</button>
-        <button onclick="simulateLoading()">로딩 상태</button>
-        <button onclick="simulateSuccess()">로그인 성공</button>
-        <button onclick="resetState()">상태 초기화</button>
-        <div class="status" id="status">
-            상태: 초기 상태
-        </div>
+    <div class="test-info">
+        <h2>로그인 페이지 테스트</h2>
+        <p>이메일과 비밀번호를 입력하는 로그인 폼입니다.</p>
+        <p>폼 제출 시 콘솔에 입력값이 출력됩니다.</p>
     </div>
     
-    <!-- Login Skin UMD 로드 -->
+    <!-- 컴포넌트 렌더링 -->
+    <div id="login-root"></div>
+    
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- UMD 번들 로드 -->
     <script src="./dist/login/login-skin.umd.js"></script>
     
+    <!-- 컴포넌트 렌더링 -->
     <script>
-        // 상태 관리
-        let currentState = {
-            formData: {
-                user_id: '',
-                password: ''
-            },
-            validationErrors: {},
-            loading: false,
-            loginSuccess: false,
-            loginError: null
-        };
-        
-        // 컴포넌트 렌더링 함수
-        function renderComponent() {
-            const root = document.getElementById('login-root');
-            
-            // Login이 전역 객체로 노출되었는지 확인
-            if (window.Login) {
-                const Login = window.Login;
-                
-                // Mock actions
-                const mockActions = {
-                    handleChange: (e) => {
-                        const { name, value } = e.target;
-                        console.log('입력 변경:', name, value);
-                        currentState.formData[name] = value;
-                        
-                        // 유효성 검사 에러 제거
-                        if (currentState.validationErrors[name]) {
-                            delete currentState.validationErrors[name];
-                            renderComponent();
-                        }
-                        
-                        updateStatus(`${name} 필드 변경: ${value}`);
-                    },
-                    handleSubmit: (e) => {
-                        e.preventDefault();
-                        console.log('폼 제출:', currentState.formData);
-                        simulateLogin();
-                    },
-                    handleSignupClick: () => {
-                        console.log('회원가입 클릭');
-                        alert('회원가입 페이지로 이동합니다.');
-                    }
-                };
-                
-                // Mock utils
-                const mockUtils = {
-                    t: (key) => {
-                        const translations = {
-                            '로그인': '로그인',
-                            '이메일을 입력하세요': '이메일을 입력하세요',
-                            '비밀번호를 입력하세요': '비밀번호를 입력하세요',
-                            '로그인 중...': '로그인 중...',
-                            '회원가입': '회원가입',
-                            '비밀번호 찾기': '비밀번호 찾기',
-                            '비회원 주문 조회': '비회원 주문 조회',
-                            '로그인 성공! 환영합니다.': '로그인 성공! 환영합니다.'
-                        };
-                        return translations[key] || key;
-                    },
-                    navigate: (path) => {
-                        console.log('네비게이션:', path);
-                        alert(`${path}로 이동합니다.`);
-                    },
-                    formatCurrency: (amount) => `${amount.toLocaleString()}원`,
-                    formatDate: (date) => new Date(date).toLocaleDateString(),
-                    getAssetUrl: (path) => path,
-                    cx: (...classes) => classes.filter(Boolean).join(' ')
-                };
-                
-                // Props 구성
-                const props = {
-                    data: {
-                        ...currentState,
-                        theme: {
-                            primary: '#007bff',
-                            primaryDark: '#0056b3',
-                            secondary: '#6c757d'
-                        },
-                        isUserLoggedIn: false,
-                        isAdminLoggedIn: false
-                    },
-                    actions: mockActions,
-                    options: {
-                        title: '로그인',
-                        redirectPath: '/',
-                        buttonColor: '#007bff',
-                        titleColor: '#333'
-                    },
-                    mode: 'preview',
-                    utils: mockUtils,
-                    app: {
-                        isUserLoggedIn: false
-                    }
-                };
-                
-                const element = React.createElement(Login, props);
-                
-                const root18 = ReactDOM.createRoot(root);
-                root18.render(element);
-                console.log('Login 컴포넌트가 성공적으로 렌더링되었습니다.');
-            } else {
-                console.error('Login을 찾을 수 없습니다. 빌드 파일을 확인해주세요.');
-                root.innerHTML = '<p style="color: red;">Login을 로드할 수 없습니다.</p>';
-            }
-        }
-        
-        // 상태 업데이트 함수
-        function updateStatus(message) {
-            document.getElementById('status').textContent = `상태: ${message}`;
-        }
-        
-        // 테스트 함수들
-        function simulateLogin() {
-            currentState.loading = true;
-            renderComponent();
-            updateStatus('로그인 중...');
-            
-            setTimeout(() => {
-                if (!currentState.formData.user_id || !currentState.formData.password) {
-                    simulateValidationError();
-                } else {
-                    currentState.loading = false;
-                    currentState.loginSuccess = true;
-                    renderComponent();
-                    updateStatus('로그인 성공!');
-                }
-            }, 2000);
-        }
-        
-        function simulateError() {
-            currentState.loginError = '이메일 또는 비밀번호가 올바르지 않습니다.';
-            currentState.loading = false;
-            renderComponent();
-            updateStatus('로그인 에러 발생');
-        }
-        
-        function simulateValidationError() {
-            currentState.validationErrors = {};
-            if (!currentState.formData.user_id) {
-                currentState.validationErrors.user_id = '이메일을 입력해주세요.';
-            }
-            if (!currentState.formData.password) {
-                currentState.validationErrors.password = '비밀번호를 입력해주세요.';
-            }
-            currentState.loading = false;
-            renderComponent();
-            updateStatus('유효성 검사 에러');
-        }
-        
-        function simulateLoading() {
-            currentState.loading = true;
-            renderComponent();
-            updateStatus('로딩 상태');
-        }
-        
-        function simulateSuccess() {
-            currentState.loginSuccess = true;
-            currentState.loading = false;
-            currentState.loginError = null;
-            currentState.validationErrors = {};
-            renderComponent();
-            updateStatus('로그인 성공 상태');
-        }
-        
-        function resetState() {
-            currentState = {
-                formData: {
-                    user_id: '',
-                    password: ''
-                },
-                validationErrors: {},
-                loading: false,
-                loginSuccess: false,
-                loginError: null
-            };
-            renderComponent();
-            updateStatus('초기 상태로 리셋');
-        }
-        
-        // DOM 로드 후 실행
         document.addEventListener('DOMContentLoaded', function() {
-            // GSAP 전역 등록
-            window.gsap = gsap;
-            window.ScrollTrigger = ScrollTrigger;
-            gsap.registerPlugin(ScrollTrigger);
+            const Login = window['login-skin'].Login;
             
             // 컴포넌트 렌더링
-            renderComponent();
+            const root = ReactDOM.createRoot(document.getElementById('login-root'));
+            root.render(React.createElement(Login));
         });
     </script>
 </body>

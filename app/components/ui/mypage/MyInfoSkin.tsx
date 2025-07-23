@@ -123,7 +123,7 @@ export function MyInfo() {
                                             aria-labelledby="email" 
                                             className="mi-skin-w-full mi-skin-px-4-5 mi-skin-py-3-5 mi-skin-border mi-skin-border-black-20 mi-skin-text-sm mi-skin-disabled-border-black-10 mi-skin-disabled-bg-black-3 mi-skin-disabled-text-black-60" 
                                             disabled 
-                                            type="email" 
+                                            type="text" 
                                             value={formData.email} 
                                             name="email" 
                                             readOnly

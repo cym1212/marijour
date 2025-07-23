@@ -12,6 +12,7 @@
         "build:skin:product-slider": "COMPONENT=product-slider webpack --config webpack.config.multi.cjs",
         "build:skin:shop-product-list": "COMPONENT=shop-product-list webpack --config webpack.config.multi.cjs",
         "build:skin:login": "COMPONENT=login webpack --config webpack.config.multi.cjs",
+        "build:skin:signup": "COMPONENT=signup webpack --config webpack.config.multi.cjs",
         "build:skin:notice": "COMPONENT=notice webpack --config webpack.config.multi.cjs",
         "build:skin:key-visual-slider": "COMPONENT=key-visual-slider webpack --config webpack.config.multi.cjs",
         "build:skin:quick-menu": "COMPONENT=quick-menu webpack --config webpack.config.multi.cjs",

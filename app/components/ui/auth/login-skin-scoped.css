@@ -1,0 +1,145 @@
+/* Login Skin Scoped CSS */
+
+/* 컨테이너 */
+.login-skin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* 래퍼 */
+.login-skin-wrapper {
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 40px;
+}
+
+/* 타이틀 */
+.login-skin-title {
+    font-family: serif;
+    font-size: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.login-skin-title h2 {
+    margin: 0;
+    font-weight: 400;
+    color: #333;
+}
+
+/* 폼 */
+.login-skin-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding-top: 20px;
+}
+
+/* 입력 그룹 */
+.login-skin-input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 입력 필드 */
+.login-skin-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 0;
+    outline: none;
+    transition: border-color 0.3s;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.login-skin-input:focus {
+    border-color: #4A5578;
+}
+
+.login-skin-input::placeholder {
+    color: #999;
+}
+
+/* 버튼 그룹 */
+.login-skin-button-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 버튼 */
+.login-skin-button {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 주 버튼 */
+.login-skin-button-primary {
+    background-color: #4A5578;
+    color: white;
+}
+
+.login-skin-button-primary:hover {
+    background-color: #3a4568;
+}
+
+/* 보조 버튼 */
+.login-skin-button-white {
+    background-color: white;
+    color: #333;
+    border: 1px solid #e0e0e0;
+}
+
+.login-skin-button-white:hover {
+    background-color: #f5f5f5;
+}
+
+/* 링크 그룹 */
+.login-skin-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+
+/* 링크 */
+.login-skin-link {
+    color: #4A5578;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.login-skin-link:hover {
+    color: #3a4568;
+}
+
+/* 구분선 */
+.login-skin-divider {
+    width: 1px;
+    height: 14px;
+    margin: 0 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 반응형 */
+@media (min-width: 768px) {
+    .login-skin-wrapper {
+        padding: 52px 40px;
+    }
+}

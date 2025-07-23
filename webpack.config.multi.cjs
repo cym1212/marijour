@@ -21,8 +21,8 @@ const components = {
     filename: 'login-skin'
   },
   'signup': {
-    entry: './app/routes/_auth.signup/index.tsx',
-    name: 'Signup',
+    entry: './app/components/ui/auth/SignupSkin.tsx',
+    name: 'signup-skin',
     filename: 'signup-skin'
   },
   'notice': {
