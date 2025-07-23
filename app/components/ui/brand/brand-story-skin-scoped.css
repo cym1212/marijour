@@ -1,0 +1,240 @@
+/* Brand Story Skin Scoped CSS */
+/* 원본 Tailwind 클래스를 정확히 CSS로 변환 */
+
+
+/* relative */
+.bs-skin-relative {
+    position: relative;
+}
+
+/* 배경 이미지 스타일 */
+.bs-skin-bg-desktop,
+.bs-skin-bg-mobile {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/* hidden/block 및 responsive */
+.bs-skin-hidden {
+    display: none;
+}
+
+.bs-skin-block {
+    display: block;
+}
+
+@media (min-width: 1024px) {
+    .bs-skin-lg-block {
+        display: block;
+    }
+    
+    .bs-skin-lg-hidden {
+        display: none;
+    }
+}
+
+/* globalWrapper */
+.bs-skin-globalWrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+    .bs-skin-globalWrapper {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* absolute left-0 top-0 */
+.bs-skin-absolute {
+    position: absolute;
+}
+
+.bs-skin-left-0 {
+    left: 0;
+}
+
+.bs-skin-top-0 {
+    top: 0;
+}
+
+/* w-full h-full */
+.bs-skin-w-full {
+    width: 100%;
+}
+
+.bs-skin-h-full {
+    height: 100%;
+}
+
+/* py-[7.5vh] */
+.bs-skin-py-7-5vh {
+    padding-top: 7.5vh;
+    padding-bottom: 7.5vh;
+}
+
+/* flex flex-col items-center justify-center */
+.bs-skin-flex {
+    display: flex;
+}
+
+.bs-skin-flex-col {
+    flex-direction: column;
+}
+
+.bs-skin-items-center {
+    align-items: center;
+}
+
+.bs-skin-justify-center {
+    justify-content: center;
+}
+
+/* text-center text-black */
+.bs-skin-text-center {
+    text-align: center;
+}
+
+.bs-skin-text-black {
+    color: black;
+}
+
+/* font-serif leading-heading whitespace-pre-line text-xl */
+.bs-skin-font-serif {
+    font-family: 'Noto Serif KR', serif;
+}
+
+.bs-skin-leading-heading {
+    line-height: 1.4;
+}
+
+.bs-skin-whitespace-pre-line {
+    white-space: pre-line;
+}
+
+.bs-skin-text-xl {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem; /* 28px */
+}
+
+/* leading-body whitespace-pre-line mt-3 text-sm */
+.bs-skin-leading-body {
+    line-height: 1.6;
+}
+
+.bs-skin-mt-3 {
+    margin-top: 0.75rem; /* 12px */
+}
+
+.bs-skin-text-sm {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.25rem; /* 20px */
+}
+
+/* bg-primary px-4 pt-2.5 pb-3.5 hover-bg-primary-80 mt-6.5 */
+.bs-skin-bg-primary {
+    background-color: #89a1be; /* primary color */
+}
+
+.bs-skin-px-4 {
+    padding-left: 1rem; /* 16px */
+    padding-right: 1rem;
+}
+
+.bs-skin-pt-2-5 {
+    padding-top: 0.625rem; /* 10px */
+}
+
+.bs-skin-pb-3-5 {
+    padding-bottom: 0.875rem; /* 14px */
+}
+
+.bs-skin-hover-bg-primary-80:hover {
+    background-color: rgba(137, 161, 190, 0.8); /* primary color with 80% opacity */
+}
+
+.bs-skin-mt-6-5 {
+    margin-top: 1.625rem; /* 26px */
+}
+
+/* button 기본 스타일 */
+.bs-skin-bg-primary {
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* text-sm text-white (버튼 내부 링크) */
+.bs-skin-text-white {
+    color: white;
+}
+
+/* 링크 기본 스타일 */
+.bs-skin-bg-primary a {
+    text-decoration: none;
+    display: block;
+}
+
+.bs-skin-bg-primary a:hover {
+    text-decoration: none;
+}
+
+/* min-h-screen */
+.bs-skin-min-h-screen {
+    min-height: 100vh;
+}
+
+/* wrapper 설정 */
+.bs-skin-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Background utilities */
+.bs-skin-bg-cover {
+    background-size: cover;
+}
+
+.bs-skin-bg-center {
+    background-position: center;
+}
+
+.bs-skin-bg-no-repeat {
+    background-repeat: no-repeat;
+}
+
+/* height 64vh */
+.bs-skin-h-64vh {
+    height: 40vh;
+}
+
+/* inset-0 */
+.bs-skin-inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+/* padding utilities */
+.bs-skin-py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.bs-skin-px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .bs-skin-md-py-10 {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+    }
+}

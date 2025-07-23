@@ -83,10 +83,7 @@
     }
 }
 
-/* Hover effect on banner image */
-.kvs-skin-group:hover .kvs-skin-banner-image-media {
-    transform: scale(1.05);
-}
+/* Hover effect removed */
 
 /* Overlay */
 .kvs-skin-banner-image-overlay {
