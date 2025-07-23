@@ -1,0 +1,278 @@
+/* My Order List Skin Scoped CSS */
+
+/* 전역 래퍼 */
+.mol-skin-globalWrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 60px;
+    width: 100%;
+    padding-top: 32px;
+    padding-bottom: 40px;
+    margin-bottom: 40px;
+}
+
+/* 좌측 사이드바 */
+.mol-skin-sidebar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.mol-skin-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: serif;
+    font-size: 30px;
+}
+
+.mol-skin-sidebar-header h2 {
+    margin: 0;
+    font-weight: 400;
+}
+
+/* 네비게이션 */
+.mol-skin-nav {
+    width: 100%;
+}
+
+.mol-skin-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mol-skin-nav-item {
+    padding: 8px 0;
+}
+
+.mol-skin-nav-item-active {
+    color: #4A5578;
+    font-weight: 700;
+}
+
+.mol-skin-nav-link {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: inherit;
+}
+
+.mol-skin-nav-item:not(.mol-skin-nav-item-active) {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.mol-skin-nav-item:not(.mol-skin-nav-item-active):hover {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.mol-skin-nav-arrow {
+    width: 16px;
+    height: 16px;
+    transform: rotate(90deg);
+}
+
+/* 우측 콘텐츠 영역 */
+.mol-skin-content {
+    flex: 1;
+}
+
+.mol-skin-content-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 4px;
+    padding-bottom: 20px;
+}
+
+.mol-skin-content-title {
+    font-family: serif;
+    font-size: 24px;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* 주문 목록 */
+.mol-skin-order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 42px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mol-skin-order-item {
+    border-top: 1px solid #000;
+}
+
+.mol-skin-order-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 0;
+}
+
+.mol-skin-order-date {
+    font-weight: 700;
+    margin: 0;
+}
+
+.mol-skin-divider {
+    width: 1px;
+    height: 14px;
+    margin: 0 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.mol-skin-order-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    text-decoration: none;
+}
+
+.mol-skin-order-link:hover {
+    color: #4A5578;
+}
+
+.mol-skin-order-arrow {
+    width: 16px;
+    height: 16px;
+    transform: rotate(90deg);
+}
+
+/* 상품 아이템 */
+.mol-skin-product-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px 0;
+    list-style: none;
+}
+
+.mol-skin-product-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mol-skin-product-image {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+}
+
+.mol-skin-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mol-skin-product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mol-skin-product-name {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.mol-skin-product-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.mol-skin-product-meta p {
+    margin: 0;
+}
+
+.mol-skin-product-actions {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.mol-skin-product-status {
+    color: #4A5578;
+    font-weight: 700;
+    margin: 0;
+}
+
+.mol-skin-cancel-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: white;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 14px;
+    padding: 6px 24px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mol-skin-cancel-button:hover {
+    background-color: rgba(74, 85, 120, 0.1);
+}
+
+/* 반응형 */
+@media (min-width: 1024px) {
+    .mol-skin-sidebar {
+        width: auto;
+    }
+    
+    .mol-skin-nav-arrow {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .mol-skin-globalWrapper {
+        padding-top: 40px;
+    }
+}
+
+@media (max-width: 767px) {
+    .mol-skin-product-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .mol-skin-product-actions {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 1023px) {
+    .mol-skin-content {
+        display: none;
+    }
+    
+    .mol-skin-nav-arrow {
+        display: block;
+    }
+}

@@ -69,6 +69,11 @@ const components = {
     entry: './app/components/ui/mypage/MyOrderListSkin.tsx',
     name: 'my-order-list-skin',
     filename: 'my-order-list-skin'
+  },
+  'my-info': {
+    entry: './app/components/ui/mypage/MyInfoSkin.tsx',
+    name: 'my-info-skin',
+    filename: 'my-info-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
 };
