@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Banner Skin Test</title>
+    
+    <!-- Skin CSS -->
+    <link rel="stylesheet" href="./dist/text-banner/text-banner-skin.css">
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Pretendard';
+            src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 2rem 0;
+            background: #f5f5f5;
+        }
+        
+        /* 테스트 컨테이너 */
+        #text-banner-root {
+            width: 100%;
+            background: white;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem 0;
+        }
+        
+        /* 테스트 컨트롤 */
+        .test-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .test-controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        
+        .test-controls button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .test-controls button:hover {
+            background: #e8e8e8;
+        }
+        
+        /* 반응형 테스트를 위한 컨테이너 크기 조정 */
+        .container-mobile {
+            max-width: 375px;
+            margin: 0 auto;
+        }
+        
+        .container-tablet {
+            max-width: 768px;
+            margin: 0 auto;
+        }
+        
+        .container-desktop {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .info {
+            text-align: center;
+            margin: 2rem 0;
+            color: #666;
+        }
+        
+        .info h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .features {
+            background: white;
+            padding: 1rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .features h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .features ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+        
+        .features li {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h1>Text Banner Skin Test</h1>
+        <p>텍스트 배너 섹션 컴포넌트 테스트 (base64 이미지 포함)</p>
+    </div>
+
+    <div class="features">
+        <h3>✨ 주요 특징</h3>
+        <ul>
+            <li>📱 반응형 그리드 레이아웃 (모바일 1열, 데스크톱 2열)</li>
+            <li>🖼️ base64 인코딩된 이미지 (외부 파일 불필요)</li>
+            <li>🎨 hover 애니메이션 효과 (1.05배 확대)</li>
+            <li>📄 2개 배너: "지속가능 환경" & "신제품 할인"</li>
+            <li>⚡ 스크롤 기반 페이드인 애니메이션</li>
+        </ul>
+    </div>
+
+    <!-- Text Banner 컨테이너 -->
+    <div id="text-banner-root"></div>
+    
+    <!-- 테스트 컨트롤 -->
+    <div class="test-controls">
+        <h3>테스트 컨트롤</h3>
+        <button id="setMobile">모바일 뷰 (375px)</button>
+        <button id="setTablet">태블릿 뷰 (768px)</button>
+        <button id="setDesktop">데스크톱 뷰 (1400px)</button>
+        <button id="resetView">기본 뷰</button>
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+        <button id="triggerAnimation">애니메이션 다시 실행</button>
+    </div>
+
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@19/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@19/umd/react-dom.production.min.js"></script>
+    
+    <!-- Text Banner Skin UMD -->
+    <script src="./dist/text-banner/text-banner-skin.umd.js"></script>
+
+    <script>
+        // 텍스트 배너 렌더링
+        const root = document.getElementById('text-banner-root');
+        const element = React.createElement(TextBannerSection);
+        ReactDOM.render(element, root);
+        
+        // 테스트 컨트롤
+        const container = document.getElementById('text-banner-root');
+        
+        document.getElementById('setMobile').addEventListener('click', () => {
+            container.className = 'container-mobile';
+        });
+        
+        document.getElementById('setTablet').addEventListener('click', () => {
+            container.className = 'container-tablet';
+        });
+        
+        document.getElementById('setDesktop').addEventListener('click', () => {
+            container.className = 'container-desktop';
+        });
+        
+        document.getElementById('resetView').addEventListener('click', () => {
+            container.className = '';
+        });
+        
+        document.getElementById('triggerAnimation').addEventListener('click', () => {
+            // 애니메이션 클래스 제거 후 다시 추가
+            const banners = document.querySelectorAll('.tb-skin-group');
+            banners.forEach(banner => {
+                banner.classList.remove('tb-skin-animate-fadein');
+                banner.style.opacity = '0';
+                
+                setTimeout(() => {
+                    banner.classList.add('tb-skin-animate-fadein');
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

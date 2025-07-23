@@ -1,0 +1,248 @@
+/* Text Banner Skin Scoped CSS */
+/* 원본 Tailwind 클래스를 정확히 CSS로 변환 */
+
+/* Section - grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 globalWrapper py-5 md:py-10 */
+.tb-skin-grid {
+    display: grid;
+}
+
+.tb-skin-grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+    .tb-skin-md-grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.tb-skin-gap-3 {
+    gap: 0.75rem; /* 12px */
+}
+
+@media (min-width: 768px) {
+    .tb-skin-md-gap-5 {
+        gap: 1.25rem; /* 20px */
+    }
+}
+
+/* globalWrapper */
+.tb-skin-globalWrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 1.25rem; /* px-5 */
+    padding-right: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .tb-skin-globalWrapper {
+        padding-left: 2.5rem; /* md:px-10 */
+        padding-right: 2.5rem;
+    }
+}
+
+.tb-skin-py-5 {
+    padding-top: 1.25rem; /* 20px */
+    padding-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .tb-skin-md-py-10 {
+        padding-top: 2.5rem; /* 40px */
+        padding-bottom: 2.5rem;
+    }
+}
+
+/* Container div - w-full aspect-[3/1] */
+.tb-skin-w-full {
+    width: 100%;
+}
+
+.tb-skin-aspect-3-1 {
+    aspect-ratio: 3/1;
+}
+
+/* Banner Container - group/bannerImage relative w-full h-full overflow-hidden opacity-0 */
+.tb-skin-group {
+    /* group 기능을 위한 기본 클래스 */
+}
+
+.tb-skin-relative {
+    position: relative;
+}
+
+.tb-skin-h-full {
+    height: 100%;
+}
+
+.tb-skin-overflow-hidden {
+    overflow: hidden;
+}
+
+.tb-skin-opacity-0 {
+    opacity: 0;
+}
+
+/* 페이드인 애니메이션 */
+.tb-skin-animate-fadein {
+    opacity: 1;
+    transition: opacity 0.9s ease-out;
+}
+
+/* BannerImage - bannerImage relative w-full h-full */
+.tb-skin-bannerImage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* BannerImageMedia - bannerImageMedia hidden/block lg:block/hidden w-full h-full bg-no-repeat bg-center bg-cover transition-transform duration-300 ease-out group-hover/bannerImage:scale-105 */
+.tb-skin-bannerImageMedia {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    transition: transform 0.3s ease-out;
+}
+
+.tb-skin-hidden {
+    display: none;
+}
+
+.tb-skin-block {
+    display: block;
+}
+
+@media (min-width: 1024px) {
+    .tb-skin-lg-block {
+        display: block;
+    }
+    
+    .tb-skin-lg-hidden {
+        display: none;
+    }
+}
+
+.tb-skin-transition-transform {
+    transition-property: transform;
+}
+
+.tb-skin-duration-300 {
+    transition-duration: 0.3s;
+}
+
+.tb-skin-ease-out {
+    transition-timing-function: ease-out;
+}
+
+.tb-skin-group:hover .tb-skin-group-hover-scale-105 {
+    transform: scale(1.05);
+}
+
+/* Link - flex flex-col items-start justify-center w-full h-full block absolute top-0 left-0 */
+.tb-skin-flex {
+    display: flex;
+}
+
+.tb-skin-flex-col {
+    flex-direction: column;
+}
+
+.tb-skin-items-start {
+    align-items: flex-start;
+}
+
+.tb-skin-justify-center {
+    justify-content: center;
+}
+
+.tb-skin-absolute {
+    position: absolute;
+}
+
+.tb-skin-top-0 {
+    top: 0;
+}
+
+.tb-skin-left-0 {
+    left: 0;
+}
+
+/* Link 스타일 */
+.tb-skin-flex.tb-skin-flex-col.tb-skin-items-start.tb-skin-justify-center {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Content div - pl-5 md:pl-10 */
+.tb-skin-pl-5 {
+    padding-left: 1.25rem; /* 20px */
+}
+
+@media (min-width: 768px) {
+    .tb-skin-md-pl-10 {
+        padding-left: 2.5rem; /* 40px */
+    }
+}
+
+/* Title - font-serif text-2xl leading-heading whitespace-pre-line */
+.tb-skin-font-serif {
+    font-family: 'Noto Serif KR', serif;
+}
+
+.tb-skin-text-2xl {
+    font-size: 1.5rem; /* 24px */
+    line-height: 2rem; /* 32px */
+}
+
+.tb-skin-leading-heading {
+    line-height: 1.4;
+}
+
+.tb-skin-whitespace-pre-line {
+    white-space: pre-line;
+}
+
+/* Description - font-pretendard text-sm leading-body whitespace-pre-line mt-1 md:mt-2.5 */
+.tb-skin-font-pretendard {
+    font-family: 'Pretendard', sans-serif;
+}
+
+.tb-skin-text-sm {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.25rem; /* 20px */
+}
+
+.tb-skin-leading-body {
+    line-height: 1.6;
+}
+
+.tb-skin-mt-1 {
+    margin-top: 0.25rem; /* 4px */
+}
+
+@media (min-width: 768px) {
+    .tb-skin-md-mt-2-5 {
+        margin-top: 0.625rem; /* 10px */
+    }
+}
+
+/* Overlay (if used) */
+.tb-skin-bannerImageOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.tb-skin-bg-black-50 {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 텍스트 색상 - 링크 안의 텍스트는 검은색 */
+.tb-skin-flex.tb-skin-flex-col.tb-skin-items-start.tb-skin-justify-center h3,
+.tb-skin-flex.tb-skin-flex-col.tb-skin-items-start.tb-skin-justify-center p {
+    color: black;
+}

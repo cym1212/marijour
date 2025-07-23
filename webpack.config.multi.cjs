@@ -39,6 +39,21 @@ const components = {
     entry: './app/components/ui/nav/QuickMenuSkin.tsx',
     name: 'QuickMenu',
     filename: 'quick-menu-skin'
+  },
+  'text-banner': {
+    entry: './app/components/ui/banner/TextBannerSkin.tsx',
+    name: 'TextBannerSection',
+    filename: 'text-banner-skin'
+  },
+  'brand-story': {
+    entry: './app/components/ui/brand/BrandStorySkin.tsx',
+    name: 'brand-story-skin',
+    filename: 'brand-story-skin'
+  },
+  'product-detail': {
+    entry: './app/components/ui/product/ProductDetailSkin.tsx',
+    name: 'product-detail-skin',
+    filename: 'product-detail-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
 };
