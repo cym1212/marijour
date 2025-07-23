@@ -16,8 +16,8 @@ const components = {
     filename: 'shop-product-list-skin'
   },
   'login': {
-    entry: './app/routes/_auth.login/index.tsx',
-    name: 'Login',
+    entry: './app/components/ui/auth/LoginSkin.tsx',
+    name: 'login-skin',
     filename: 'login-skin'
   },
   'signup': {
