@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BannerImageMedia Skin Test</title>
+    
+    <!-- CSS 로드 -->
+    <link rel="stylesheet" href="./dist/banner-image-media/banner-image-media-skin.css">
+    
+    <!-- 기본 스타일 리셋 -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        /* 테스트를 위한 컨테이너 스타일 */
+        .test-container {
+            width: 100%;
+            height: 600px;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .test-info {
+            padding: 20px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-info h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .test-info p {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        /* 그룹 호버 테스트를 위한 스타일 */
+        .group-test {
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>BannerImageMedia Skin Test</h2>
+        <p>좌우 분할 레이아웃 - 왼쪽에 텍스트, 오른쪽에 이미지가 표시됩니다.</p>
+        <p>모바일에서는 세로로 배치됩니다.</p>
+    </div>
+    
+    <!-- 일반 테스트 -->
+    <div class="test-container">
+        <div id="banner-image-media-root"></div>
+    </div>
+    
+    
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- UMD 번들 로드 -->
+    <script src="./dist/banner-image-media/banner-image-media-skin.umd.js"></script>
+    
+    <!-- 컴포넌트 렌더링 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const BannerImageMedia = window['banner-image-media-skin'].BannerImageMedia;
+            
+            // 컴포넌트 렌더링
+            const root = ReactDOM.createRoot(document.getElementById('banner-image-media-root'));
+            root.render(React.createElement(BannerImageMedia));
+        });
+    </script>
+</body>
+</html>

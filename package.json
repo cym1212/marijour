@@ -17,7 +17,8 @@
         "build:skin:quick-menu": "COMPONENT=quick-menu webpack --config webpack.config.multi.cjs",
         "build:skin:text-banner": "COMPONENT=text-banner webpack --config webpack.config.multi.cjs",
         "build:skin:brand-story": "COMPONENT=brand-story webpack --config webpack.config.multi.cjs",
-        "build:skin:product-detail": "COMPONENT=product-detail webpack --config webpack.config.multi.cjs"
+        "build:skin:product-detail": "COMPONENT=product-detail webpack --config webpack.config.multi.cjs",
+        "build:skin:banner-image-media": "COMPONENT=banner-image-media webpack --config webpack.config.multi.cjs"
     },
     "dependencies": {
         "@gsap/react": "^2.1.2",

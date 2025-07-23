@@ -1,0 +1,75 @@
+/* Banner Image Media Skin Scoped CSS */
+/* 이미지 위에 텍스트 오버레이 스타일 */
+
+/* 컨테이너 */
+.bim-skin-container {
+    position: relative;
+    width: 100%;
+    height: calc(75vh - 102.59px);
+    overflow: hidden;
+}
+
+/* 배경 이미지 */
+.bim-skin-background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 텍스트 오버레이 */
+.bim-skin-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+/* 콘텐츠 래퍼 */
+.bim-skin-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+/* 타이틀 */
+.bim-skin-title {
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 48px;
+    line-height: 1.2;
+    font-weight: 400;
+    color: #333;
+    margin-bottom: 24px;
+}
+
+/* 설명 */
+.bim-skin-description {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #666;
+    margin-bottom: 0;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .bim-skin-overlay {
+        padding: 40px 20px;
+    }
+    
+    .bim-skin-title {
+        font-size: 32px;
+    }
+    
+    .bim-skin-description {
+        font-size: 13px;
+    }
+}

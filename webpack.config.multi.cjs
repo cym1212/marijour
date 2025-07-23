@@ -54,6 +54,11 @@ const components = {
     entry: './app/components/ui/product/ProductDetailSkin.tsx',
     name: 'product-detail-skin',
     filename: 'product-detail-skin'
+  },
+  'banner-image-media': {
+    entry: './app/components/ui/banner/BannerImageMediaSkin.tsx',
+    name: 'banner-image-media-skin',
+    filename: 'banner-image-media-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
 };
