@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandStorySkin - FixedBgText API 스펙 테스트</title>
+    <link rel="stylesheet" href="./dist/brand-story/brand-story-skin.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-info {
+            background: #e8f4ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .test-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .test-section-header {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .test-section-header h4 {
+            margin: 0;
+            color: #333;
+        }
+        .test-section-content {
+            background: white;
+        }
+        .controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .controls label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .controls input,
+        .controls select {
+            padding: 5px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .controls button {
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .controls button:hover {
+            background: #0056b3;
+        }
+        .component-wrapper {
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-info">
+            <h3>🚀 BrandStorySkin - FixedBgText API 스펙 테스트</h3>
+            <p><strong>구현된 기능:</strong></p>
+            <p>✅ 1. FixedBgText API 문서 ComponentSkinProps 인터페이스 준수</p>
+            <p>✅ 2. 일반 배경 이미지 (고정 배경 대신)</p>
+            <p>✅ 3. HTML 콘텐츠 및 오버레이 처리</p>
+            <p>✅ 4. 반응형 높이 및 텍스트 색상 설정</p>
+            <p>✅ 5. 디바이스별 콘텐츠 지원</p>
+            <p>✅ 6. 디버그 모드 및 에디터 모드 지원</p>
+        </div>
+
+        <!-- 기본 설정 테스트 -->
+        <div class="test-section">
+            <div class="test-section-header">
+                <h4>1. 기본 설정 (제목/설명 모드)</h4>
+            </div>
+            <div class="test-section-content">
+                <div id="basicTest" class="component-wrapper"></div>
+            </div>
+        </div>
+
+        <!-- 오버레이 설정 테스트 -->
+        <div class="test-section">
+            <div class="test-section-header">
+                <h4>2. 오버레이 설정 테스트</h4>
+            </div>
+            <div class="controls">
+                <label>오버레이 색상:</label>
+                <input type="color" id="overlayColor" value="#000000">
+                
+                <label>오버레이 투명도:</label>
+                <input type="range" id="overlayOpacity" min="0" max="1" step="0.1" value="0.3">
+                <span id="opacityValue">0.3</span>
+                
+                <label>높이:</label>
+                <input type="number" id="height" min="200" max="800" value="400" step="50">px
+                
+                <button onclick="updateOverlayTest()">적용</button>
+            </div>
+            <div class="test-section-content">
+                <div id="overlayTest" class="component-wrapper"></div>
+            </div>
+        </div>
+
+        <!-- HTML 콘텐츠 테스트 -->
+        <div class="test-section">
+            <div class="test-section-header">
+                <h4>3. HTML 콘텐츠 모드</h4>
+            </div>
+            <div class="controls">
+                <label>텍스트 색상:</label>
+                <input type="color" id="textColor" value="#ffffff">
+                
+                <label>정렬:</label>
+                <select id="contentAlignment">
+                    <option value="top">상단</option>
+                    <option value="center" selected>중앙</option>
+                    <option value="bottom">하단</option>
+                </select>
+                
+                <button onclick="updateHtmlTest()">적용</button>
+            </div>
+            <div class="test-section-content">
+                <div id="htmlTest" class="component-wrapper"></div>
+            </div>
+        </div>
+
+        <!-- 디버그 모드 테스트 -->
+        <div class="test-section">
+            <div class="test-section-header">
+                <h4>4. 디버그 모드</h4>
+            </div>
+            <div class="test-section-content">
+                <div id="debugTest" class="component-wrapper"></div>
+            </div>
+        </div>
+
+        <!-- 에디터 모드 테스트 -->
+        <div class="test-section">
+            <div class="test-section-header">
+                <h4>5. 에디터 모드</h4>
+            </div>
+            <div class="test-section-content">
+                <div id="editorTest" class="component-wrapper"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- BrandStorySkin -->
+    <script src="./dist/brand-story/brand-story-skin.umd.js"></script>
+
+    <script>
+        const BrandStorySkin = window['brand-story-skin'] || window.BrandStorySkin;
+
+        // 공통 유틸리티
+        const utils = {
+            t: (key) => key,
+            navigate: (path) => {
+                console.log('Navigate to:', path);
+                alert(`네비게이션: ${path}`);
+            },
+            formatCurrency: (amount) => `${amount.toLocaleString()}원`,
+            formatDate: (date) => new Date(date).toLocaleDateString(),
+            getAssetUrl: (path) => path,
+            cx: (...classes) => classes.filter(Boolean).join(' ')
+        };
+
+        // 1. 기본 설정 테스트
+        function renderBasicTest() {
+            const container = document.getElementById('basicTest');
+            const root = ReactDOM.createRoot(container);
+            
+            root.render(React.createElement(BrandStorySkin, {
+                data: {
+                    id: 'basic-test',
+                    finalTitle: 'Premium Life\nCommerce Brand',
+                    finalDescription: '마리쥬르는 단순한 인테리어 제품을 판매하는 것이 아니라,\n생활하는 공간의 질 높은 라이프 스타일을 디자인할 수 있도록 제안하는 브랜드입니다.',
+                    overlayColor: '#000000',
+                    overlayOpacity: 0.2,
+                    textColor: '#000000',
+                    height: 400,
+                    contentAlignment: 'center'
+                },
+                utils: utils,
+                mode: 'production'
+            }));
+        }
+
+        // 2. 오버레이 설정 테스트
+        function renderOverlayTest() {
+            const container = document.getElementById('overlayTest');
+            const root = ReactDOM.createRoot(container);
+            
+            const overlayColor = document.getElementById('overlayColor').value;
+            const overlayOpacity = parseFloat(document.getElementById('overlayOpacity').value);
+            const height = parseInt(document.getElementById('height').value);
+            
+            root.render(React.createElement(BrandStorySkin, {
+                data: {
+                    id: 'overlay-test',
+                    finalTitle: '오버레이 테스트',
+                    finalDescription: '오버레이 색상과 투명도를 조절해보세요.',
+                    overlayColor: overlayColor,
+                    overlayOpacity: overlayOpacity,
+                    textColor: '#ffffff',
+                    height: height,
+                    contentAlignment: 'center'
+                },
+                utils: utils,
+                mode: 'production'
+            }));
+        }
+
+        function updateOverlayTest() {
+            document.getElementById('opacityValue').textContent = document.getElementById('overlayOpacity').value;
+            renderOverlayTest();
+        }
+
+        // 3. HTML 콘텐츠 테스트
+        function renderHtmlTest() {
+            const container = document.getElementById('htmlTest');
+            const root = ReactDOM.createRoot(container);
+            
+            const textColor = document.getElementById('textColor').value;
+            const contentAlignment = document.getElementById('contentAlignment').value;
+            
+            const htmlContent = `
+                <h2 style="color: ${textColor}; margin-bottom: 1rem;">HTML 콘텐츠 모드</h2>
+                <p style="color: ${textColor}; margin-bottom: 1rem;">이것은 <strong>HTML 콘텐츠</strong>입니다.</p>
+                <ul style="color: ${textColor}; text-align: left; max-width: 400px;">
+                    <li>리스트 아이템 1</li>
+                    <li>리스트 아이템 2</li>
+                    <li>리스트 아이템 3</li>
+                </ul>
+                <a href="#" style="color: ${textColor}; text-decoration: underline;">링크 예시</a>
+            `;
+            
+            root.render(React.createElement(BrandStorySkin, {
+                data: {
+                    id: 'html-test',
+                    htmlContent: htmlContent,
+                    overlayColor: '#000000',
+                    overlayOpacity: 0.4,
+                    textColor: textColor,
+                    height: 500,
+                    contentAlignment: contentAlignment
+                },
+                utils: utils,
+                mode: 'production'
+            }));
+        }
+
+        function updateHtmlTest() {
+            renderHtmlTest();
+        }
+
+        // 4. 디버그 모드 테스트
+        function renderDebugTest() {
+            const container = document.getElementById('debugTest');
+            const root = ReactDOM.createRoot(container);
+            
+            root.render(React.createElement(BrandStorySkin, {
+                data: {
+                    id: 'debug-test',
+                    finalTitle: '디버그 모드',
+                    finalDescription: '왼쪽 상단에 디버그 정보가 표시됩니다.',
+                    overlayColor: '#0066cc',
+                    overlayOpacity: 0.3,
+                    textColor: '#ffffff',
+                    height: 350,
+                    contentAlignment: 'center',
+                    debug: true
+                },
+                utils: utils,
+                mode: 'production'
+            }));
+        }
+
+        // 5. 에디터 모드 테스트
+        function renderEditorTest() {
+            const container = document.getElementById('editorTest');
+            const root = ReactDOM.createRoot(container);
+            
+            root.render(React.createElement(BrandStorySkin, {
+                data: {
+                    id: 'editor-test',
+                    finalTitle: '에디터 모드',
+                    finalDescription: '오른쪽 상단에 에디터 힌트가 표시됩니다.',
+                    overlayColor: '#cc6600',
+                    overlayOpacity: 0.2,
+                    textColor: '#000000',
+                    height: 350,
+                    contentAlignment: 'center'
+                },
+                utils: utils,
+                mode: 'editor',
+                editor: {
+                    isSelected: true
+                }
+            }));
+        }
+
+        // 페이지 로드 시 모든 테스트 렌더링
+        if (BrandStorySkin) {
+            renderBasicTest();
+            renderOverlayTest();
+            renderHtmlTest();
+            renderDebugTest();
+            renderEditorTest();
+            
+            // 이벤트 리스너
+            document.getElementById('overlayOpacity').addEventListener('input', function() {
+                document.getElementById('opacityValue').textContent = this.value;
+            });
+            
+            console.log('✅ BrandStorySkin FixedBgText API 스펙 테스트 완료');
+        } else {
+            console.error('❌ BrandStorySkin을 로드할 수 없습니다.');
+            document.body.innerHTML = '<div style="color: red; text-align: center; padding: 50px;">❌ BrandStorySkin을 로드할 수 없습니다.</div>';
+        }
+    </script>
+</body>
+</html>

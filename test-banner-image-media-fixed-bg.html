@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BannerImageMediaSkin - FixedBgText API 테스트</title>
+    <link rel="stylesheet" href="./dist/banner-image-media/banner-image-media-skin.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+        }
+        .test-info {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #e8f4ff;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+        }
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .test-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .dummy-content {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .dummy-content h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .dummy-content p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .controls {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        .controls label {
+            font-weight: 500;
+            color: #333;
+        }
+        .controls input,
+        .controls select {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .controls button {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .controls button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-info">
+            <h3>🚀 BannerImageMediaSkin - FixedBgText API 테스트</h3>
+            <p><strong>구현된 기능:</strong></p>
+            <p>✅ 1. 고정 배경 이미지 (background-attachment: fixed)</p>
+            <p>✅ 2. FixedBgText API ComponentSkinProps 인터페이스 완전 구현</p>
+            <p>✅ 3. HTML 콘텐츠 및 오버레이 처리</p>
+            <p>✅ 4. 반응형 높이 및 텍스트 색상 설정</p>
+            <p>✅ 5. 디버그 모드 및 에디터 모드 지원</p>
+            <p><strong>테스트:</strong> 스크롤하면 배경이 고정되어 있는 것을 확인할 수 있습니다.</p>
+        </div>
+
+        <!-- 컨트롤 패널 -->
+        <div class="controls">
+            <label>오버레이 색상:</label>
+            <input type="color" id="overlayColor" value="#000000">
+            
+            <label>오버레이 투명도:</label>
+            <input type="range" id="overlayOpacity" min="0" max="1" step="0.1" value="0.5">
+            <span id="opacityValue">0.5</span>
+            
+            <label>텍스트 색상:</label>
+            <input type="color" id="textColor" value="#ffffff">
+            
+            <label>높이:</label>
+            <input type="number" id="height" min="300" max="800" value="500" step="50">px
+            
+            <label>정렬:</label>
+            <select id="contentAlignment">
+                <option value="top">상단</option>
+                <option value="center" selected>중앙</option>
+                <option value="bottom">하단</option>
+            </select>
+            
+            <label>디버그:</label>
+            <input type="checkbox" id="debug">
+            
+            <button onclick="updateComponent()">적용</button>
+        </div>
+
+        <!-- BannerImageMedia 컴포넌트 -->
+        <div id="bannerImageMediaContainer"></div>
+
+        <!-- 더미 콘텐츠 (스크롤 테스트용) -->
+        <div class="dummy-content">
+            <h4>스크롤 테스트 콘텐츠</h4>
+            <p>이 텍스트를 스크롤하면서 위의 배경 이미지가 고정되어 있는지 확인해보세요.</p>
+            <p>고정 배경(Fixed Background)은 페이지를 스크롤해도 배경 이미지가 움직이지 않고 고정되어 있는 효과입니다.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+
+        <div class="dummy-content">
+            <h4>HTML 콘텐츠 모드 테스트</h4>
+            <button onclick="testHtmlContent()">HTML 콘텐츠로 전환</button>
+            <button onclick="testDefaultContent()">기본 콘텐츠로 전환</button>
+        </div>
+
+        <div class="dummy-content">
+            <h4>추가 스크롤 영역</h4>
+            <p>계속 스크롤하면서 배경 이미지가 고정되어 있는지 확인하세요.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- BannerImageMediaSkin -->
+    <script src="./dist/banner-image-media/banner-image-media-skin.umd.js"></script>
+
+    <script>
+        const BannerImageMediaSkin = window.BannerImageMediaSkin || window['banner-image-media-skin'];
+        let currentRoot;
+
+        // 공통 유틸리티
+        const utils = {
+            t: (key) => key,
+            navigate: (path) => console.log('Navigate to:', path),
+            formatCurrency: (amount) => `${amount.toLocaleString()}원`,
+            formatDate: (date) => new Date(date).toLocaleDateString(),
+            getAssetUrl: (path) => path,
+            cx: (...classes) => classes.filter(Boolean).join(' ')
+        };
+
+        // 컴포넌트 렌더링 함수
+        function renderComponent(additionalData = {}) {
+            const container = document.getElementById('bannerImageMediaContainer');
+            if (!currentRoot) {
+                currentRoot = ReactDOM.createRoot(container);
+            }
+            
+            const overlayColor = document.getElementById('overlayColor').value;
+            const overlayOpacity = parseFloat(document.getElementById('overlayOpacity').value);
+            const textColor = document.getElementById('textColor').value;
+            const height = parseInt(document.getElementById('height').value);
+            const contentAlignment = document.getElementById('contentAlignment').value;
+            const debug = document.getElementById('debug').checked;
+            
+            currentRoot.render(React.createElement(BannerImageMediaSkin, {
+                data: {
+                    id: 'fixed-bg-test',
+                    overlayColor: overlayColor,
+                    overlayOpacity: overlayOpacity,
+                    textColor: textColor,
+                    height: height,
+                    contentAlignment: contentAlignment,
+                    debug: debug,
+                    ...additionalData
+                },
+                utils: utils,
+                mode: 'production'
+            }));
+        }
+
+        // 컴포넌트 업데이트
+        function updateComponent() {
+            document.getElementById('opacityValue').textContent = document.getElementById('overlayOpacity').value;
+            renderComponent();
+        }
+
+        // HTML 콘텐츠 테스트
+        function testHtmlContent() {
+            const htmlContent = `
+                <h1 style="margin-bottom: 2rem;">🌟 고정 배경 HTML 콘텐츠</h1>
+                <p style="font-size: 1.2rem; margin-bottom: 1.5rem;">이것은 <strong>HTML 콘텐츠 모드</strong>입니다.</p>
+                <ul style="text-align: left; max-width: 500px; margin: 0 auto;">
+                    <li>고정 배경 효과 적용</li>
+                    <li>FixedBgText API 완전 지원</li>
+                    <li>반응형 디자인 적용</li>
+                    <li>오버레이 및 색상 커스터마이징</li>
+                </ul>
+                <p style="margin-top: 2rem;">
+                    <a href="#" style="color: inherit;">더 알아보기 →</a>
+                </p>
+            `;
+            
+            renderComponent({
+                htmlContent: htmlContent
+            });
+        }
+
+        // 기본 콘텐츠 테스트
+        function testDefaultContent() {
+            renderComponent({
+                finalTitle: 'Premium Life\nCommerce Brand',
+                finalDescription: '마리쥬르는 단순한 인테리어 제품을 판매하는 것이 아니라,\n생활하는 공간의 질 높은 라이프 스타일을 디자인할 수 있도록 제안하는\n브랜드입니다.'
+            });
+        }
+
+        // 초기 렌더링
+        if (BannerImageMediaSkin) {
+            renderComponent({
+                finalTitle: 'Fixed Background Text',
+                finalDescription: '스크롤해도 배경이 움직이지 않는 고정 배경 텍스트 컴포넌트입니다.\n아래로 스크롤하여 효과를 확인해보세요.'
+            });
+            
+            // 이벤트 리스너
+            document.getElementById('overlayOpacity').addEventListener('input', function() {
+                document.getElementById('opacityValue').textContent = this.value;
+            });
+            
+            console.log('✅ BannerImageMediaSkin FixedBgText API 테스트 준비 완료');
+        } else {
+            console.error('❌ BannerImageMediaSkin을 로드할 수 없습니다.');
+            document.getElementById('bannerImageMediaContainer').innerHTML = 
+                '<div style="color: red; text-align: center; padding: 50px;">❌ BannerImageMediaSkin을 로드할 수 없습니다.</div>';
+        }
+    </script>
+</body>
+</html>

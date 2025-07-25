@@ -213,6 +213,94 @@
     height: 40vh;
 }
 
+/* FixedBgText API 스펙에 맞춘 추가 클래스들 */
+
+/* 오버레이 */
+.bs-skin-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+/* 콘텐츠 */
+.bs-skin-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* HTML 콘텐츠 */
+.bs-skin-html-content {
+    width: 100%;
+    max-width: 800px;
+}
+
+.bs-skin-html-content h1,
+.bs-skin-html-content h2,
+.bs-skin-html-content h3,
+.bs-skin-html-content h4,
+.bs-skin-html-content h5,
+.bs-skin-html-content h6 {
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.bs-skin-html-content p {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.bs-skin-html-content a {
+    text-decoration: underline;
+}
+
+.bs-skin-html-content ul,
+.bs-skin-html-content ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.bs-skin-html-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* 로딩 상태 */
+.bs-skin-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* 에러 상태 */
+.bs-skin-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+/* 디버그 정보 */
+.bs-skin-debug-info {
+    font-family: 'Courier New', monospace;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bs-skin-debug-info p {
+    margin: 2px 0;
+}
+
+/* 에디터 힌트 */
+.bs-skin-editor-hint {
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* inset-0 */
 .bs-skin-inset-0 {
     top: 0;
