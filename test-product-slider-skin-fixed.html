@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductSlider 스킨 테스트 - 네비게이션 및 보더 수정</title>
+    <link rel="stylesheet" href="./dist/product-slider/product-slider-skin.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-info {
+            background: #e8f4ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .test-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .navigation-log {
+            background: #f0f8f0;
+            border: 1px solid #28a745;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .navigation-log h4 {
+            margin: 0 0 10px 0;
+            color: #28a745;
+        }
+        #navigationLog {
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-info">
+            <h3>🚀 ProductSlider 스킨 테스트 (수정됨)</h3>
+            <p><strong>수정 사항:</strong></p>
+            <p>✅ 1. 상품 클릭 시 상세페이지 네비게이션 추가</p>
+            <p>✅ 2. 원치 않는 보더 스타일 제거 (border-width:1px 등)</p>
+            <p>✅ 3. 스킨 전용 CSS 스코핑으로 다른 컴포넌트 스타일 간섭 방지</p>
+            <p><strong>테스트 방법:</strong> 상품을 클릭하면 네비게이션 로그에 기록됩니다. 보더가 없어야 합니다.</p>
+        </div>
+
+        <!-- ProductSlider 컴포넌트 -->
+        <div id="productSliderContainer"></div>
+
+        <!-- 네비게이션 로그 -->
+        <div class="navigation-log">
+            <h4>📍 네비게이션 로그</h4>
+            <div id="navigationLog">
+                <p style="color: #666; font-style: italic;">상품을 클릭하면 네비게이션 로그가 여기에 표시됩니다...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- ProductSlider 스킨 -->
+    <script src="./dist/product-slider/product-slider-skin.umd.js"></script>
+
+    <script>
+        // 네비게이션 로그 함수
+        function addNavigationLog(message, type = 'info') {
+            const logDiv = document.getElementById('navigationLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.marginBottom = '5px';
+            logEntry.style.padding = '5px';
+            logEntry.style.backgroundColor = type === 'success' ? '#d4edda' : '#d1ecf1';
+            logEntry.style.border = `1px solid ${type === 'success' ? '#c3e6cb' : '#bee5eb'}`;
+            logEntry.style.borderRadius = '3px';
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            
+            // 첫 번째 안내 메시지 제거
+            if (logDiv.querySelector('p')) {
+                logDiv.querySelector('p').remove();
+            }
+            
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // 상품 데이터 - API에서 받아온 것처럼 구성
+        const sampleProductData = {
+            allProducts: [
+                {
+                    id: 1,
+                    title: "프리미엄 베딩 세트",
+                    price: 89000,
+                    salePrice: 67000,
+                    image: "https://via.placeholder.com/300x300/f0f0f0/333?text=Product+1",
+                    stock_count: 15,
+                    badges: ["NEW", "SALE"]
+                },
+                {
+                    id: 2,
+                    title: "모던 쿠션 커버",
+                    price: 25000,
+                    image: "https://via.placeholder.com/300x300/e8e8e8/666?text=Product+2",
+                    stock_count: 8,
+                    badges: ["BEST"]
+                },
+                {
+                    id: 3,
+                    title: "라이프스타일 담요",
+                    price: 45000,
+                    salePrice: 35000,
+                    image: "https://via.placeholder.com/300x300/f5f5f5/444?text=Product+3",
+                    stock_count: 22,
+                    badges: ["ECO"]
+                },
+                {
+                    id: 4,
+                    title: "아로마 디퓨저 세트",
+                    price: 125000,
+                    image: "https://via.placeholder.com/300x300/f8f8f8/555?text=Product+4",
+                    stock_count: 5,
+                    badges: ["PREMIUM", "GIFT"]
+                },
+                {
+                    id: 5,
+                    title: "인테리어 조명",
+                    price: 78000,
+                    salePrice: 58000,
+                    image: "https://via.placeholder.com/300x300/fafafa/777?text=Product+5",
+                    stock_count: 12,
+                    badges: ["HOT"]
+                }
+            ],
+            sliderTitle: "인기 상품 모음",
+            showTitle: true,
+            showPrice: true,
+            showAddToCart: true,
+            loading: false
+        };
+
+        // 액션 정의 - 수정된 네비게이션 로직 포함
+        const actions = {
+            handleProductClick: (product) => {
+                addNavigationLog(`🎯 상품 클릭: "${product.title}" (ID: ${product.id})`, 'success');
+                addNavigationLog(`📍 상세페이지 이동 시뮬레이션: /product/${product.id}`, 'info');
+                
+                // 실제 네비게이션 시뮬레이션
+                setTimeout(() => {
+                    addNavigationLog(`✅ 상세페이지 로드 완료 (시뮬레이션)`, 'success');
+                }, 500);
+            },
+            handleAddToCart: (product, e) => {
+                addNavigationLog(`🛒 장바구니 추가: "${product.title}" (ID: ${product.id})`, 'success');
+            }
+        };
+
+        // 유틸리티 함수 - 수정된 네비게이션 포함
+        const utils = {
+            navigate: (path) => {
+                addNavigationLog(`🔄 utils.navigate 호출: ${path}`, 'success');
+                
+                // 실제로는 React Router나 Next.js 라우터를 사용
+                // 여기서는 시뮬레이션
+                setTimeout(() => {
+                    addNavigationLog(`✅ 네비게이션 완료: ${path}`, 'success');
+                }, 300);
+            },
+            formatCurrency: (amount) => `${amount.toLocaleString()}원`,
+            t: (key) => key,
+            formatDate: (date) => new Date(date).toLocaleDateString(),
+            getAssetUrl: (path) => path,
+            cx: (...classes) => classes.filter(Boolean).join(' ')
+        };
+
+        // ProductSlider 렌더링
+        const ProductSliderSkin = window.ProductSliderSkin || window.ProductSliderSkinUMD;
+        
+        if (ProductSliderSkin) {
+            const container = document.getElementById('productSliderContainer');
+            const root = ReactDOM.createRoot(container);
+            
+            root.render(React.createElement(ProductSliderSkin, {
+                data: sampleProductData,
+                actions: actions,
+                utils: utils,
+                mode: 'production'
+            }));
+            
+            addNavigationLog('🚀 ProductSlider 스킨 로드 완료 - 수정 버전', 'success');
+            addNavigationLog('🎯 상품을 클릭해보세요!', 'info');
+        } else {
+            document.getElementById('productSliderContainer').innerHTML = 
+                '<div style="color: red; padding: 20px; text-align: center;">❌ ProductSlider 스킨을 로드할 수 없습니다.</div>';
+            addNavigationLog('❌ ProductSlider 스킨 로드 실패', 'error');
+        }
+    </script>
+</body>
+</html>

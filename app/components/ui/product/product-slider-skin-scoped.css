@@ -1,0 +1,78 @@
+/* Product Slider Skin Scoped CSS */
+/* 원본 스타일 보존 - 다른 스킨의 CSS 간섭 방지 */
+
+/* Container */
+.ps-skin-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Container style reset to prevent border interference */
+.ps-skin-container,
+.ps-skin-container * {
+    border: none !important;
+    border-width: 0 !important;
+}
+
+/* Loading state */
+.ps-skin-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Empty state */
+.ps-skin-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Override any global productItem styles that might interfere */
+.ps-skin-container .productItem span.border,
+.ps-skin-container .productItem span {
+    border: none !important;
+    border-width: 0 !important;
+}
+
+/* Ensure badges use only background colors, not borders */
+.ps-skin-container .productItem em {
+    background-color: rgba(137, 161, 190, 0.1);
+    color: #89a1be;
+    border: none !important;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Override any potential border styles on product elements */
+.ps-skin-container .productItem,
+.ps-skin-container .productItem *:not(img) {
+    border: none !important;
+}
+
+/* Maintain image borders if needed for aesthetic reasons, but prevent interference */
+.ps-skin-container .productItem img {
+    border: none;
+    border-radius: 0;
+}
+
+/* Ensure buttons don't inherit unwanted borders */
+.ps-skin-container .productItem button {
+    border: 1px solid #89a1be !important; /* Only the cart button should have border */
+}
+
+/* Specifically target TextBadge components to ensure no borders */
+.ps-skin-container [class*="badge"],
+.ps-skin-container [class*="Badge"] {
+    border: none !important;
+}

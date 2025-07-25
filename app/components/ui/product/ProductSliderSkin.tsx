@@ -3,36 +3,41 @@ import { SliderTitle } from '@/components/ui/slider/SliderTitle';
 import { ProductSlider } from '@/components/ui/product/ProductSlider';
 import type { ProductItemProps } from '@/types/product';
 
-// 웹빌더 문서에 맞춘 ProductItem 인터페이스
+// 스킨 전용 CSS - 다른 컴포넌트 스타일 간섭 방지
+import './product-slider-skin-scoped.css';
+
+// ProductSlider API 문서에 맞춘 ProductItem 인터페이스
 interface ProductItem {
-    id: number | string;
-    title: string;
-    newPrice: number;
-    oldPrice?: number;
+    id: number;
+    
+    // 상품명 (title 또는 name 중 하나는 필수)
+    title?: string;
+    name?: string;
+    
+    // 가격 정보
+    price?: number;
+    salePrice?: number;
+    
+    // 이미지 (image 또는 thumbnail 중 하나는 필수)
     image?: string;
     thumbnail?: string;
-    stockCount: number;
-    description?: string;
-    category?: string;
-    rating?: number;
-    discountPercent?: number;
-    isInStock?: boolean;
-    createdAt?: string;
-    updatedAt?: string;
-    companyId?: number;
-    hasOptions?: boolean;
+    
+    // 재고 정보
+    stock_count?: number;
+    
+    // 외부 스킨 호환성을 위한 config 객체
     config?: {
+        default_price?: number;
+        discounted_price?: number;
         img_url?: string;
-        main_image?: string;
-        stock_count?: string | number;
-        default_price?: string | number;
-        discounted_price?: string | number;
-        [key: string]: any;
+        stock_count?: number;
     };
+    
+    // 기타 속성
     [key: string]: any;
 }
 
-// 웹빌더 ProductItem을 내부 ProductItemProps로 변환하는 함수
+// ProductItem을 내부 ProductItemProps로 변환하는 함수
 const mapWebBuilderProduct = (product: ProductItem): ProductItemProps => {
     // 할인율 계산 함수
     const calculateDiscountRate = (original: number, sale?: number): number => {
@@ -40,67 +45,105 @@ const mapWebBuilderProduct = (product: ProductItem): ProductItemProps => {
         return Math.round(((original - sale) / original) * 100);
     };
 
-    // 웹빌더 새 문서 구조에 맞춰 가격 처리
-    const currentPrice = product.newPrice || 0;
-    const originalPrice = product.oldPrice || currentPrice;
-    const discountRate = calculateDiscountRate(originalPrice, currentPrice);
+    // API 문서에 따른 데이터 호환성 처리
+    const productName = product.title || product.name || '상품명 없음';
+    const price = product.config?.default_price || product.price || 0;
+    const salePrice = product.config?.discounted_price || product.salePrice || product.sale_price;
+    const imageUrl = product.config?.img_url || product.image || product.thumbnail || '/placeholder.jpg';
+    const stock = product.config?.stock_count || product.stock_count || product.stock;
+    
+    const discountRate = calculateDiscountRate(price, salePrice);
     
     return {
         id: product.id,
-        name: product.title || '',
-        price: currentPrice,
-        originalPrice: discountRate > 0 ? originalPrice : undefined,
+        name: productName,
+        price: salePrice || price,
+        originalPrice: discountRate > 0 ? price : undefined,
         discountRate: discountRate > 0 ? discountRate : undefined,
-        thumbnailUrl: product.image || product.thumbnail || '',
+        thumbnailUrl: imageUrl,
         starRating: product.rating || 0,
-        reviewCount: 0, // 문서에 없는 필드는 기본값
-        badges: [] // 문서에 없는 필드는 기본값
+        reviewCount: product.reviewCount || 0,
+        badges: product.badges || []
     };
 };
 
-// 웹빌더 스킨 Props 인터페이스 (문서의 SkinProps)
-interface SkinProps {
+// 수정된 ProductSlider API에 맞춘 ComponentSkinProps 인터페이스
+interface ComponentSkinProps {
     data?: {
-        products?: ProductItem[];
+        // 상품 데이터
         allProducts?: ProductItem[];
+        defaultProducts?: ProductItem[];
+        products?: ProductItem[]; // allProducts의 별칭
+        
+        // 상태 관련 Props
         loading?: boolean;
-        currentSlide?: number;
-        totalSlides?: number;
-        isUserLoggedIn?: boolean;
-        isAdminMode?: boolean;
-        itemsPerSlide?: number;
-        showStock?: boolean;
-        theme?: any;
-    };
-    actions?: {
-        handleSlideChange?: (slideIndex: number) => void;
-        handlePrevSlide?: () => void;
-        handleNextSlide?: () => void;
-        handleAddToCart?: (product: ProductItem) => void;
-        handleProductClick?: (product: ProductItem) => void;
-        handleMouseEnter?: () => void;
-        handleMouseLeave?: () => void;
-    };
-    options?: {
+        translateX?: number;
+        slideWidth?: number;
+        isTransitioning?: boolean;
+        isMobile?: boolean;
+        isTablet?: boolean;
+        innerContainerWidth?: number;
+        
+        // 설정 관련 Props
         sliderTitle?: string;
-        sliderDescription?: string;
         showTitle?: boolean;
         titleFontSize?: string;
         titleFontWeight?: string;
         titleColor?: string;
         showPrice?: boolean;
         showAddToCart?: boolean;
-        showNavigation?: boolean;
-        showPagination?: boolean;
-        priceColor?: string;
+        showStock?: boolean;
         cartButtonColor?: string;
-        navigationColor?: string;
-        paginationColor?: string;
-        mobileSlidesPerView?: number;
-        desktopSlidesPerView?: number;
-        autoplay?: boolean;
-        autoplaySpeed?: number;
+        
+        // 스타일 Props
+        containerStyle?: React.CSSProperties;
+        titleStyle?: React.CSSProperties;
+        
+        // 터치/스와이프 상태
+        touchStart?: number | null;
+        touchEnd?: number | null;
+        
+        // 편집기 관련 Props
+        isEditingTitle?: boolean;
+        titleEditValue?: string;
+        
+        // 필터링 설정 Props
+        include_product_ids?: string;
+        exclude_product_ids?: string;
+        include_category_ids?: string;
+        exclude_category_ids?: string;
+        
+        // 참조 객체
+        containerRef?: React.RefObject<HTMLDivElement | null>;
+        sliderRef?: React.RefObject<HTMLDivElement | null>;
+        slideRef?: React.RefObject<HTMLDivElement | null>;
     };
+    actions?: {
+        // 슬라이드 제어 액션
+        moveSlide?: (direction: 'next' | 'prev') => void;
+        
+        // 상품 상호작용 액션
+        handleAddToCart?: (product: any, e: React.MouseEvent) => void;
+        handleProductClick?: (product: any) => void;
+        
+        // 터치/스와이프 이벤트
+        handleTouchStart?: (e: React.TouchEvent) => void;
+        handleTouchMove?: (e: React.TouchEvent) => void;
+        handleTouchEnd?: () => void;
+        
+        // 제목 편집 액션
+        handleTitleDoubleClick?: () => void;
+        handleTitleBlur?: () => void;
+        setTitleEditValue?: (value: string) => void;
+        
+        // 필터링 액션
+        handleFilterOptionChange?: (optionName: string, value: string) => void;
+        renderFilteringSettings?: () => boolean;
+        
+        // 유틸리티 액션
+        formatPrice?: (price: number) => string;
+    };
+    options?: Record<string, any>; // 더 이상 사용하지 않음 - 모든 설정은 data에서 가져옴
     mode?: 'editor' | 'preview' | 'production';
     utils?: {
         t: (key: string, params?: Record<string, any>) => string;
@@ -112,110 +155,69 @@ interface SkinProps {
     };
 }
 
-// 기본 제품 데이터 (원본 PRODUCT_MOCK_DATA 형식)
-const defaultProducts: ProductItemProps[] = [
-    {
-        id: 1,
-        name: '레고트 누프레임 커플잔 2P',
-        discountRate: 20,
-        price: 32000,
-        originalPrice: 40000,
-        starRating: 4.5,
-        reviewCount: 120,
-        thumbnailUrl: './test-images/product-1.jpg',
-        badges: ['Best'],
-    },
-    {
-        id: 2,
-        name: '모던 스톤웨어 접시 세트',
-        discountRate: 15,
-        price: 25500,
-        originalPrice: 30000,
-        starRating: 4.3,
-        reviewCount: 85,
-        thumbnailUrl: './test-images/product-2.jpg',
-        badges: ['New'],
-    },
-    {
-        id: 3,
-        name: '에코 우드 컵 4P 세트',
-        discountRate: 10,
-        price: 18000,
-        originalPrice: 20000,
-        starRating: 4.8,
-        reviewCount: 200,
-        thumbnailUrl: './test-images/product-3.jpg',
-    },
-    {
-        id: 4,
-        name: '클래식 도자기 찻잔 세트',
-        discountRate: 25,
-        price: 15000,
-        originalPrice: 20000,
-        starRating: 4.2,
-        reviewCount: 60,
-        thumbnailUrl: './test-images/product-4.jpg',
-        badges: ['Best', 'New'],
-    },
-    {
-        id: 5,
-        name: '프리미엄 코르크 컵받침 세트',
-        discountRate: 30,
-        price: 14000,
-        originalPrice: 20000,
-        starRating: 4.7,
-        reviewCount: 150,
-        thumbnailUrl: './test-images/product-1.jpg',
-        badges: ['Best'],
-    },
-    {
-        id: 6,
-        name: '럭셔리 실버 커틀러리 세트',
-        discountRate: 18,
-        price: 65600,
-        originalPrice: 80000,
-        starRating: 4.9,
-        reviewCount: 95,
-        thumbnailUrl: './test-images/product-2.jpg',
-        badges: ['Premium'],
-    }
-];
+// API 연동용 스킨 - 기본 데이터 없음
 
 // 기본 props
-const defaultProps: SkinProps = {
+const defaultProps: ComponentSkinProps = {
     data: {
-        products: defaultProducts,
-        allProducts: defaultProducts,
+        // 상품 데이터
+        allProducts: [],
+        defaultProducts: [],
+        products: [],
+        
+        // 상태 관련
         loading: false,
-        currentSlide: 0,
-        totalSlides: defaultProducts.length,
-        isUserLoggedIn: false,
-        isAdminMode: false,
-        itemsPerSlide: 3,
-        showStock: false
-    },
-    actions: {
-        handleSlideChange: (slideIndex) => console.log('Slide changed to:', slideIndex),
-        handlePrevSlide: () => console.log('Previous slide'),
-        handleNextSlide: () => console.log('Next slide'),
-        handleAddToCart: (product) => console.log('Added to cart:', product),
-        handleProductClick: (product) => console.log('Product clicked:', product),
-        handleMouseEnter: () => console.log('Mouse entered'),
-        handleMouseLeave: () => console.log('Mouse left')
-    },
-    options: {
-        sliderTitle: '베스트 상품',
-        sliderDescription: '마리쥬르 베스트 상품을 소개합니다.',
+        translateX: 0,
+        slideWidth: 300,
+        isTransitioning: false,
+        isMobile: false,
+        isTablet: false,
+        innerContainerWidth: 1200,
+        
+        // 설정 관련
+        sliderTitle: '인기 상품',
         showTitle: true,
-        mobileSlidesPerView: 1,
-        desktopSlidesPerView: 3,
-        autoplay: true,
-        autoplaySpeed: 3000,
+        titleFontSize: '18px',
+        titleFontWeight: '600',
+        titleColor: '#333',
         showPrice: true,
         showAddToCart: true,
-        showNavigation: true,
-        showPagination: true
+        showStock: false,
+        cartButtonColor: '#007bff',
+        
+        // 스타일
+        containerStyle: {},
+        titleStyle: {},
+        
+        // 터치/스와이프
+        touchStart: null,
+        touchEnd: null,
+        
+        // 편집기
+        isEditingTitle: false,
+        titleEditValue: '',
+        
+        // 필터링
+        include_product_ids: '',
+        exclude_product_ids: '',
+        include_category_ids: '',
+        exclude_category_ids: ''
     },
+    actions: {
+        moveSlide: (direction) => console.log('Move slide:', direction),
+        handleAddToCart: (product, e) => console.log('Added to cart:', product),
+        handleProductClick: (product) => console.log('Product clicked:', product),
+        handleTouchStart: (e) => console.log('Touch start'),
+        handleTouchMove: (e) => console.log('Touch move'),
+        handleTouchEnd: () => console.log('Touch end'),
+        handleTitleDoubleClick: () => console.log('Title double click'),
+        handleTitleBlur: () => console.log('Title blur'),
+        setTitleEditValue: (value) => console.log('Set title edit value:', value),
+        handleFilterOptionChange: (optionName, value) => console.log('Filter change:', optionName, value),
+        renderFilteringSettings: () => false,
+        formatPrice: (price) => `${price.toLocaleString()}원`
+    },
+    options: {}, // 더 이상 사용 안함
     mode: 'production',
     utils: {
         t: (key) => key,
@@ -227,70 +229,123 @@ const defaultProps: SkinProps = {
     }
 };
 
-const ProductSliderSkin: React.FC<SkinProps> = (props) => {
+const ProductSliderSkin: React.FC<ComponentSkinProps> = (props = {}) => {
     // props가 없으면 기본값 사용
     const { 
         data = defaultProps.data, 
         actions = defaultProps.actions,
-        options = defaultProps.options
+        utils = defaultProps.utils
     } = props || defaultProps;
     
-    const { allProducts, loading } = data!;
-    
-    // options에서 설정값 추출
+    // 수정된 API: 모든 설정을 data 객체에서 가져옴
     const {
-        sliderTitle,
-        showTitle,
-        showPrice,
-        showAddToCart,
-        showNavigation,
-        showPagination,
-        autoplay,
-        autoplaySpeed,
-        mobileSlidesPerView,
-        desktopSlidesPerView
-    } = options || {};
+        // 상품 데이터
+        allProducts,
+        defaultProducts,
+        loading,
+        
+        // 슬라이드 상태
+        translateX = 0,
+        slideWidth = 300,
+        isTransitioning = false,
+        
+        // 설정
+        sliderTitle = '인기 상품',
+        showTitle = true,
+        titleStyle = {},
+        containerStyle = {},
+        showPrice = true,
+        showStock = false,
+        showAddToCart = true,
+        cartButtonColor = '#007bff',
+        
+        // 편집기
+        isEditingTitle = false,
+        titleEditValue = '',
+        
+        // 참조
+        containerRef,
+        sliderRef
+    } = data || {};
 
+    // 로딩 상태 처리
+    if (loading) {
+        return <div className="ps-skin-loading">상품을 불러오는 중...</div>;
+    }
     
-    console.log('[ProductSliderSkin] 받은 options:', options);
+    // 상품 데이터 처리: allProducts 우선, 없으면 defaultProducts 사용
+    const productsToShow = allProducts?.length > 0 ? allProducts : defaultProducts;
+    if (!productsToShow || productsToShow.length === 0) {
+        return <div className="ps-skin-empty">표시할 상품이 없습니다.</div>;
+    }
+    
+    console.log('[ProductSliderSkin] 받은 data:', data);
     console.log('[ProductSliderSkin] showTitle:', showTitle);
     console.log('[ProductSliderSkin] sliderTitle:', sliderTitle);
     console.log('[ProductSliderSkin] showPrice:', showPrice);
     console.log('[ProductSliderSkin] showAddToCart:', showAddToCart);
-    console.log('[ProductSliderSkin] showNavigation:', showNavigation);
-    console.log('[ProductSliderSkin] showPagination:', showPagination);
-    console.log('[ProductSliderSkin] 전체 상품 개수:', allProducts?.length);
+    console.log('[ProductSliderSkin] 전체 상품 개수:', productsToShow?.length);
+    console.log('[ProductSliderSkin] translateX:', translateX);
+    console.log('[ProductSliderSkin] slideWidth:', slideWidth);
     
-    // allProducts를 사용하여 전체 상품을 Swiper에 전달
-    const mappedProducts = (allProducts || []).map(product => {
+    // productsToShow를 사용하여 전체 상품을 내부 컴포넌트에 전달
+    const mappedProducts = (productsToShow || []).map(product => {
         const mapped = mapWebBuilderProduct(product);
         return mapped;
     });
 
-
-    if (loading) {
-        return <div>로딩 중...</div>;
-    }
-
     return (
-        <section style={{ 
-            maxWidth: '1400px', 
-            margin: '0 auto', 
-            padding: '40px 20px',
-            background: 'white',
-            minHeight: '400px'
-        }}>
+        <div 
+            ref={containerRef}
+            className="ps-skin-container"
+            style={{
+                maxWidth: '1400px', 
+                margin: '0 auto', 
+                padding: '40px 20px',
+                background: 'white',
+                minHeight: '400px',
+                // 원본 스타일 보존 - border 제거
+                border: 'none',
+                borderWidth: '0',
+                ...containerStyle
+            }}
+            onTouchStart={actions?.handleTouchStart}
+            onTouchMove={actions?.handleTouchMove}
+            onTouchEnd={actions?.handleTouchEnd}
+        >
 
-            {/* 제목 표시 */}
-            {showTitle && sliderTitle && (
-                <div style={{
-                    fontSize: '32px',
-                    fontWeight: 'bold',
-                    marginBottom: '30px',
-                    color: '#333'
-                }}>
-                    {sliderTitle}
-                </div>
+            {/* 제목 표시 - 편집 모드 지원 */}
+            {showTitle && (
+                isEditingTitle ? (
+                    <input 
+                        type="text" 
+                        value={titleEditValue}
+                        onChange={(e) => actions?.setTitleEditValue?.(e.target.value)}
+                        onBlur={actions?.handleTitleBlur}
+                        style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            marginBottom: '30px',
+                            border: '1px solid #ccc',
+                            padding: '8px',
+                            ...titleStyle
+                        }}
+                        autoFocus
+                    />
+                ) : (
+                    <h2 
+                        style={{
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            marginBottom: '30px',
+                            cursor: 'pointer',
+                            ...titleStyle
+                        }}
+                        onDoubleClick={actions?.handleTitleDoubleClick}
+                    >
+                        {sliderTitle}
+                    </h2>
+                )
             )}
             
 
@@ -302,33 +357,37 @@ const ProductSliderSkin: React.FC<SkinProps> = (props) => {
                             <div style={{ height: '100%', minHeight: '350px' }}>
                                 <ProductSlider
                                     data={mappedProducts}
-                                    desktopSlidesPerView={desktopSlidesPerView || 3}
-                                    mobileSlidesPerView={mobileSlidesPerView || 1}
+                                    desktopSlidesPerView={3} // 기본값 사용
+                                    mobileSlidesPerView={1}
                                     onProductClick={(product) => {
                                         console.log('[ProductSliderSkin] onProductClick 호출됨:', product);
-                                        const originalProduct = allProducts?.find(p => p.id === product.id);
-                                        console.log('[ProductSliderSkin] 찾은 원본 상품:', originalProduct);
-                                        console.log('[ProductSliderSkin] actions:', actions);
+                                        const originalProduct = productsToShow?.find(p => p.id === product.id);
                                         if (originalProduct && actions?.handleProductClick) {
-                                            console.log('[ProductSliderSkin] actions.handleProductClick 호출!');
                                             actions.handleProductClick(originalProduct);
+                                        } else if (utils?.navigate) {
+                                            // 기본 상품 상세 페이지로 이동
+                                            utils.navigate(`/product/${product.id}`);
                                         } else {
-                                            console.log('[ProductSliderSkin] actions.handleProductClick 호출 실패');
+                                            // Fallback: 새 창에서 상품 상세 페이지 열기
+                                            window.open(`/product/${product.id}`, '_blank');
                                         }
                                     }}
                                     onAddToCart={(product) => {
                                         console.log('[ProductSliderSkin] Add to cart:', product);
-                                        const originalProduct = allProducts?.find(p => p.id === product.id);
+                                        const originalProduct = productsToShow?.find(p => p.id === product.id);
                                         if (originalProduct && actions?.handleAddToCart) {
-                                            actions.handleAddToCart(originalProduct);
+                                            // 수정된 API: 이벤트 객체도 전달
+                                            const fakeEvent = { preventDefault: () => {}, stopPropagation: () => {} } as React.MouseEvent;
+                                            actions.handleAddToCart(originalProduct, fakeEvent);
                                         }
                                     }}
                                     showPrice={showPrice}
+                                    showStock={showStock} // 재고 표시 옵션 추가
                                     showAddToCart={showAddToCart}
-                                    showNavigation={showNavigation}
-                                    showPagination={showPagination}
-                                    autoplay={autoplay}
-                                    autoplaySpeed={autoplaySpeed || 3000}
+                                    showNavigation={true}
+                                    showPagination={true}
+                                    autoplay={true}
+                                    autoplaySpeed={3000}
                                 />
                             </div>
                         );
@@ -356,7 +415,7 @@ const ProductSliderSkin: React.FC<SkinProps> = (props) => {
                     ❌ 매핑된 상품 데이터가 없습니다!
                 </div>
             )}
-        </section>
+        </div>
     );
 };
 
