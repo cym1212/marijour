@@ -22,7 +22,10 @@
         "build:skin:banner-image-media": "COMPONENT=banner-image-media webpack --config webpack.config.multi.cjs",
         "build:skin:cart": "COMPONENT=cart webpack --config webpack.config.multi.cjs",
         "build:skin:my-order-list": "COMPONENT=my-order-list webpack --config webpack.config.multi.cjs",
-        "build:skin:my-info": "COMPONENT=my-info webpack --config webpack.config.multi.cjs"
+        "build:skin:my-info": "COMPONENT=my-info webpack --config webpack.config.multi.cjs",
+        "build:skin:notice-list": "COMPONENT=notice-list webpack --config webpack.config.multi.cjs",
+        "build:skin:notice-detail": "COMPONENT=notice-detail webpack --config webpack.config.multi.cjs",
+        "build:skin:notice-integrated": "COMPONENT=notice-integrated webpack --config webpack.config.multi.cjs"
     },
     "dependencies": {
         "@gsap/react": "^2.1.2",

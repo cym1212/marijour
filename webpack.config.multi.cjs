@@ -74,6 +74,21 @@ const components = {
     entry: './app/components/ui/mypage/MyInfoSkin.tsx',
     name: 'my-info-skin',
     filename: 'my-info-skin'
+  },
+  'notice-list': {
+    entry: './app/components/ui/notice/NoticeListSkin.tsx',
+    name: 'notice-list-skin',
+    filename: 'notice-list-skin'
+  },
+  'notice-detail': {
+    entry: './app/components/ui/notice/NoticeDetailSkin.tsx',
+    name: 'notice-detail-skin',
+    filename: 'notice-detail-skin'
+  },
+  'notice-integrated': {
+    entry: './app/components/ui/notice/NoticeIntegratedSkin.tsx',
+    name: 'notice-integrated-skin',
+    filename: 'notice-integrated-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
 };

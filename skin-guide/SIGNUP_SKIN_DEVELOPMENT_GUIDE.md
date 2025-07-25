@@ -95,13 +95,15 @@ interface SkinProps {
     signUpSuccess: boolean;                      // 회원가입 성공 여부
     signUpError: string | null;                  // 회원가입 에러 메시지
     theme: {                                     // 테마 설정
-      primary?: string;
-      primaryDark?: string;
-      secondary?: string;
+      primaryColor?: string;
+      secondaryColor?: string;
       [key: string]: any;
     };
-    withcookieData: any;                         // 위드쿠키 전역 데이터
-    showSSNField: boolean;                       // 주민등록번호 필드 표시 여부
+    policies: any;                               // 정책 정보
+    isSpecifiedLegPolicy: boolean;               // 특정 법적 정책 여부
+    companyId: string;                          // 회사 ID
+    basicFields: FormFieldConfig[];              // 기본 필드 설정
+    varFields: FormFieldConfig[];                // 커스텀 필드 설정
     
     // SignupLogic에서 반환된 기타 데이터
     [key: string]: any;
@@ -120,8 +122,6 @@ interface SkinProps {
   
   // 프로퍼티 패널에서 설정한 옵션들
   options: {
-    basicFields?: BasicFieldsConfig;             // 기본 필드 표시 설정
-    varFields?: Record<string, VarFieldConfig>;  // 커스텀 필드 설정 (var01 ~ var10)
     padding?: string;                            // 패딩
     backgroundColor?: string;                    // 배경색
     borderRadius?: string;                       // 테두리 둥글기

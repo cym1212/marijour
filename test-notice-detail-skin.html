@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Detail Skin Test</title>
+    <link rel="stylesheet" href="./dist/notice-detail/notice-detail-skin.css">
+    <style>
+        /* 기본 전역 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notice Detail 섹션이 들어갈 위치 -->
+    <div id="notice-detail-root"></div>
+
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Notice Detail Skin UMD -->
+    <script src="./dist/notice-detail/notice-detail-skin.umd.js"></script>
+    
+    <script>
+        // Notice Detail 컴포넌트 렌더링
+        const noticeDetailRoot = ReactDOM.createRoot(document.getElementById('notice-detail-root'));
+        const NoticeDetailComponent = window['notice-detail-skin'];
+        noticeDetailRoot.render(React.createElement(NoticeDetailComponent));
+    </script>
+</body>
+</html>

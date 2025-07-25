@@ -32,9 +32,63 @@
     
     <script>
         // MyInfo 컴포넌트 렌더링
-        const myInfoRoot = ReactDOM.createRoot(document.getElementById('my-info-root'));
-        const MyInfoComponent = window['my-info-skin'];
-        myInfoRoot.render(React.createElement(MyInfoComponent));
+        document.addEventListener('DOMContentLoaded', function() {
+            const MyInfo = window['my-info-skin'].MyInfo;
+            
+            // 컴포넌트에 전달할 props
+            const props = {
+                data: {
+                    userInfo: {
+                        insungId: 'test@example.com',
+                        email: 'test@example.com',
+                        name: '홍길동',
+                        phone: '010-1234-5678',
+                        created_at: '2025-01-01',
+                        grade: '일반'
+                    },
+                    editedInfo: {
+                        name: '홍길동',
+                        phone: '010-1234-5678',
+                        email: 'test@example.com'
+                    },
+                    loading: false,
+                    errors: {},
+                    showPasswordFields: false,
+                    isUserLoggedIn: true
+                },
+                actions: {
+                    handleFieldChange: function(field, value) {
+                        console.log('Field changed:', field, value);
+                        // 여기서 상태를 업데이트하고 다시 렌더링할 수 있습니다
+                    },
+                    handleUpdate: async function() {
+                        console.log('Update requested');
+                        alert('정보가 업데이트되었습니다.');
+                    },
+                    togglePasswordChange: function() {
+                        console.log('Password change toggled');
+                        // 비밀번호 변경 필드 토글
+                    }
+                },
+                options: {
+                    title: '회원정보 수정',
+                    showPassword: true,
+                    showPhone: true,
+                    showEmail: true
+                },
+                utils: {
+                    t: function(key) { return key; },
+                    navigate: function(path) { 
+                        console.log('Navigate to:', path);
+                        window.location.href = path;
+                    }
+                }
+            };
+            
+            // 컴포넌트 렌더링
+            const root = ReactDOM.createRoot(document.getElementById('my-info-root'));
+            root.render(React.createElement(MyInfo, props));
+        });
     </script>
 </body>
 </html>

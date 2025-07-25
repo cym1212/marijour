@@ -8,31 +8,31 @@
 
 ```typescript
 interface ProductItem {
-    id: number | string;    // 상품 ID
-    title: string;          // 상품명 (title 필드 사용)
-    newPrice: number;       // 현재 판매가
-    oldPrice?: number;      // 원가/정가
-    image?: string;         // 상품 이미지 URL
-    thumbnail?: string;     // 썸네일 이미지 URL
-    stockCount: number;     // 재고 수량 (stockCount 필드 사용)
-    description?: string;   // 상품 설명
-    category?: string;      // 카테고리
-    rating?: number;        // 평점
-    discountPercent?: number; // 할인율
-    isInStock?: boolean;    // 재고 있음 여부
-    createdAt?: string;     // 생성일
-    updatedAt?: string;     // 수정일
-    companyId?: number;     // 회사 ID
-    hasOptions?: boolean;   // 옵션 있음 여부
-    config?: {              // 추가 설정 정보
-        img_url?: string;
-        main_image?: string;
-        stock_count?: string | number;
-        default_price?: string | number;
-        discounted_price?: string | number;
-        [key: string]: any;
-    };
-    [key: string]: any;     // 추가 커스텀 필드
+  id: number | string;    // 상품 ID
+  title: string;          // 상품명 (title 필드 사용)
+  newPrice: number;       // 현재 판매가
+  oldPrice?: number;      // 원가/정가
+  image?: string;         // 상품 이미지 URL
+  thumbnail?: string;     // 썸네일 이미지 URL
+  stockCount: number;     // 재고 수량 (stockCount 필드 사용)
+  description?: string;   // 상품 설명
+  category?: string;      // 카테고리
+  rating?: number;        // 평점
+  discountPercent?: number; // 할인율
+  isInStock?: boolean;    // 재고 있음 여부
+  createdAt?: string;     // 생성일
+  updatedAt?: string;     // 수정일
+  companyId?: number;     // 회사 ID
+  hasOptions?: boolean;   // 옵션 있음 여부
+  config?: {              // 추가 설정 정보
+    img_url?: string;
+    main_image?: string;
+    stock_count?: string | number;
+    default_price?: string | number;
+    discounted_price?: string | number;
+    [key: string]: any;
+  };
+  [key: string]: any;     // 추가 커스텀 필드
 }
 ```
 
@@ -248,16 +248,16 @@ module.exports = {
 import { registerComponentSkin } from '@withcookie/webbuilder-sdk';
 
 registerComponentSkin({
-    id: 'custom-product-slider',
-    name: '커스텀 상품 슬라이더',
-    componentTypes: ['product-slider'],  // 지원하는 컴포넌트 타입
-    umdUrl: 'https://cdn.example.com/skins/product-slider-skin.js',
-    globalName: 'ProductSliderCustomSkin',
-    cssUrls: ['https://cdn.example.com/skins/product-slider-skin.css'],
-    preview: 'https://cdn.example.com/skins/preview.png',
-    description: '모던한 디자인의 상품 슬라이더',
-    version: '1.0.0',
-    author: 'Your Name'
+  id: 'custom-product-slider',
+  name: '커스텀 상품 슬라이더',
+  componentTypes: ['product-slider'],  // 지원하는 컴포넌트 타입
+  umdUrl: 'https://cdn.example.com/skins/product-slider-skin.js',
+  globalName: 'ProductSliderCustomSkin',
+  cssUrls: ['https://cdn.example.com/skins/product-slider-skin.css'],
+  preview: 'https://cdn.example.com/skins/preview.png',
+  description: '모던한 디자인의 상품 슬라이더',
+  version: '1.0.0',
+  author: 'Your Name'
 });
 ```
 

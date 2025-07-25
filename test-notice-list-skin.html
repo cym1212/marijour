@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice List Skin Test</title>
+    <link rel="stylesheet" href="./dist/notice-list/notice-list-skin.css">
+    <style>
+        /* 기본 전역 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notice List 섹션이 들어갈 위치 -->
+    <div id="notice-list-root"></div>
+
+    <!-- React 및 ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Notice List Skin UMD -->
+    <script src="./dist/notice-list/notice-list-skin.umd.js"></script>
+    
+    <script>
+        // Notice List 컴포넌트 렌더링
+        const noticeListRoot = ReactDOM.createRoot(document.getElementById('notice-list-root'));
+        const NoticeListComponent = window['notice-list-skin'];
+        noticeListRoot.render(React.createElement(NoticeListComponent));
+    </script>
+</body>
+</html>

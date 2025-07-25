@@ -8,39 +8,39 @@
 
 ```typescript
 interface Product {
-   id: number | string;
-   title: string;                // 상품명
-   description?: string;         // 상품 설명
-   image?: string;              // 상품 이미지 URL
-   imageTwo?: string;           // 두 번째 이미지 URL (호버 효과용)
-   oldPrice: number;            // 이전 가격 (정가)
-   newPrice: number;            // 현재 가격 (판매가)
-   sale?: string;               // 할인 타입 (NEW, SALE 등)
-   isInStock?: boolean;         // 재고 여부
-   stockCount?: number;         // 재고 수량
-   rating?: number;             // 평점 (1-5)
-   companyId?: number;          // 회사 ID
-   hasOptions?: boolean;        // 옵션이 있는 상품인지 여부
-   config?: {
-      default_price?: string | number;      // 기본 가격
-      discounted_price?: string | number;   // 할인 가격
-      system_price?: string | number;       // 시스템 가격
-      stock_count?: string | number;        // 재고 수량
-      [key: string]: any;                  // 기타 설정
-   };
-
-   // 호환성을 위한 추가 필드 (로직에서 자동 매핑)
-   name?: string;              // title과 동일 (하위 호환성)
-   price?: number;             // newPrice와 동일
-   originalPrice?: number;     // oldPrice와 동일
-   thumbnail?: string;         // image와 동일
-
-   // API에서 올 수 있는 추가 필드
-   created_at?: string;
-   category_id?: string | number;
-   variant_id?: string | number;
-   stock?: number;            // stockCount와 유사
-   [key: string]: any;
+  id: number | string;
+  title: string;                // 상품명
+  description?: string;         // 상품 설명
+  image?: string;              // 상품 이미지 URL
+  imageTwo?: string;           // 두 번째 이미지 URL (호버 효과용)
+  oldPrice: number;            // 이전 가격 (정가)
+  newPrice: number;            // 현재 가격 (판매가)
+  sale?: string;               // 할인 타입 (NEW, SALE 등)
+  isInStock?: boolean;         // 재고 여부
+  stockCount?: number;         // 재고 수량
+  rating?: number;             // 평점 (1-5)
+  companyId?: number;          // 회사 ID
+  hasOptions?: boolean;        // 옵션이 있는 상품인지 여부
+  config?: {
+    default_price?: string | number;      // 기본 가격
+    discounted_price?: string | number;   // 할인 가격
+    system_price?: string | number;       // 시스템 가격
+    stock_count?: string | number;        // 재고 수량
+    [key: string]: any;                  // 기타 설정
+  };
+  
+  // 호환성을 위한 추가 필드 (로직에서 자동 매핑)
+  name?: string;              // title과 동일 (하위 호환성)
+  price?: number;             // newPrice와 동일
+  originalPrice?: number;     // oldPrice와 동일
+  thumbnail?: string;         // image와 동일
+  
+  // API에서 올 수 있는 추가 필드
+  created_at?: string;
+  category_id?: string | number;
+  variant_id?: string | number;
+  stock?: number;            // stockCount와 유사
+  [key: string]: any;
 }
 ```
 
@@ -61,7 +61,7 @@ interface SkinProps {
     
     // ProductListLogic에서 반환된 data 객체의 모든 필드가 직접 포함됨
     products: Product[];          // 현재 페이지의 상품들
-    loading: boolean;             // 로딩 상태
+    loading: boolean;             // 로딩 상태 (현재는 항상 false로 고정)
     currentPage: number;          // 현재 페이지 번호
     totalPages: number;           // 전체 페이지 수
     totalProducts: number;        // 전체 상품 수
@@ -600,3 +600,8 @@ handleProductClick을 사용하면 다음과 같은 이점이 있습니다:
 - 모바일 무한 스크롤 상태 자동 저장
 - 에디터 모드에서 안전한 동작
 - 향후 기능 추가 시 자동 적용
+
+## 기본 설정값
+- itemsPerPage: 20 (페이지당 상품 수 기본값)
+- 모바일에서는 무한 스크롤 방식 사용
+- 이미지 매핑: product.image = product.thumbnail || product.image (thumbnail이 우선, 없으면 image 사용)

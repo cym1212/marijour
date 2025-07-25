@@ -539,3 +539,21 @@ API 기반 스킨의 경우 자동으로 전역 변수 충돌을 방지합니다
 2. **메모이제이션**: React.memo 활용하여 불필요한 리렌더링 방지
 3. **이벤트 핸들러**: 인라인 함수 대신 actions 사용
 4. **스타일 최적화**: 정적 스타일은 CSS 파일로 분리
+
+## 리다이렉트 URL 우선순위
+
+로그인 성공 후 리다이렉트 URL은 다음 순서로 결정됩니다:
+1. `componentData.componentProps?.redirectPath`
+2. `componentData.componentProps?.redirectUrl`
+3. `componentData.props?.redirectPath`
+4. `componentData.props?.redirectUrl`
+5. 기본값: `/`
+
+## 데이터 병합 과정
+
+ComponentSkinWrapper는 다음과 같이 데이터를 병합합니다:
+1. 원본 componentData의 모든 필드
+2. useLoginLogic이 반환한 모든 필드 (actions 제외)
+3. componentProps를 data.componentProps로 명시적 전달
+
+Note: useLoginLogic은 개별 action 함수들과 actions 객체를 모두 반환하지만, 스킨에는 actions 객체만 전달됩니다.

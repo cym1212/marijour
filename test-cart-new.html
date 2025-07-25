@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart Skin Test - New Version</title>
+    <link rel="stylesheet" href="./dist/cart/cart-skin.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Cart Skin Test - New Interface</h1>
+        
+        <!-- Test 1: 관리자 모드 (더미 데이터) -->
+        <div class="test-section">
+            <div class="test-title">Test 1: 관리자 모드 (더미 데이터 + 직급별 가격)</div>
+            <div id="cart-admin-test"></div>
+        </div>
+        
+        <!-- Test 2: 실제 데이터 (빈 장바구니) -->
+        <div class="test-section">
+            <div class="test-title">Test 2: 빈 장바구니</div>
+            <div id="cart-empty-test"></div>
+        </div>
+        
+        <!-- Test 3: 실제 데이터 (장바구니 있음) -->
+        <div class="test-section">
+            <div class="test-title">Test 3: 실제 데이터 (직급별 가격 적용)</div>
+            <div id="cart-real-test"></div>
+        </div>
+    </div>
+
+    <!-- React 및 Cart 스킨 로드 -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="./dist/cart/cart-skin.umd.js"></script>
+
+    <script>
+        const { createElement: h } = React;
+        const { createRoot } = ReactDOM;
+
+        // Test 1: 관리자 모드
+        const adminTestData = {
+            data: {
+                isAdminMode: true,
+                cartItems: [], // 빈 배열로 더미 데이터 트리거
+                user: {
+                    level: 'VIP',
+                    levelName: '비아이피'
+                },
+                localQuantities: {},
+                freeShippingLimit: 50000,
+                calculations: {
+                    subtotal: 0,
+                    shippingFee: 0,
+                    total: 0
+                }
+            },
+            actions: {
+                handleIncreaseQuantity: async (itemId) => {
+                    console.log('수량 증가:', itemId);
+                },
+                handleDecreaseQuantity: async (itemId) => {
+                    console.log('수량 감소:', itemId);
+                },
+                handleRemoveItem: async (itemId) => {
+                    console.log('아이템 삭제:', itemId);
+                },
+                handleCheckout: async () => {
+                    console.log('주문하기 클릭');
+                },
+                handleClearCart: async () => {
+                    console.log('전체 삭제 클릭');
+                },
+                calculateLevelPrice: (item, level) => {
+                    const defaultPrice = item.product?.config?.default_price || 0;
+                    const levelPrices = item.product?.optionJson?.level2_price || {};
+                    const levelPrice = levelPrices[level] || defaultPrice;
+                    const discount = Math.max(0, defaultPrice - levelPrice);
+                    const discountRate = defaultPrice > 0 ? Math.round((discount / defaultPrice) * 100) : 0;
+                    
+                    return {
+                        originalPrice: defaultPrice,
+                        levelPrice,
+                        discount,
+                        discountRate,
+                        levelName: level
+                    };
+                }
+            },
+            options: {
+                title: '장바구니 (관리자 모드)',
+                showQuantitySelector: true,
+                showRemoveButton: true,
+                primaryButtonColor: '#007bff'
+            }
+        };
+
+        // Test 2: 빈 장바구니
+        const emptyTestData = {
+            data: {
+                cartItems: [],
+                loading: false,
+                calculations: {
+                    subtotal: 0,
+                    shippingFee: 0,
+                    total: 0
+                },
+                localQuantities: {},
+                freeShippingLimit: 50000,
+                user: {
+                    level: 'GOLD',
+                    levelName: '골드'
+                }
+            },
+            actions: adminTestData.actions,
+            options: {
+                title: '장바구니 (빈 상태)',
+                emptyText: '장바구니가 비어 있습니다. 쇼핑을 시작해보세요!'
+            }
+        };
+
+        // Test 3: 실제 데이터
+        const realTestData = {
+            data: {
+                cartItems: [
+                    {
+                        id: 1,
+                        productId: 1,
+                        count: 2,
+                        variantId: null,
+                        variant: null,
+                        options: null,
+                        product: {
+                            id: 1,
+                            title: '프리미엄 세라믹 머그컵 세트',
+                            config: {
+                                img_url: 'https://via.placeholder.com/150/cccccc/666666?text=Product',
+                                default_price: 45000,
+                                discounted_price: 40000,
+                                stock_count: 10
+                            },
+                            optionJson: {
+                                level2_price: {
+                                    'VIP': 35000,
+                                    'GOLD': 40000,
+                                    'SILVER': 42000
+                                }
+                            }
+                        }
+                    },
+                    {
+                        id: 2,
+                        productId: 2,
+                        count: 1,
+                        variantId: null,
+                        variant: null,
+                        options: null,
+                        product: {
+                            id: 2,
+                            title: '유기농 대나무 식기 세트',
+                            config: {
+                                img_url: 'https://via.placeholder.com/150/eeeeee/999999?text=Bamboo',
+                                default_price: 35000,
+                                discounted_price: 30000,
+                                stock_count: 5
+                            },
+                            optionJson: {
+                                level2_price: {
+                                    'VIP': 28000,
+                                    'GOLD': 30000,
+                                    'SILVER': 32000
+                                }
+                            }
+                        }
+                    }
+                ],
+                loading: false,
+                calculations: {
+                    subtotal: 110000,
+                    shippingFee: 3000,
+                    total: 113000
+                },
+                localQuantities: {
+                    '1': 2,
+                    '2': 1
+                },
+                freeShippingLimit: 50000,
+                user: {
+                    level: 'GOLD',
+                    levelName: '골드'
+                },
+                isUserLoggedIn: true
+            },
+            actions: adminTestData.actions,
+            options: {
+                title: '장바구니 (실제 데이터)',
+                showQuantitySelector: true,
+                showRemoveButton: true
+            }
+        };
+
+        // 컴포넌트 렌더링
+        if (window.CartSkin && window.CartSkin.Cart) {
+            const CartComponent = window.CartSkin.Cart;
+            
+            // Test 1
+            const adminRoot = createRoot(document.getElementById('cart-admin-test'));
+            adminRoot.render(h(CartComponent, adminTestData));
+            
+            // Test 2
+            const emptyRoot = createRoot(document.getElementById('cart-empty-test'));
+            emptyRoot.render(h(CartComponent, emptyTestData));
+            
+            // Test 3
+            const realRoot = createRoot(document.getElementById('cart-real-test'));
+            realRoot.render(h(CartComponent, realTestData));
+            
+            console.log('✅ Cart 컴포넌트가 성공적으로 로드되었습니다!');
+            console.log('새로운 기능들:');
+            console.log('- 직급별 가격 시스템');
+            console.log('- handleIncreaseQuantity/handleDecreaseQuantity 액션');
+            console.log('- localQuantities를 통한 즉시 UI 업데이트');
+            console.log('- count 필드 (quantity → count)');
+            console.log('- 무료배송 한도 표시');
+        } else {
+            console.error('❌ Cart 컴포넌트를 찾을 수 없습니다!');
+        }
+    </script>
+</body>
+</html>
