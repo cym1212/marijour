@@ -220,15 +220,83 @@
 }
 
 /* Swiper Scrollbar Custom Style - keyVisualSlider specific */
+.kvs-skin-keyVisualSlider .swiper-scrollbar,
 .kvs-skin-keyVisualSlider .swiper-scrollbar-horizontal {
     height: 3px;
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 40px);
     bottom: 20px;
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.3);
 }
 
-.kvs-skin-keyVisualSlider .swiper-scrollbar-horizontal .swiper-scrollbar-drag {
-    background: rgba(255, 255, 255, 0.6);
+.kvs-skin-keyVisualSlider .swiper-scrollbar-drag {
+    background: rgba(255, 255, 255, 0.8);
+    height: 100%;
+    cursor: grab;
+}
+
+.kvs-skin-keyVisualSlider .swiper-scrollbar-drag:active {
+    cursor: grabbing;
+}
+
+/* Position Classes - 3x3 Grid */
+/* Position 1: 상단 왼쪽 */
+.kvs-skin-position-1 {
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+/* Position 2: 상단 중앙 */
+.kvs-skin-position-2 {
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+}
+
+/* Position 3: 상단 오른쪽 */
+.kvs-skin-position-3 {
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-align: right;
+}
+
+/* Position 4: 중앙 왼쪽 */
+.kvs-skin-position-4 {
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Position 5: 중앙 중앙 (기본값) */
+.kvs-skin-position-5 {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Position 6: 중앙 오른쪽 */
+.kvs-skin-position-6 {
+    align-items: flex-end;
+    justify-content: center;
+    text-align: right;
+}
+
+/* Position 7: 하단 왼쪽 */
+.kvs-skin-position-7 {
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+/* Position 8: 하단 중앙 */
+.kvs-skin-position-8 {
+    align-items: center;
+    justify-content: flex-end;
+    text-align: center;
+}
+
+/* Position 9: 하단 오른쪽 */
+.kvs-skin-position-9 {
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
 }

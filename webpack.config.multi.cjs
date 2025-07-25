@@ -32,7 +32,7 @@ const components = {
   },
   'key-visual-slider': {
     entry: './app/components/ui/slider/KeyVisualSliderSkin.tsx',
-    name: 'KeyVisualSlider',
+    name: 'MainBannerSkin',
     filename: 'key-visual-slider-skin'
   },
   'quick-menu': {
