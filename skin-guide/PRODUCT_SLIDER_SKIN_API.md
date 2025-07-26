@@ -157,7 +157,7 @@ interface ComponentSkinProps {
 | 액션명 | 타입 | 설명 |
 |--------|------|------|
 | `handleAddToCart` | `(product: any, e: React.MouseEvent) => void` | 장바구니에 상품 추가 |
-| `handleProductClick` | `(product: any) => void` | 상품 클릭 (상세페이지 이동) |
+| `handleProductClick` | `(product: any) => void` | 상품 클릭 시 `/product/{id}` 페이지로 이동 |
 
 ### 터치/스와이프 이벤트
 
@@ -376,6 +376,34 @@ if (data.loading) {
 )}
 ```
 
+### 7. 상품 클릭 시 상세 페이지 이동
+
+상품 이미지나 상품명을 클릭하면 자동으로 `/product/{id}` 페이지로 이동합니다:
+
+```javascript
+// 상품 이미지 클릭
+<div 
+  className="product-image"
+  onClick={() => actions.handleProductClick(product)}
+  style={{ cursor: 'pointer' }}
+>
+  <img src={imageUrl} alt={productName} />
+</div>
+
+// 상품명 클릭
+<h3 
+  className="product-name"
+  onClick={() => actions.handleProductClick(product)}
+  style={{ cursor: 'pointer' }}
+>
+  {productName}
+</h3>
+```
+
+**`handleProductClick` 동작 방식:**
+- React Router가 있는 경우: `navigate('/product/' + product.id)`
+- 없는 경우: `window.location.href = '/product/' + product.id`
+
 ---
 
 ## 🎨 CSS 스타일링 가이드 (중요!)
@@ -537,7 +565,13 @@ const CustomProductSliderSkin = ({ data, actions, utils, mode }) => {
                 
                 {/* 상품 정보 */}
                 <div className="my-product-info">
-                  <h3 className="my-product-name">{productName}</h3>
+                  <h3 
+                    className="my-product-name"
+                    onClick={() => actions.handleProductClick(product)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {productName}
+                  </h3>
                   
                   {/* 가격 표시 */}
                   {showPrice && (

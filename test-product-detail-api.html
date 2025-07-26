@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductDetailSkin - API 스펙 테스트</title>
+    <link rel="stylesheet" href="./dist/product-detail/product-detail-skin.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .test-info {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #e8f4ff;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+        }
+        .test-info h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .test-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .controls {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .controls h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-item label {
+            font-weight: 500;
+            color: #333;
+        }
+        .control-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        .control-item input[type="color"] {
+            width: 60px;
+            height: 30px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-container {
+            background: white;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section-divider {
+            max-width: 1200px;
+            margin: 40px auto;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h3>🚀 ProductDetailSkin - API 스펙 테스트</h3>
+        <p><strong>구현된 기능:</strong></p>
+        <p>✅ 1. 상품 이미지 갤러리 (메인 이미지 + 추가 이미지)</p>
+        <p>✅ 2. 상품 옵션 및 변형(variant) 선택 시스템</p>
+        <p>✅ 3. 등급별 할인 가격 계산</p>
+        <p>✅ 4. 수량 선택 및 재고 관리</p>
+        <p>✅ 5. 장바구니 추가 및 바로구매 기능</p>
+        <p>✅ 6. 탭 기반 상세 정보 (설명, 리뷰)</p>
+        <p>✅ 7. 관련 상품 표시</p>
+        <p>✅ 8. 모바일 반응형 지원 (바텀시트)</p>
+        <p>✅ 9. ComponentProps 설정 (표시/숨김, 색상)</p>
+    </div>
+
+    <!-- 컨트롤 패널 -->
+    <div class="controls">
+        <h4>속성 패널 설정</h4>
+        
+        <!-- 탭 표시 설정 -->
+        <div class="control-group">
+            <h5>탭 표시 설정</h5>
+            <div class="control-item">
+                <input type="checkbox" id="showDescriptionTab" checked>
+                <label for="showDescriptionTab">설명 탭 표시</label>
+            </div>
+            <div class="control-item">
+                <input type="checkbox" id="showReviewsTab" checked>
+                <label for="showReviewsTab">리뷰 탭 표시</label>
+            </div>
+            <div class="control-item">
+                <input type="checkbox" id="showStock">
+                <label for="showStock">재고 정보 표시</label>
+            </div>
+        </div>
+        
+        <!-- 표시 옵션 설정 -->
+        <div class="control-group">
+            <h5>표시 옵션 설정</h5>
+            <div class="control-item">
+                <input type="checkbox" id="showRelatedProducts" checked>
+                <label for="showRelatedProducts">관련 상품 표시</label>
+            </div>
+            <div class="control-item">
+                <input type="checkbox" id="showQuantitySelector" checked>
+                <label for="showQuantitySelector">수량 선택기 표시</label>
+            </div>
+            <div class="control-item">
+                <input type="checkbox" id="showAddToCart" checked>
+                <label for="showAddToCart">장바구니 버튼 표시</label>
+            </div>
+            <div class="control-item">
+                <input type="checkbox" id="showBuyNow" checked>
+                <label for="showBuyNow">바로구매 버튼 표시</label>
+            </div>
+        </div>
+        
+        <!-- 스타일 설정 -->
+        <div class="control-group">
+            <h5>스타일 설정</h5>
+            <div class="control-item">
+                <label for="priceColor">가격 색상:</label>
+                <input type="color" id="priceColor" value="#ff6b6b">
+            </div>
+            <div class="control-item">
+                <label for="addToCartButtonColor">장바구니 버튼 색상:</label>
+                <input type="color" id="addToCartButtonColor" value="#007bff">
+            </div>
+            <div class="control-item">
+                <label for="buyNowButtonColor">바로구매 버튼 색상:</label>
+                <input type="color" id="buyNowButtonColor" value="#28a745">
+            </div>
+            <div class="control-item">
+                <label for="stockTextColor">재고 텍스트 색상:</label>
+                <input type="color" id="stockTextColor" value="#28a745">
+            </div>
+        </div>
+        
+        <button onclick="updateComponent()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">설정 적용</button>
+    </div>
+
+    <!-- 컴포넌트 표시 영역 -->
+    <div id="productDetailContainer" class="test-container"></div>
+
+    <div class="section-divider">
+        --- 모바일 바텀시트 테스트 ---
+    </div>
+
+    <!-- 모바일 시뮬레이션 -->
+    <div class="controls">
+        <h4>모바일 시뮬레이션</h4>
+        <button onclick="simulateMobile()" style="padding: 10px 20px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer;">모바일 모드 시뮬레이션</button>
+        <p style="margin-top: 10px; color: #666;">모바일 모드에서는 옵션 선택을 위한 바텀시트가 표시됩니다.</p>
+    </div>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- ProductDetailSkin -->
+    <script src="./dist/product-detail/product-detail-skin.umd.js"></script>
+
+    <script>
+        const ProductDetailSkin = window.ProductDetailSkin || window['product-detail-skin'] || window.ProductDetail;
+        let currentRoot;
+        let isMobileSimulation = false;
+
+        // 기본 데이터
+        const defaultProduct = {
+            id: 9,
+            title: '미니멀 글라스 텀블러 6P',
+            description: '<h3>상품 특징</h3><p>심플하고 깔끔한 디자인의 글라스 텀블러 세트입니다.</p><ul><li>고품질 글라스 소재</li><li>6개 구성 세트</li><li>다양한 음료에 적합</li><li>식기세척기 사용 가능</li></ul>',
+            config: {
+                img_url: '/image/product1.jpg',
+                main_image: '/image/product1.jpg',
+                discounted_price: 27600,
+                default_price: 30000,
+                stock_count: 50
+            },
+            additionalImages: [
+                '/image/product1.jpg',
+                '/image/product2.jpg',
+                '/image/product3.jpg',
+                '/image/product4.jpg'
+            ],
+            optionGroups: [
+                {
+                    id: 1,
+                    code: 'color',
+                    name: '색상',
+                    isRequired: true,
+                    optionValues: [
+                        { id: 1, code: 'clear', name: '클리어' },
+                        { id: 2, code: 'blue', name: '블루' },
+                        { id: 3, code: 'green', name: '그린' }
+                    ]
+                },
+                {
+                    id: 2,
+                    code: 'size',
+                    name: '사이즈',
+                    isRequired: false,
+                    optionValues: [
+                        { id: 4, code: 'small', name: '스몰' },
+                        { id: 5, code: 'large', name: '라지' }
+                    ]
+                }
+            ],
+            variants: [
+                {
+                    id: 1,
+                    additionalPrice: 0,
+                    stock: 20,
+                    options: [
+                        { optionValueId: 1, optionValue: { optionGroupId: 1 } },
+                        { optionValueId: 4, optionValue: { optionGroupId: 2 } }
+                    ]
+                },
+                {
+                    id: 2,
+                    additionalPrice: 2000,
+                    stock: 15,
+                    options: [
+                        { optionValueId: 1, optionValue: { optionGroupId: 1 } },
+                        { optionValueId: 5, optionValue: { optionGroupId: 2 } }
+                    ]
+                }
+            ]
+        };
+
+        // 유틸리티
+        const utils = {
+            t: (key) => key,
+            navigate: (path) => console.log('Navigate to:', path),
+            formatCurrency: (amount) => `${amount.toLocaleString()}원`,
+            formatDate: (date) => new Date(date).toLocaleDateString(),
+            getAssetUrl: (path) => path,
+            cx: (...classes) => classes.filter(Boolean).join(' ')
+        };
+
+        // 컴포넌트 렌더링 함수
+        function renderComponent() {
+            const container = document.getElementById('productDetailContainer');
+            if (!currentRoot) {
+                currentRoot = ReactDOM.createRoot(container);
+            }
+            
+            // 설정 값 가져오기
+            const componentProps = {
+                showDescriptionTab: document.getElementById('showDescriptionTab').checked,
+                showReviewsTab: document.getElementById('showReviewsTab').checked,
+                showStock: document.getElementById('showStock').checked,
+                showRelatedProducts: document.getElementById('showRelatedProducts').checked,
+                showQuantitySelector: document.getElementById('showQuantitySelector').checked,
+                showAddToCart: document.getElementById('showAddToCart').checked,
+                showBuyNow: document.getElementById('showBuyNow').checked,
+                priceColor: document.getElementById('priceColor').value,
+                addToCartButtonColor: document.getElementById('addToCartButtonColor').value,
+                buyNowButtonColor: document.getElementById('buyNowButtonColor').value,
+                stockTextColor: document.getElementById('stockTextColor').value
+            };
+            
+            // 가격 정보 계산
+            const priceInfo = {
+                originalPrice: defaultProduct.config.default_price,
+                levelPrice: defaultProduct.config.discounted_price,
+                discount: defaultProduct.config.default_price - defaultProduct.config.discounted_price,
+                discountRate: Math.round(((defaultProduct.config.default_price - defaultProduct.config.discounted_price) / defaultProduct.config.default_price) * 100),
+                levelName: '실버회원'
+            };
+            
+            currentRoot.render(React.createElement(ProductDetailSkin, {
+                data: {
+                    id: 'product-detail-test',
+                    product: defaultProduct,
+                    componentProps: componentProps,
+                    priceInfo: priceInfo,
+                    finalPrice: defaultProduct.config.discounted_price,
+                    isMobile: isMobileSimulation,
+                    isUserLoggedIn: true
+                },
+                actions: {
+                    handleOptionChange: (groupId, valueId) => {
+                        console.log('옵션 선택:', { groupId, valueId });
+                    },
+                    handleQuantityChange: (quantity) => {
+                        console.log('수량 변경:', quantity);
+                    },
+                    handleAddToCart: async () => {
+                        console.log('장바구니 추가');
+                        alert('장바구니에 추가되었습니다!');
+                    },
+                    handleBuyNow: async () => {
+                        console.log('바로구매');
+                        alert('구매 페이지로 이동합니다!');
+                    },
+                    handleTabChange: (tab) => {
+                        console.log('탭 변경:', tab);
+                    },
+                    handleImageChange: (image) => {
+                        console.log('이미지 변경:', image);
+                    }
+                },
+                utils: utils,
+                mode: 'production'
+            }));
+        }
+
+        // 컴포넌트 업데이트
+        function updateComponent() {
+            renderComponent();
+        }
+
+        // 모바일 시뮬레이션
+        function simulateMobile() {
+            isMobileSimulation = !isMobileSimulation;
+            renderComponent();
+            if (isMobileSimulation) {
+                alert('모바일 모드가 활성화되었습니다. 바텀시트를 테스트하려면 옵션 선택 영역을 클릭하세요.');
+            }
+        }
+
+        // 초기 렌더링
+        if (ProductDetailSkin) {
+            renderComponent();
+            console.log('✅ ProductDetailSkin API 스펙 테스트 준비 완료');
+        } else {
+            console.error('❌ ProductDetailSkin을 로드할 수 없습니다.');
+            document.getElementById('productDetailContainer').innerHTML = 
+                '<div style="color: red; text-align: center; padding: 50px;">❌ ProductDetailSkin을 로드할 수 없습니다.</div>';
+        }
+    </script>
+</body>
+</html>
