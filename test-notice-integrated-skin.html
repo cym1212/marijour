@@ -3,38 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notice Integrated Skin Test</title>
+    <title>Notice Integrated Skin Test - Board API</title>
     <link rel="stylesheet" href="./dist/notice-integrated/notice-integrated-skin.css">
     <style>
-        /* 기본 전역 스타일 */
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f5f5;
         }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #fafafa;
+        /* 테스트 컨트롤 */
+        .test-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .test-controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        
+        .test-controls button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            margin-bottom: 8px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .test-controls button:hover {
+            background: #0056b3;
+        }
+        
+        .test-controls button.active {
+            background: #28a745;
+        }
+        
+        .test-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <!-- Notice Integrated 섹션이 들어갈 위치 -->
-    <div id="notice-integrated-root"></div>
+    <!-- 테스트 컨트롤 패널 -->
+    <div class="test-controls">
+        <h3>Board API 테스트 컨트롤</h3>
+        <button id="mode-list" class="active">리스트 모드</button>
+        <button id="mode-detail">상세 보기 모드</button>
+        <button id="toggle-auth">권한 토글 (현재: 비회원)</button>
+        <button id="toggle-loading">로딩 상태 토글</button>
+        
+        <div class="test-info">
+            <p><strong>현재 모드:</strong> <span id="current-mode">list</span></p>
+            <p><strong>권한 상태:</strong> <span id="auth-status">비회원</span></p>
+            <p><strong>로딩 상태:</strong> <span id="loading-status">false</span></p>
+        </div>
+    </div>
+    
+    <!-- 컴포넌트 렌더링 영역 -->
+    <div id="notice-root"></div>
 
-    <!-- React 및 ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Notice Integrated Skin UMD -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="./dist/notice-integrated/notice-integrated-skin.umd.js"></script>
-    
+
     <script>
-        // Notice Integrated 컴포넌트 렌더링
-        const noticeIntegratedRoot = ReactDOM.createRoot(document.getElementById('notice-integrated-root'));
-        const NoticeIntegratedComponent = window['notice-integrated-skin'];
-        noticeIntegratedRoot.render(React.createElement(NoticeIntegratedComponent));
+        // 전역 상태
+        let currentState = {
+            mode: 'list',
+            isAuthenticated: false,
+            isLoading: false,
+            currentPage: 1,
+            selectedPostId: 1
+        };
+
+        // Board API 모의 데이터 생성 함수
+        function generateBoardData() {
+            const mockPosts = Array.from({ length: 20 }, (_, i) => ({
+                id: i + 1,
+                title: `공지사항 제목 ${i + 1}번`,
+                content: `<p>이것은 공지사항 ${i + 1}번의 내용입니다. Board API를 통해 제공되는 HTML 콘텐츠입니다.</p><p>여러 단락으로 구성된 긴 내용을 포함할 수 있습니다.</p>`,
+                createdAt: new Date(Date.now() - (i * 24 * 60 * 60 * 1000)).toISOString(),
+                views: Math.floor(Math.random() * 1000),
+                viewCount: Math.floor(Math.random() * 1000),
+                userId: i % 3 === 0 ? 1 : i % 3 === 1 ? null : 2,
+                administratorId: i % 3 === 0 ? 1 : null,
+                user: i % 3 === 0 ? { name: '관리자' } : i % 3 === 1 ? null : { name: `사용자${i}` }
+            }));
+
+            return {
+                // 기본 정보
+                mode: currentState.mode,
+                boardTitle: '공지사항',
+                boardCode: 'notice',
+                
+                // 리스트 모드 데이터
+                posts: currentState.mode === 'list' ? mockPosts : [],
+                postsLoading: currentState.mode === 'list' && currentState.isLoading,
+                
+                // 상세 모드 데이터
+                postDetail: currentState.mode === 'detail' ? {
+                    post: {
+                        ...mockPosts.find(p => p.id === currentState.selectedPostId),
+                        permissions: {
+                            canEdit: currentState.isAuthenticated,
+                            canDelete: currentState.isAuthenticated,
+                            canComment: currentState.isAuthenticated
+                        }
+                    }
+                } : null,
+                postDetailLoading: currentState.mode === 'detail' && currentState.isLoading,
+                
+                // 페이징
+                pagination: {
+                    currentPage: currentState.currentPage,
+                    totalPages: 2,
+                    totalCount: 20,
+                    perPage: 10
+                },
+                currentPage: currentState.currentPage,
+                
+                // 권한
+                postsData: {
+                    permissions: {
+                        canWrite: currentState.isAuthenticated,
+                        canEdit: currentState.isAuthenticated,
+                        canDelete: currentState.isAuthenticated,
+                        canComment: currentState.isAuthenticated
+                    }
+                },
+                
+                // 사용자 정보
+                currentUser: currentState.isAuthenticated ? { id: 1, name: '테스트 사용자' } : null,
+                isUserLoggedIn: currentState.isAuthenticated,
+                
+                // 표시 설정
+                showNewButton: true,
+                showEditButton: true,
+                showDeleteButton: true,
+                showCommentButton: false,
+                
+                // 테마
+                theme: {
+                    primary: '#007bff',
+                    backgroundColor: '#ffffff'
+                }
+            };
+        }
+
+        // Board API actions 생성
+        function createBoardActions() {
+            return {
+                navigateToList: () => {
+                    console.log('[Board API] Navigate to list');
+                    // 웹빌더와 동일한 구조로 테스트
+                    const isPreview = false; // 테스트 환경에서는 항상 false
+                    const boardCode = 'notice';
+                    
+                    if (!isPreview) {
+                        // 실제 웹빌더처럼 URL 변경
+                        window.location.hash = `#/${boardCode}`;
+                    }
+                    
+                    currentState.mode = 'list';
+                    renderComponent();
+                },
+                
+                navigateToDetail: (postId) => {
+                    console.log('[Board API] Navigate to detail:', postId);
+                    currentState.mode = 'detail';
+                    currentState.selectedPostId = postId;
+                    renderComponent();
+                },
+                
+                navigateToNew: (boardCode) => {
+                    console.log('[Board API] Navigate to new post:', boardCode);
+                    alert('새 글 작성 화면으로 이동합니다.');
+                },
+                
+                setBoardMode: (mode) => {
+                    console.log('[Board API] Set board mode:', mode);
+                    currentState.mode = mode;
+                    renderComponent();
+                },
+                
+                handlePageChange: (page) => {
+                    console.log('[Board API] Page change:', page);
+                    currentState.currentPage = page;
+                    renderComponent();
+                },
+                
+                setShowDeleteModal: (show) => {
+                    console.log('[Board API] Show delete modal:', show);
+                    if (show) {
+                        if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+                            alert('게시글이 삭제되었습니다.');
+                            currentState.mode = 'list';
+                            renderComponent();
+                        }
+                    }
+                },
+                
+                setFormData: (data) => {
+                    console.log('[Board API] Set form data:', data);
+                    alert('수정 화면으로 이동합니다.');
+                }
+            };
+        }
+
+        // utils 객체 생성
+        function createUtils() {
+            return {
+                t: (key) => {
+                    const translations = {
+                        '공지사항': '공지사항',
+                        '게시글을 불러오는 중...': '게시글을 불러오는 중...',
+                        '게시글이 없습니다.': '게시글이 없습니다.',
+                        '새로운 게시글이 등록되면 여기에 표시됩니다.': '새로운 게시글이 등록되면 여기에 표시됩니다.',
+                        '게시글을 찾을 수 없습니다.': '게시글을 찾을 수 없습니다.',
+                        '요청하신 게시글이 존재하지 않거나 삭제되었습니다.': '요청하신 게시글이 존재하지 않거나 삭제되었습니다.',
+                        '조회': '조회',
+                        '관리자': '관리자',
+                        '나': '나',
+                        '익명': '익명',
+                        '이전': '이전',
+                        '다음': '다음',
+                        '목록': '목록',
+                        '수정': '수정',
+                        '삭제': '삭제',
+                        '공유하기': '공유하기',
+                        '인쇄하기': '인쇄하기',
+                        '새 글쓰기': '새 글쓰기'
+                    };
+                    return translations[key] || key;
+                },
+                
+                formatDate: (dateString) => {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('ko-KR');
+                },
+                
+                navigate: (path) => {
+                    console.log('[Utils] Navigate to:', path);
+                },
+                
+                cx: (...classes) => classes.filter(Boolean).join(' ')
+            };
+        }
+
+        // 컴포넌트 렌더링 함수
+        function renderComponent() {
+            const NoticeIntegrated = window['notice-integrated-skin'].NoticeIntegrated || 
+                                   window['notice-integrated-skin'].default;
+            
+            const props = {
+                data: generateBoardData(),
+                actions: createBoardActions(),
+                utils: createUtils(),
+                options: {
+                    showPagination: true,
+                    maxVisiblePages: 5,
+                    showWriter: true,
+                    showDate: true,
+                    showContent: true,
+                    contentLineClamp: 2,
+                    showBackButton: true,
+                    showShareButton: true,
+                    showPrintButton: true,
+                    animation: true
+                },
+                mode: 'production'
+            };
+
+            const root = ReactDOM.createRoot(document.getElementById('notice-root'));
+            root.render(React.createElement(NoticeIntegrated, props));
+            
+            // UI 상태 업데이트
+            updateUI();
+        }
+
+        // UI 상태 업데이트
+        function updateUI() {
+            document.getElementById('current-mode').textContent = currentState.mode;
+            document.getElementById('auth-status').textContent = currentState.isAuthenticated ? '로그인' : '비회원';
+            document.getElementById('loading-status').textContent = currentState.isLoading;
+            
+            // 버튼 상태 업데이트
+            document.querySelectorAll('.test-controls button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (currentState.mode === 'list') {
+                document.getElementById('mode-list').classList.add('active');
+            } else if (currentState.mode === 'detail') {
+                document.getElementById('mode-detail').classList.add('active');
+            }
+        }
+
+        // 이벤트 리스너 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            // 모드 전환
+            document.getElementById('mode-list').addEventListener('click', () => {
+                currentState.mode = 'list';
+                renderComponent();
+            });
+            
+            document.getElementById('mode-detail').addEventListener('click', () => {
+                currentState.mode = 'detail';
+                currentState.selectedPostId = 1;
+                renderComponent();
+            });
+            
+            // 권한 토글
+            document.getElementById('toggle-auth').addEventListener('click', (e) => {
+                currentState.isAuthenticated = !currentState.isAuthenticated;
+                e.target.textContent = `권한 토글 (현재: ${currentState.isAuthenticated ? '로그인' : '비회원'})`;
+                renderComponent();
+            });
+            
+            // 로딩 토글
+            document.getElementById('toggle-loading').addEventListener('click', () => {
+                currentState.isLoading = !currentState.isLoading;
+                renderComponent();
+            });
+            
+            // 초기 렌더링
+            renderComponent();
+        });
     </script>
 </body>
 </html>
