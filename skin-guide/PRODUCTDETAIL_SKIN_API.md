@@ -7,7 +7,7 @@ ProductDetail(상품 상세) 컴포넌트는 전자상거래 사이트의 상품
 **주요 특징:**
 - 상품 이미지 갤러리 (메인 이미지 + 추가 이미지)
 - 상품 옵션 및 변형(variant) 선택 시스템
-- 등급별 할인 가격 계산
+- 등급/직급별 할인 가격 계산
 - 수량 선택 및 재고 관리
 - 장바구니 추가 및 바로구매 기능
 - 탭 기반 상세 정보 (설명, 리뷰, 재고)
@@ -15,123 +15,159 @@ ProductDetail(상품 상세) 컴포넌트는 전자상거래 사이트의 상품
 - 모바일 반응형 지원 (바텀시트)
 - 다국어 지원
 
+## ⚠️ 중요 사항: 상품 상세 이미지
+
+**외부 스킨 개발자를 위한 중요 안내:**
+
+ProductDetail 컴포넌트는 **별도의 `detailImage` 필드를 사용하지 않습니다**. 
+상품 상세 이미지는 `product.description` 필드에 HTML 또는 마크다운 형식으로 포함되어 있습니다.
+
+```typescript
+// ❌ 잘못된 접근 방법
+const detailImage = product.detailImage; // 이 필드는 존재하지 않음
+
+// ✅ 올바른 접근 방법 (HTML 형식)
+const descriptionImages = extractImagesFromDescription(product.description);
+```
+
+상품 상세 이미지를 표시하려면 반드시 `product.description`에서 이미지를 추출해야 합니다.
+자세한 구현 방법은 "6.1 상품 상세 이미지 섹션"을 참조하세요.
+
 ## ComponentSkinProps 인터페이스
 
 ```typescript
 interface ComponentSkinProps {
-    data: {
-        // 기본 정보
-        id: string;
-        style: CSSStyleDeclaration;
-        componentProps: object;
-
-        // 상품 데이터
-        product: {
-            id: number;
-            title: string;
-            description: string;
-            config: {
-                img_url: string;
-                main_image: string;
-                discounted_price: number;
-                default_price: number;
-                stock_count: number;
-            };
-            variants: Array<{
-                id: number;
-                sku: string;
-                additionalPrice: number;
-                stock: number;
-                options: Array<{
-                    optionValueId: number;
-                    optionValue: {
-                        optionGroupId: number;
-                    };
-                }>;
-            }>;
-            optionGroups: Array<{
-                id: number;
-                code: string;
-                name: string;
-                isRequired: boolean;
-                optionValues: Array<{
-                    id: number;
-                    code: string;
-                    name: string;
-                    value: string;
-                    isActive: boolean;
-                }>;
-            }>;
-            optionJson: {
-                level2_price: Record<number, number>;
-            };
-            additionalImages: string[];
-
-            // 리뷰 관련
-            recentReviews?: Array<{
-                id: number;
-                userName: string;
-                rating: number;
-                content: string;
-                createdAt: string;
-            }>;
-            totalReviews?: number;
-            averageRating?: number;
-
-            // 추가 정보
-            weights?: string[];
-            price?: number;
-        };
-
-        // 상태 정보
-        selectedOptions: Record<number, number>;
-        quantity: number;
-        loading: boolean;
-        error: any;
-        activeTab: string;
-        mainImage: string;
-        allImages: string[];
-        relatedProducts: any[];
-        selectedVariant: any;
-        isMobile: boolean;
-        showBottomSheet: boolean;
-        isUserLoggedIn: boolean;
-        isAdminMode: boolean;
-        theme: object;
-
-        // 가격 정보
-        basePrice: number;
-        priceInfo: {
-            originalPrice: number;
-            levelPrice: number;
-            discount: number;
-            discountRate: number;
-            levelName: string | null;
-        };
-        finalPrice: number;
-        isOutOfStock: boolean;
-
-        // 유틸리티
-        t: (key: string) => string;
+  data: {
+    // 기본 정보
+    id: string;
+    style: CSSStyleDeclaration;
+    componentProps: object;
+    
+    // 상품 데이터
+    product: {
+      id: number;
+      title: string;
+      description: string;
+      config: {
+        img_url: string;
+        main_image: string;
+        discounted_price: number;
+        default_price: number;
+        stock_count: number;
+      };
+      variants: Array<{
+        id: number;
+        sku: string;
+        additionalPrice: number;
+        stock: number;
+        options: Array<{
+          optionValueId: number;
+          optionValue: {
+            optionGroupId: number;
+          };
+        }>;
+      }>;
+      optionGroups: Array<{
+        id: number;
+        code: string;
+        name: string;
+        isRequired: boolean;
+        optionValues: Array<{
+          id: number;
+          code: string;
+          name: string;
+          value: string;
+          isActive: boolean;
+        }>;
+      }>;
+      optionJson: {
+        level2_price: Record<number, number>;
+      };
+      additionalImages: string[];
+      
+      // 리뷰 관련
+      recentReviews?: Array<{
+        id: number;
+        userName: string;
+        rating: number;
+        content: string;
+        createdAt: string;
+      }>;
+      totalReviews?: number;
+      averageRating?: number;
+      
+      // 추가 정보
+      sku?: string;        // 상품 코드/SKU
+      features?: Array<{   // 상품 특징 목록
+        label: string;
+        value: string;
+      }>;
+      tags?: string;       // 상품 태그
+      weights?: string[];  // 무게 옵션
+      price?: number;      // 기본 가격
+      
+      // 배송 정보
+      shippingInfo?: {
+        method: string;    // 배송 방법
+        cost: number;      // 배송비
+        estimatedDays: number; // 예상 배송일
+      };
     };
-    actions: {
-        handleOptionChange: (groupId: number, valueId: number) => void;
-        handleQuantityChange: (quantity: number) => void;
-        handleAddToCart: () => Promise<void>;
-        handleBuyNow: () => Promise<void>;
-        handleTabChange: (tab: string) => void;
-        handleImageChange: (image: string) => void;
-        increaseQuantity: () => void;
-        decreaseQuantity: () => void;
-        setShowBottomSheet: (show: boolean) => void;
+    
+    // 상태 정보
+    selectedOptions: Record<number, number>;
+    quantity: number;
+    loading: boolean;
+    error: any;
+    activeTab: string;
+    mainImage: string;
+    allImages: string[];
+    relatedProducts: Array<{    // 관련 상품 목록
+      id: number;
+      title: string;
+      image: string;
+      price: number;
+      rating?: number;
+      newPrice?: number;
+      oldPrice?: number;
+    }>;
+    selectedVariant: any;
+    isMobile: boolean;
+    showBottomSheet: boolean;
+    isUserLoggedIn: boolean;
+    isAdminMode: boolean;
+    theme: object;
+    
+    // 가격 정보
+    basePrice: number;
+    priceInfo: {
+      originalPrice: number;
+      levelPrice: number;
+      discount: number;
+      discountRate: number;
+      levelName: string | null;
     };
-    utils: {
-        t: (key: string) => string;
-    };
-    mode: 'editor' | 'preview' | 'production';
-    editor?: {
-        isSelected: boolean;
-    };
+    finalPrice: number;
+    isOutOfStock: boolean;
+  };
+  actions: {
+    handleOptionChange: (groupId: number, valueId: number) => void;
+    handleQuantityChange: (quantity: number) => void;
+    handleAddToCart: () => Promise<void>;
+    handleBuyNow: () => Promise<void>;
+    handleTabChange: (tab: string) => void;
+    handleImageChange: (image: string) => void;
+    increaseQuantity: () => void;
+    decreaseQuantity: () => void;
+    setShowBottomSheet: (show: boolean) => void;
+  };
+  utils: {
+    t: (key: string) => string;
+  };
+  mode: 'editor' | 'preview' | 'production';
+  editor?: {
+    isSelected: boolean;
+  };
 }
 ```
 
@@ -187,7 +223,7 @@ interface ComponentSkinProps {
 product: {
   id: number;                    // 상품 ID
   title: string;                 // 상품명
-  description: string;           // 상품 설명
+  description: string;           // 상품 설명 (마크다운 형식, 상품 상세 이미지 포함)
   config: {
     img_url: string;            // 메인 이미지 URL
     main_image: string;         // 대체 메인 이미지 URL
@@ -198,6 +234,20 @@ product: {
   additionalImages: string[];   // 추가 이미지 배열
 }
 ```
+
+### 상품 상세 이미지 처리
+
+**중요**: ProductDetail 컴포넌트는 별도의 `detailImage` 필드를 사용하지 않습니다. 대신 `product.description` 필드에 HTML 또는 마크다운 형식으로 상품 상세 이미지가 포함되어 있습니다.
+
+```html
+<!-- HTML 형식 예시 (실제 API 응답) -->
+<p><img src="https://example.com/detail-image-1.jpg" alt="상품 이미지"></p>
+
+<!-- 마크다운 형식 예시 (하위 호환성) -->
+![상품 상세 이미지](https://example.com/detail-image.jpg)
+```
+
+이미지 추출 방법은 위의 "6.1 상품 상세 이미지 섹션"을 참조하세요.
 
 ### 옵션 및 변형 시스템
 
@@ -229,12 +279,14 @@ variants: Array<{
 }>;
 ```
 
-### 등급별 가격 시스템
+### 등급/직급별 가격 시스템
 
 ```typescript
-// 상품의 등급별 가격 설정
+// 상품의 등급/직급별 가격 설정
 optionJson: {
-  level2_price: Record<number, number>; // 등급ID: 가격
+  priority: "level1" | "level2"; // 사용할 가격 체계
+  level1_price?: Record<number, number>; // 등급ID: 가격
+  level2_price?: Record<number, number>; // 직급ID: 가격
 };
 
 // 계산된 가격 정보
@@ -398,25 +450,38 @@ const { priceInfo, finalPrice, componentProps } = data;
 상품 설명에서 이미지 URL을 추출하여 표시하는 방법:
 
 ```tsx
-// 마크다운에서 이미지 URL 추출 함수
-const extractImagesFromMarkdown = (markdown?: string): string[] => {
-  if (!markdown) return [];
-  const regex = /!\[.*?\]\((.*?)\)/g;
-  const matches: string[] = [];
+// 설명에서 이미지 URL 추출 함수 (HTML과 마크다운 모두 지원)
+const extractImagesFromDescription = (description?: string): string[] => {
+  if (!description) return [];
+  const images: string[] = [];
+  
+  // HTML img 태그에서 src 추출
+  const htmlRegex = /<img[^>]+src="([^">]+)"/g;
   let match;
-  while ((match = regex.exec(markdown)) !== null) {
-    matches.push(match[1]);
+  while ((match = htmlRegex.exec(description)) !== null) {
+    if (match[1] && !match[1].includes('ProseMirror-separator')) {
+      images.push(match[1]);
+    }
   }
-  return matches;
+  
+  // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
+  const markdownRegex = /!\[.*?\]\((.*?)\)/g;
+  while ((match = markdownRegex.exec(description)) !== null) {
+    if (match[1]) {
+      images.push(match[1]);
+    }
+  }
+  
+  return images;
 };
 
 // 상품 설명 탭 콘텐츠
 {activeTab === 'description' && (
   <div className="description-tab-content">
     {/* 이미지 형식의 설명인 경우 */}
-    {extractImagesFromMarkdown(product.description).length > 0 ? (
+    {extractImagesFromDescription(product.description).length > 0 ? (
       <div className="description-images">
-        {extractImagesFromMarkdown(product.description).map((imgUrl, index) => (
+        {extractImagesFromDescription(product.description).map((imgUrl, index) => (
           <div key={index} className="description-image-item">
             <img 
               src={imgUrl} 
@@ -594,16 +659,29 @@ const MyProductDetailSkin: React.FC<ComponentSkinProps> = ({
     return <span className="star-rating">{stars}</span>;
   };
 
-  // 마크다운에서 이미지 추출
-  const extractImagesFromMarkdown = (markdown?: string): string[] => {
-    if (!markdown) return [];
-    const regex = /!\[.*?\]\((.*?)\)/g;
-    const matches: string[] = [];
+  // 설명에서 이미지 추출 (HTML과 마크다운 모두 지원)
+  const extractImagesFromDescription = (description?: string): string[] => {
+    if (!description) return [];
+    const images: string[] = [];
+    
+    // HTML img 태그에서 src 추출
+    const htmlRegex = /<img[^>]+src="([^">]+)"/g;
     let match;
-    while ((match = regex.exec(markdown)) !== null) {
-      matches.push(match[1]);
+    while ((match = htmlRegex.exec(description)) !== null) {
+      if (match[1] && !match[1].includes('ProseMirror-separator')) {
+        images.push(match[1]);
+      }
     }
-    return matches;
+    
+    // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
+    const markdownRegex = /!\[.*?\]\((.*?)\)/g;
+    while ((match = markdownRegex.exec(description)) !== null) {
+      if (match[1]) {
+        images.push(match[1]);
+      }
+    }
+    
+    return images;
   };
 
   if (loading) {
@@ -614,7 +692,7 @@ const MyProductDetailSkin: React.FC<ComponentSkinProps> = ({
     return <div className="error">상품을 찾을 수 없습니다.</div>;
   }
 
-  const descriptionImages = extractImagesFromMarkdown(product.description);
+  const descriptionImages = extractImagesFromDescription(product.description);
 
   return (
     <div id={id} className="my-product-detail">
@@ -643,6 +721,16 @@ const MyProductDetailSkin: React.FC<ComponentSkinProps> = ({
           <div className="product-info">
             <h1>{product.title}</h1>
             
+            {/* 상품 평점 */}
+            {(product.averageRating || product.totalReviews > 0) && (
+              <div className="product-rating">
+                <StarRating rating={product.averageRating} />
+                {product.totalReviews > 0 && (
+                  <span className="review-count">({product.totalReviews})</span>
+                )}
+              </div>
+            )}
+            
             {/* 가격 표시 */}
             <div className="price-section">
               {priceInfo.discount > 0 ? (
@@ -664,6 +752,47 @@ const MyProductDetailSkin: React.FC<ComponentSkinProps> = ({
               )}
             </div>
 
+            {/* SKU 코드 */}
+            {product.sku && (
+              <div className="product-sku">
+                <span>상품코드: {product.sku}</span>
+              </div>
+            )}
+            
+            {/* 태그 정보 */}
+            {product.tags && product.tags.trim() !== "" && (
+              <div className="product-tags">
+                <strong>태그:</strong> {product.tags}
+              </div>
+            )}
+            
+            {/* 상품 특징 */}
+            {product.features && product.features.length > 0 && (
+              <div className="product-features">
+                <ul>
+                  {product.features.map((feature, index) => (
+                    <li key={index}>
+                      <strong>{feature.label}:</strong> {feature.value}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* 무게 옵션 */}
+            {product.weights && product.weights.length > 0 && (
+              <div className="product-weights">
+                <span>무게:</span>
+                <div className="weight-options">
+                  {product.weights.map((weight, index) => (
+                    <span key={index} className={`weight-option ${index === 0 ? 'active' : ''}`}>
+                      {weight}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             {/* 재고 정보 */}
             {componentProps.showStock && (
               <div className="stock-info" style={{color: componentProps.stockTextColor}}>
@@ -927,22 +1056,25 @@ export default MyProductDetailSkin;
 
 ## 고급 기능 처리
 
-### 1. 등급별 가격 계산 로직
+### 1. 등급/직급별 가격 계산 로직
 
-상품의 등급별 가격은 다음 우선순위로 계산됩니다:
+상품의 등급/직급별 가격은 다음 우선순위로 계산됩니다:
 
-1. **상품별 등급 가격**: `product.optionJson.level2_price[userLevel2Id]`
-2. **등급 정책의 공급가 비율**: `userLevel2Policy.settingJson.supply_price_ratio`
+1. **optionJson.priority 확인**: "level1" 또는 "level2" 사용 결정
+2. **상품별 등급/직급 가격**: 
+   - level1: `product.optionJson.level1_price[userLevel1Id]`
+   - level2: `product.optionJson.level2_price[userLevel2Id]`
+3. **등급/직급 정책의 공급가 비율**: `levelPolicy.settingJson.supply_price_ratio`
 3. **기본 가격**: 할인이 없는 경우
 
 ```typescript
-// 등급별 가격 정보 활용
+// 등급/직급별 가격 정보 활용
 const { priceInfo } = data;
 
 if (priceInfo.discount > 0) {
-    // 등급 할인이 적용된 경우
-    console.log(`${priceInfo.levelName}: ${priceInfo.discountRate}% 할인`);
-    console.log(`할인 금액: ${priceInfo.discount}원`);
+  // 등급 할인이 적용된 경우
+  console.log(`${priceInfo.levelName}: ${priceInfo.discountRate}% 할인`);
+  console.log(`할인 금액: ${priceInfo.discount}원`);
 }
 ```
 
@@ -955,9 +1087,9 @@ if (priceInfo.discount > 0) {
 const { selectedVariant, finalPrice } = data;
 
 if (selectedVariant) {
-    // 변형별 추가 가격이 최종 가격에 포함됨
-    console.log(`추가 가격: ${selectedVariant.additionalPrice}원`);
-    console.log(`변형 재고: ${selectedVariant.stock}개`);
+  // 변형별 추가 가격이 최종 가격에 포함됨
+  console.log(`추가 가격: ${selectedVariant.additionalPrice}원`);
+  console.log(`변형 재고: ${selectedVariant.stock}개`);
 }
 ```
 
@@ -976,7 +1108,7 @@ const { isOutOfStock, selectedVariant, product } = data;
 
 // 품절 상태 확인
 if (isOutOfStock) {
-    // 품절 상태 UI 표시
+  // 품절 상태 UI 표시
 }
 
 // 필수 옵션 선택 확인은 handleAddToCart에서 자동 처리됨
@@ -1017,13 +1149,13 @@ const { isMobile } = data;
 
 // 모바일에서 다른 레이아웃 적용
 {isMobile ? (
-    <div className="mobile-layout">
-        {/* 모바일용 UI */}
-    </div>
+  <div className="mobile-layout">
+    {/* 모바일용 UI */}
+  </div>
 ) : (
-    <div className="desktop-layout">
-        {/* 데스크톱용 UI */}
-    </div>
+  <div className="desktop-layout">
+    {/* 데스크톱용 UI */}
+  </div>
 )}
 ```
 
@@ -1034,7 +1166,7 @@ const { isMobile } = data;
 ```tsx
 // 모바일에서 옵션 선택 버튼 클릭 시
 <button onClick={() => actions.setShowBottomSheet(true)}>
-    옵션 선택
+  옵션 선택
 </button>
 ```
 
@@ -1045,7 +1177,7 @@ const { isMobile } = data;
 ```tsx
 // 탭 키로 접근 가능하도록 tabIndex 설정
 <button tabIndex={0} onKeyDown={handleKeyDown}>
-    장바구니
+  장바구니
 </button>
 ```
 
@@ -1054,12 +1186,12 @@ const { isMobile } = data;
 ```tsx
 // 가격 정보에 대한 설명 제공
 <div aria-label={`상품 가격 ${finalPrice.toLocaleString()}원`}>
-    {finalPrice.toLocaleString()}원
+  {finalPrice.toLocaleString()}원
 </div>
 
 // 재고 상태 안내
 <div aria-live="polite">
-    {isOutOfStock ? '품절된 상품입니다' : '구매 가능한 상품입니다'}
+  {isOutOfStock ? '품절된 상품입니다' : '구매 가능한 상품입니다'}
 </div>
 ```
 
@@ -1068,12 +1200,12 @@ const { isMobile } = data;
 ```css
 /* 충분한 색상 대비 확보 */
 .price {
-    color: #d73527; /* 4.5:1 이상의 대비율 */
+  color: #d73527; /* 4.5:1 이상의 대비율 */
 }
 
 .button {
-    background-color: #0056b3;
-    color: #ffffff; /* 7:1 이상의 대비율 */
+  background-color: #0056b3;
+  color: #ffffff; /* 7:1 이상의 대비율 */
 }
 ```
 
@@ -1083,17 +1215,17 @@ const { isMobile } = data;
 
 ```tsx
 // 이미지 지연 로딩
-<img
-    src={image}
-    loading="lazy"
-    alt={product.title}
+<img 
+  src={image} 
+  loading="lazy"
+  alt={product.title}
 />
 
 // 반응형 이미지
-<img
-    src={image}
-    sizes="(max-width: 768px) 100vw, 50vw"
-    alt={product.title}
+<img 
+  src={image}
+  sizes="(max-width: 768px) 100vw, 50vw"
+  alt={product.title}
 />
 ```
 
@@ -1109,15 +1241,15 @@ const { isMobile } = data;
 const { loading, error, product } = data;
 
 if (loading) {
-    return <div className="loading">로딩 중...</div>;
+  return <div className="loading">로딩 중...</div>;
 }
 
 if (error) {
-    return <div className="error">오류가 발생했습니다: {error.message}</div>;
+  return <div className="error">오류가 발생했습니다: {error.message}</div>;
 }
 
 if (!product) {
-    return <div className="not-found">상품을 찾을 수 없습니다.</div>;
+  return <div className="not-found">상품을 찾을 수 없습니다.</div>;
 }
 ```
 
@@ -1131,12 +1263,18 @@ if (!product) {
 - [ ] 탭 표시/숨김 설정이 올바르게 작동하는가?
 - [ ] 표시 옵션 설정이 올바르게 작동하는가?
 - [ ] 스타일 색상 설정이 올바르게 적용되는가?
+- [ ] 상품 이미지 갤러리가 올바르게 작동하는가?
+- [ ] 상품 상세 이미지(description 필드)가 올바르게 표시되는가?
+- [ ] 상품 평점과 리뷰 수가 올바르게 표시되는가?
+- [ ] SKU, 태그, 특징 정보가 올바르게 표시되는가?
+- [ ] 무게 옵션이 올바르게 표시되는가?
 - [ ] 상품 옵션 선택이 올바르게 작동하는가?
 - [ ] 수량 선택기가 올바르게 작동하는가?
 - [ ] 장바구니 추가가 올바르게 작동하는가?
 - [ ] 바로구매가 올바르게 작동하는가?
-- [ ] 등급별 할인 가격이 올바르게 표시되는가?
+- [ ] 등급/직급별 할인 가격이 올바르게 표시되는가?
 - [ ] 재고 관리가 올바르게 작동하는가?
+- [ ] 리뷰 목록과 별점이 올바르게 표시되는가?
 - [ ] 모바일 반응형이 올바르게 작동하는가?
 - [ ] 바텀시트가 올바르게 작동하는가?
 - [ ] 다국어가 올바르게 작동하는가?

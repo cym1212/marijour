@@ -8,7 +8,7 @@ Cart(장바구니) 컴포넌트는 전자상거래 사이트의 장바구니 기
 - 장바구니 상품 목록 표시
 - 수량 증가/감소 기능
 - 상품별 옵션 표시
-- 등급별 할인 가격 자동 계산
+- 등급/직급별 할인 가격 자동 계산 (회사 설정에 따라 level1 또는 level2 정책 기반)
 - 재고 수량 확인
 - 배송비 자동 계산 (무료배송 기준금액 적용)
 - 전체 금액 실시간 계산
@@ -103,11 +103,11 @@ interface ComponentSkinProps {
     handleCheckout: () => void;
     handleClearCart: () => Promise<void>;
     calculateLevelPrice: (basePrice: number, product: any) => {
-      originalPrice: number;
-      levelPrice: number;
-      discount: number;
-      discountRate: number;
-      levelName: string | null;
+      originalPrice: number;      // 원가
+      levelPrice: number;         // 등급/직급별 할인가
+      discount: number;           // 할인 금액
+      discountRate: number;       // 할인율(%)
+      levelName: string | null;   // 등급/직급명 (예: "VIP", "골드회원" 등)
     };
     calculateTotalPrice: () => number;
     calculateGrandTotal: () => number;
@@ -272,37 +272,52 @@ const { cartItems, showImage, showStock } = data;
 )}
 ```
 
-### 3. 가격 표시 (등급별 할인 적용)
+### 3. 가격 표시 (등급/직급별 할인 적용)
 
 ```tsx
+// 1. 기본 가격 결정: discounted_price가 있으면 사용, 없으면 default_price 사용
 const basePrice = item.product.config?.discounted_price || item.product.config?.default_price || 0;
+
+// 2. 등급/직급별 가격 계산 (로그인 & 등급/직급이 있는 경우만 할인 적용)
 const priceInfo = actions.calculateLevelPrice(basePrice, item.product);
+
+// 3. variant 추가 가격
 const additionalPrice = item.variant ? parseInt(item.variant.additionalPrice) : 0;
+
+// 4. 최종 가격 = 등급/직급 할인가 + variant 추가 가격
 const finalPrice = priceInfo.levelPrice + additionalPrice;
 
 <div className="price-info">
-  {priceInfo.discount > 0 ? (
-    <>
-      <span className="original-price" style={{ textDecoration: 'line-through' }}>
-        {(priceInfo.originalPrice + additionalPrice).toLocaleString()}원
+  {/* 등급/직급별 할인이 있는 경우 (discount > 0 && levelName이 있는 경우) */}
+  {priceInfo.discount > 0 && priceInfo.levelName ? (
+    <div className="level-price-info">
+      <span className="level-badge">{priceInfo.levelName}</span>
+      <span className="original-price">
+        {basePrice.toLocaleString()}원
       </span>
-      <span className="level-price" style={{ color: data.priceColor }}>
-        {finalPrice.toLocaleString()}원
+      <span className="arrow">→</span>
+      <span className="level-price">
+        {priceInfo.levelPrice.toLocaleString()}원
       </span>
-      <span className="discount-badge">
-        {priceInfo.levelName} {priceInfo.discountRate}% 할인
-      </span>
-    </>
+    </div>
   ) : (
-    <span style={{ color: data.priceColor }}>
-      {finalPrice.toLocaleString()}원
+    // 할인이 없는 경우 (일반 가격만 표시)
+    <span className="price">
+      {basePrice.toLocaleString()}원
     </span>
   )}
   
-  {/* 소계 */}
-  <div className="subtotal">
-    소계: {(finalPrice * item.count).toLocaleString()}원
-  </div>
+  {/* variant 추가 가격이 있는 경우 */}
+  {additionalPrice > 0 && (
+    <span className="variant-additional-price">
+      (+{additionalPrice.toLocaleString()}원)
+    </span>
+  )}
+</div>
+
+{/* 수량 x 가격 = 소계 */}
+<div className="item-total">
+  {(finalPrice * item.count).toLocaleString()}원
 </div>
 ```
 
@@ -462,7 +477,7 @@ const MyCartSkin: React.FC<ComponentSkinProps> = ({
                       </div>
                     )}
                     
-                    {/* 가격 표시 */}
+                    {/* 가격 표시 (등급/직급별 할인 포함) */}
                     <div className="price-info">
                       {priceInfo.discount > 0 ? (
                         <>
@@ -611,21 +626,46 @@ export default MyCartSkin;
 
 ## 고급 기능 처리
 
-### 1. 등급별 가격 계산
+### 1. 등급/직급별 가격 계산
 
-`calculateLevelPrice` 액션은 사용자의 등급에 따라 자동으로 할인 가격을 계산합니다:
+`calculateLevelPrice` 액션은 회사 설정에 따라 사용자의 등급(level1) 또는 직급(level2)에 따라 자동으로 할인 가격을 계산합니다:
 
 ```typescript
 const priceInfo = actions.calculateLevelPrice(basePrice, product);
 // 반환값:
 // {
-//   originalPrice: 10000,    // 원가
-//   levelPrice: 9000,        // 등급 할인가
+//   originalPrice: 10000,    // 원가 (discounted_price 또는 default_price)
+//   levelPrice: 9000,        // 등급/직급별 할인가
 //   discount: 1000,          // 할인 금액
 //   discountRate: 10,        // 할인율(%)
-//   levelName: "VIP"         // 등급명
+//   levelName: "VIP"         // 등급/직급명 (예: "VIP", "골드회원" 등)
 // }
 ```
+
+**가격 계산 순서:**
+
+1. **기본 가격 결정**:
+   - `product.config.discounted_price`가 있으면 사용 (이미 할인된 가격)
+   - 없으면 `product.config.default_price` 사용 (정가)
+
+2. **등급/직급별 할인 적용 조건**:
+   - 사용자가 로그인되어 있고
+   - 회사가 등급제를 사용하면 level1, 직급제를 사용하면 level2가 설정되어 있을 때 적용
+
+3. **등급/직급별 가격 결정 방식**:
+   - **직급제(level2) 사용 시**: `product.optionJson.level2_price[userLevel2Id]`가 있으면 → 해당 직급의 개별 가격 사용
+   - **등급제(level1) 사용 시**: `product.optionJson.level1_price[userLevel1Id]`가 있으면 → 해당 등급의 개별 가격 사용
+   - 없으면 → 등급/직급 정책의 `supply_price_ratio`로 계산 (basePrice × ratio)
+
+4. **할인이 적용되지 않는 경우**:
+   - 로그인하지 않은 사용자 → 기본 가격 그대로
+   - 등급/직급이 없는 사용자 → 기본 가격 그대로
+   - optionJson이 없거나 등급/직급별 가격이 설정되지 않은 상품 → supply_price_ratio로 계산 가능
+
+**참고:** 
+- 회사마다 등급제(level1) 또는 직급제(level2) 중 하나를 선택하여 사용합니다
+- 현재 기본 구현은 level2(직급)로 되어 있지만, level1(등급)도 동일한 방식으로 작동합니다
+- 기본 가격이 이미 할인된 가격(discounted_price)인 경우, 등급/직급별 할인은 추가로 적용됩니다
 
 ### 2. 실시간 수량 업데이트
 
@@ -717,7 +757,7 @@ if (!data.isUserLoggedIn) {
 - [ ] 옵션(variant) 정보가 올바르게 표시되는가?
 - [ ] 수량 증가/감소가 올바르게 작동하는가?
 - [ ] 재고 제한이 올바르게 작동하는가?
-- [ ] 등급별 할인 가격이 올바르게 계산되는가?
+- [ ] 등급/직급별 할인 가격이 올바르게 계산되는가?
 - [ ] 배송비가 올바르게 계산되는가?
 - [ ] 무료배송 기준이 올바르게 적용되는가?
 - [ ] 상품 삭제가 올바르게 작동하는가?

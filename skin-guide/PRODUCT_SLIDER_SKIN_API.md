@@ -39,30 +39,30 @@ ProductSlider는 상품 목록을 슬라이드 형태로 표시하는 컴포넌�
 
 ```typescript
 interface ComponentSkinProps {
-    data: ProductSliderData;      // 컴포넌트 상태 및 설정
-    actions: ProductSliderActions; // 이벤트 핸들러
-    options: Record<string, any>;  // 사용자 설정 옵션
-    mode: 'editor' | 'preview' | 'production';
-    utils: {
-        t: (key: string) => string;
-        navigate: (path: string) => void;
-        formatCurrency: (amount: number) => string;
-        formatDate: (date: Date) => string;
-        getAssetUrl: (path: string) => string;
-        cx: (...classes: string[]) => string;
-    };
-    app?: {
-        user?: any;
-        company?: any;
-        currentLanguage?: string;
-        theme?: any;
-    };
-    editor?: {
-        isSelected: boolean;
-        onSelect: () => void;
-        onEdit: () => void;
-        onDelete: () => void;
-    };
+  data: ProductSliderData;      // 컴포넌트 상태 및 설정
+  actions: ProductSliderActions; // 이벤트 핸들러
+  options: Record<string, any>;  // 사용자 설정 옵션
+  mode: 'editor' | 'preview' | 'production';
+  utils: {
+    t: (key: string) => string;
+    navigate: (path: string) => void;
+    formatCurrency: (amount: number) => string;
+    formatDate: (date: Date) => string;
+    getAssetUrl: (path: string) => string;
+    cx: (...classes: string[]) => string;
+  };
+  app?: {
+    user?: any;
+    company?: any;
+    currentLanguage?: string;
+    theme?: any;
+  };
+  editor?: {
+    isSelected: boolean;
+    onSelect: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
+  };
 }
 ```
 
@@ -790,16 +790,16 @@ const ProductCard = React.memo(({ product, onAddToCart }) => {
 ### 접근성 개선
 ```javascript
 <div
-    role="region"
-    aria-label="상품 슬라이더"
-    aria-roledescription="carousel"
+  role="region"
+  aria-label="상품 슬라이더"
+  aria-roledescription="carousel"
 >
-    <div
-        role="group"
-        aria-label={`${totalSlides}개 중 ${currentSlide + 1}번째 슬라이드`}
-    >
-        {/* 상품 목록 */}
-    </div>
+  <div
+    role="group"
+    aria-label={`${totalSlides}개 중 ${currentSlide + 1}번째 슬라이드`}
+  >
+    {/* 상품 목록 */}
+  </div>
 </div>
 ```
 

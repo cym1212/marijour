@@ -214,7 +214,7 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
       {!isMobile && totalPages > 1 && (
         <section className="globalWrapper w-full pb-10">
           <nav
-            className="flex items-center justify-center space-x-1"
+            className="flex items-center justify-center space-x-3"
             aria-label="페이지네이션"
           >
             {/* 첫 페이지로 이동 */}
@@ -244,21 +244,53 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
             </button>
 
             {/* 페이지 번호들 */}
-            <div className="flex items-center space-x-1 px-1">
-              {[...Array(totalPages)].map((_, index) => {
-                const pageNum = index + 1;
-                return (
+            <div className="flex items-center space-x-1">
+              {(() => {
+                const maxVisiblePages = 5;
+                const pages: number[] = [];
+                
+                if (totalPages <= maxVisiblePages) {
+                  // 전체 페이지가 5개 이하면 모든 페이지 표시
+                  for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                  }
+                } else {
+                  // 현재 페이지를 중심으로 페이지 범위 계산
+                  const halfVisible = Math.floor(maxVisiblePages / 2);
+                  let startPage = currentPage - halfVisible;
+                  let endPage = currentPage + halfVisible;
+                  
+                  // 시작 페이지가 1보다 작으면 조정
+                  if (startPage < 1) {
+                    startPage = 1;
+                    endPage = maxVisiblePages;
+                  }
+                  
+                  // 끝 페이지가 전체 페이지보다 크면 조정
+                  if (endPage > totalPages) {
+                    endPage = totalPages;
+                    startPage = totalPages - maxVisiblePages + 1;
+                    if (startPage < 1) startPage = 1;
+                  }
+                  
+                  for (let i = startPage; i <= endPage; i++) {
+                    pages.push(i);
+                  }
+                }
+                
+                return pages.map(pageNum => (
                   <button
                     key={pageNum}
-                    className={`px-2.5 text-sm ${pageNum === currentPage ? 'font-bold text-primary' : 'text-black/40 hover-primary'}`}
+                    className={`text-sm ${pageNum === currentPage ? 'font-bold text-primary' : 'text-black/40 hover-primary'}`}
+                    style={{ paddingLeft: '1rem', paddingRight: '1rem' }}
                     onClick={() => handlePageChange && handlePageChange(pageNum)}
                     aria-label={`${pageNum}페이지로 이동`}
                     aria-current={pageNum === currentPage ? 'page' : undefined}
                   >
                     {pageNum}
                   </button>
-                );
-              })}
+                ));
+              })()}
             </div>
 
             {/* 다음 페이지 */}

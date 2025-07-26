@@ -3,9 +3,6 @@ import React from 'react';
 // 스타일 import
 import './cart-skin-scoped.css';
 
-// Base64 이미지 import
-import { CART_PRODUCT_IMAGES } from './cart-images';
-
 // TypeScript 인터페이스 정의
 interface CartItem {
   id: number;
@@ -136,7 +133,7 @@ const DUMMY_CART_DATA: CartItem[] = [
       id: 1,
       title: '레고트 누프레임 커플잔 2P',
       config: {
-        img_url: CART_PRODUCT_IMAGES.product1,
+        img_url: 'https://via.placeholder.com/300x300/f0f0f0/666?text=Product+1',
         default_price: 40000,
         discounted_price: 32000,
         stock_count: 10
@@ -161,7 +158,7 @@ const DUMMY_CART_DATA: CartItem[] = [
       id: 2,
       title: '모던 스톤웨어 접시 세트',
       config: {
-        img_url: CART_PRODUCT_IMAGES.product2,
+        img_url: 'https://via.placeholder.com/300x300/f0f0f0/666?text=Product+2',
         default_price: 30000,
         discounted_price: 25500,
         stock_count: 5
@@ -186,7 +183,7 @@ const DUMMY_CART_DATA: CartItem[] = [
       id: 3,
       title: '에코 우드 컵 4P 세트',
       config: {
-        img_url: CART_PRODUCT_IMAGES.product3,
+        img_url: 'https://via.placeholder.com/300x300/f0f0f0/666?text=Product+3',
         default_price: 20000,
         discounted_price: 18000,
         stock_count: 8
@@ -215,19 +212,6 @@ export const Cart: React.FC<ComponentSkinProps> = ({
   editor 
 }) => {
   // 디버깅: 실제 전달되는 props 확인
-  console.log('🔍 Cart Debug Info:', {
-    dataKeys: Object.keys(data || {}),
-    cartItemsLength: data?.cartItems?.length,
-    cartItems: data?.cartItems,
-    localQuantities: data?.localQuantities,
-    actualLocalQuantities,
-    isAdminMode: data?.isAdminMode,
-    actionsKeys: Object.keys(actions || {}),
-    hasIncreaseAction: typeof actions?.handleIncreaseQuantity === 'function',
-    hasDecreaseAction: typeof actions?.handleDecreaseQuantity === 'function',
-    optionsKeys: Object.keys(options || {}),
-    mode: mode
-  });
 
   // ✅ 새로운 문서에 맞게 데이터 추출
   const {
@@ -302,7 +286,6 @@ export const Cart: React.FC<ComponentSkinProps> = ({
   // ✅ 기본 스킨과 동일한 방식으로 utils 추출
   const {
     t = (key: string) => key,
-    navigate = (path: string) => console.log(`Navigate to: ${path}`),
     formatCurrency = (amount: number) => `${amount.toLocaleString()}원`,
     cx = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ')
   } = utils || {};
@@ -351,7 +334,6 @@ export const Cart: React.FC<ComponentSkinProps> = ({
       }));
       
       // 서버에 업데이트 (액션이 있는 경우에만)
-      console.log('📍 Calling handleIncreaseQuantity with:', item);
       if (typeof handleIncreaseQuantity === 'function') {
         handleIncreaseQuantity(item);  // ⭐ item 객체 전체 전달
       } else {
@@ -378,7 +360,6 @@ export const Cart: React.FC<ComponentSkinProps> = ({
       }));
       
       // 서버에 업데이트 (액션이 있는 경우에만)
-      console.log('📍 Calling handleDecreaseQuantity with:', item);
       if (typeof handleDecreaseQuantity === 'function') {
         handleDecreaseQuantity(item);  // ⭐ item 객체 전체 전달
       } else {
@@ -444,14 +425,17 @@ export const Cart: React.FC<ComponentSkinProps> = ({
         </div>
       </section>
 
-      {/* 사용자 등급 정보 */}
-      {isUserLoggedIn && user?.levelName && (
+      {/* 사용자 등급/직급 정보 및 무료배송 안내 */}
+      {isUserLoggedIn && (
         <section className="cart-skin-globalWrapper cart-skin-mb-4">
-          <div className="cart-skin-flex cart-skin-items-center cart-skin-gap-2 cart-skin-text-sm cart-skin-text-primary">
-            <span>현재 등급: {user.levelName}</span>
+          <div className="cart-skin-flex cart-skin-items-center cart-skin-gap-2 cart-skin-text-sm">
+            {user?.levelName && (
+              <span className="cart-skin-text-primary">
+              </span>
+            )}
             {!isEligibleForFreeShipping && freeShippingRemaining > 0 && (
               <span className="cart-skin-text-black-60">
-                • {formatCurrency(freeShippingRemaining)} 더 구매시 무료배송
+                {user?.levelName && '•'} {formatCurrency(freeShippingRemaining)} 더 구매시 무료배송
               </span>
             )}
           </div>
@@ -517,10 +501,10 @@ export const Cart: React.FC<ComponentSkinProps> = ({
                         <div>
                           <h3 className="cart-skin-text-sm cart-skin-font-bold cart-skin-mb-2 cart-skin-line-clamp-1 cart-skin-md-line-clamp-2">{item.product.title}</h3>
                           
-                          {/* 직급별 가격 정보 */}
-                          {user?.levelName && (
+                          {/* 등급/직급별 가격 정보 */}
+                          {priceInfo.discount > 0 && priceInfo.levelName && (
                             <div className="cart-skin-text-xs cart-skin-text-primary cart-skin-mb-2">
-                              {user.levelName} 등급 가격
+                              {priceInfo.levelName} 할인 적용
                             </div>
                           )}
                           
@@ -536,12 +520,14 @@ export const Cart: React.FC<ComponentSkinProps> = ({
                           )}
                           
                           <div className="cart-skin-flex cart-skin-flex-wrap cart-skin-items-center cart-skin-gap-1-5">
-                            {priceInfo.discountRate > 0 && (
-                              <em className="cart-skin-text-xs cart-skin-text-primary cart-skin-font-bold cart-skin-bg-primary-10 cart-skin-px-1 cart-skin-py-0-5 cart-skin-rounded">{priceInfo.discountRate}%</em>
-                            )}
-                            <p className="cart-skin-font-bold">{formatCurrency(priceInfo.levelPrice)}</p>
-                            {priceInfo.originalPrice > priceInfo.levelPrice && (
-                              <del className="cart-skin-text-sm cart-skin-font-bold cart-skin-text-black-40 cart-skin-w-full cart-skin-md-w-auto cart-skin-mt-neg-0-5 cart-skin-md-mt-0">{formatCurrency(priceInfo.originalPrice)}</del>
+                            {priceInfo.discount > 0 && priceInfo.levelName ? (
+                              <>
+                                <em className="cart-skin-text-xs cart-skin-text-primary cart-skin-font-bold cart-skin-bg-primary-10 cart-skin-px-1 cart-skin-py-0-5 cart-skin-rounded">{priceInfo.discountRate}%</em>
+                                <p className="cart-skin-font-bold">{formatCurrency(priceInfo.levelPrice)}</p>
+                                <del className="cart-skin-text-sm cart-skin-font-bold cart-skin-text-black-40 cart-skin-w-full cart-skin-md-w-auto cart-skin-mt-neg-0-5 cart-skin-md-mt-0">{formatCurrency(priceInfo.originalPrice)}</del>
+                              </>
+                            ) : (
+                              <p className="cart-skin-font-bold">{formatCurrency(priceInfo.levelPrice)}</p>
                             )}
                           </div>
                         </div>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrderHistory Skin Test</title>
+    <link rel="stylesheet" href="./dist/order-history/order-history-skin.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+        }
+        #skin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="skin-container"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="./dist/order-history/order-history-skin.umd.js"></script>
+    <script>
+        // 더미 데이터
+        const mockOrders = [
+            {
+                id: 1,
+                orderNumber: 'ORD-2024-0001',
+                status: 'DELIVERED',
+                createdAt: '2024-01-15T10:30:00Z',
+                updatedAt: '2024-01-18T14:20:00Z',
+                totalAmount: 157000,
+                shippingFee: 3000,
+                paymentMethod: '신용카드',
+                deliveryInfo: {
+                    recipientName: '홍길동',
+                    recipientPhone: '010-1234-5678',
+                    zipCode: '06234',
+                    address: '서울특별시 강남구 테헤란로 123',
+                    addressDetail: '위워크빌딩 12층',
+                    deliveryMessage: '부재시 경비실에 맡겨주세요',
+                    trackingNumber: '1234567890',
+                    carrierName: 'CJ대한통운'
+                },
+                carts: [
+                    {
+                        id: 1,
+                        count: 2,
+                        unitPrice: '32000',
+                        product: {
+                            id: 1,
+                            title: '레고트 누프레임 커플잔 2P',
+                            config: {
+                                img_url: 'https://via.placeholder.com/100x100/f0f0f0/666?text=Product+1',
+                                default_price: 40000,
+                                discounted_price: 32000
+                            }
+                        }
+                    }
+                ]
+            }
+        ];
+
+        // 더 많은 페이지를 위한 더미 주문 생성
+        for (let i = 2; i <= 30; i++) {
+            mockOrders.push({
+                ...mockOrders[0],
+                id: i,
+                orderNumber: `ORD-2024-${String(i).padStart(4, '0')}`,
+                status: ['PENDING', 'SHIPPING', 'DELIVERED', 'CANCELLED'][i % 4]
+            });
+        }
+
+        const props = {
+            data: {
+                orders: mockOrders.slice(0, 10), // 첫 페이지 10개
+                loading: false,
+                error: null,
+                currentPage: 1,
+                totalPages: 10,
+                totalOrders: 100,
+                isUserLoggedIn: true,
+                isAdminMode: false,
+                title: '주문 내역',
+                emptyText: '주문 내역이 없습니다.'
+            },
+            actions: {
+                handlePageChange: (page) => {
+                    console.log('페이지 변경:', page);
+                    alert(`${page} 페이지로 이동`);
+                },
+                handleViewDetail: (order) => {
+                    console.log('주문 상세 보기:', order);
+                },
+                getStatusInfo: (status) => {
+                    const statusMap = {
+                        'DELIVERED': { text: '배송 완료', class: 'delivered', icon: '✅' },
+                        'SHIPPING': { text: '배송 중', class: 'shipping', icon: '🚚' },
+                        'PENDING': { text: '결제 대기 중', class: 'pending', icon: '⏳' },
+                        'CANCELLED': { text: '주문 취소됨', class: 'cancelled', icon: '❌' }
+                    };
+                    return statusMap[status] || { text: status, class: '', icon: '❓' };
+                }
+            },
+            utils: {
+                t: (key) => key,
+                navigate: (path) => console.log('Navigate to:', path),
+                formatCurrency: (amount) => `${amount.toLocaleString()}원`,
+                formatDate: (date) => {
+                    const d = new Date(date);
+                    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+                }
+            }
+        };
+
+        const container = document.getElementById('skin-container');
+        const root = ReactDOM.createRoot(container);
+        root.render(React.createElement(OrderHistorySkin, props));
+    </script>
+</body>
+</html>

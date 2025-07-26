@@ -356,7 +356,7 @@ const CustomSliderSkin = ({ data, actions, utils, mode }) => {
             <p>{currentBanner.description}</p>
           )}
           
-          {currentBanner.showButton && (
+          {currentBanner.showButton && currentBanner.url && currentBanner.url !== '#' && (
             <button
               className="banner-button"
               style={{
@@ -520,7 +520,161 @@ const position = banner.position ||
   getPositionFromLegacy(banner.horizontalPosition, banner.verticalPosition);
 ```
 
+### 7. ⚠️ 버튼 표시 조건 (중요!)
+```javascript
+// 버튼이 표시되려면 3가지 조건이 모두 충족되어야 합니다:
+// 1. showButton이 true
+// 2. url이 존재
+// 3. url이 '#'이 아님
+{banner.showButton && banner.url && banner.url !== '#' && (
+  <button>버튼</button>
+)}
+
+// 잘못된 예 (동작하지 않음):
+{banner.showButton && <button>버튼</button>}  // ❌ URL 체크 누락
+```
+
+### 8. 텍스트 위치 클래스 적용
+```javascript
+// position 값(1-9)을 CSS 클래스로 적용
+<div className={`text-overlay position-${banner.position || '5'}`}>
+  {/* 텍스트 콘텐츠 */}
+</div>
+
+// CSS에서 위치 스타일 정의 예시:
+.position-1 { top: 10%; left: 10%; }      // 상단 왼쪽
+.position-2 { top: 10%; left: 50%; transform: translateX(-50%); }  // 상단 중앙
+.position-3 { top: 10%; right: 10%; }     // 상단 오른쪽
+.position-4 { top: 50%; left: 10%; transform: translateY(-50%); }  // 중앙 왼쪽
+.position-5 { top: 50%; left: 50%; transform: translate(-50%, -50%); } // 중앙
+.position-6 { top: 50%; right: 10%; transform: translateY(-50%); } // 중앙 오른쪽
+.position-7 { bottom: 10%; left: 10%; }   // 하단 왼쪽
+.position-8 { bottom: 10%; left: 50%; transform: translateX(-50%); } // 하단 중앙
+.position-9 { bottom: 10%; right: 10%; }  // 하단 오른쪽
+```
+
+### 9. 🎨 CSS 스타일링 가이드 (중요!)
+
+외부 스킨은 **독립적인 디자인**을 가져야 합니다. 기본 스킨의 CSS가 영향을 주지 않도록 다음을 준수하세요:
+
+#### CSS 클래스명 충돌 방지:
+```javascript
+// ❌ 피해야 할 방법 (기본 스킨과 동일한 클래스명)
+<div className="mainbanner-container">
+  <h2 className="mainbanner-title">제목</h2>
+</div>
+
+// ✅ 권장 방법 (고유한 prefix 사용)
+<div className="my-custom-banner-container">
+  <h2 className="my-custom-banner-title">제목</h2>
+</div>
+```
+
+#### CSS Module 또는 CSS-in-JS 사용:
+```javascript
+// CSS Module 예시
+import styles from './MyCustomBannerSkin.module.css';
+
+<div className={styles.container}>
+  <h2 className={styles.title}>제목</h2>
+</div>
+
+// Styled Components 예시
+import styled from 'styled-components';
+
+const BannerContainer = styled.div`
+  position: relative;
+  height: ${props => props.height};
+`;
+```
+
+#### 필수 스타일 직접 구현:
+```css
+/* 외부 스킨은 position 클래스도 직접 정의해야 함 */
+.my-custom-position-1 { position: absolute; top: 10%; left: 10%; }
+.my-custom-position-2 { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); }
+/* ... position-9까지 */
+
+/* 기본 레이아웃 스타일도 필요 */
+.my-custom-banner-container {
+  position: relative;
+  overflow: hidden;
+}
+```
+
+#### 기본 스킨 CSS 참고하지 않기:
+- BasicMainBannerSkin.css의 스타일이 자동으로 적용되지 않습니다
+- 모든 스타일을 처음부터 구현해야 합니다
+- 기본 스킨과 다른 디자인을 원한다면 완전히 다른 구조로 만드세요
+
 ---
+
+## ⚠️ 속성 패널 매핑 가이드 (중요!)
+
+현재 MainBanner 속성 패널에서 설정 가능한 항목들과 실제 컴포넌트 속성 매핑:
+
+### 속성 패널에서 직접 설정 가능한 항목:
+| 속성 패널 항목 | 저장되는 속성 | 설명 |
+|---------------|--------------|------|
+| 배너 제목 | `banner.text` | 배너에 표시되는 메인 텍스트 |
+| 배너 설명 | `banner.description` | 배너 서브 텍스트 |
+| 링크 URL | `banner.url` | 클릭 시 이동할 URL |
+| 텍스트 위치 | `banner.position` | 1-9 그리드 위치 |
+| 텍스트 색상 | `banner.textColor` | 텍스트 색상 |
+| 텍스트 그림자 | `banner.textShadow` | 텍스트 그림자 효과 |
+| 버튼 배경색 | `banner.buttonBgColor` | 버튼 배경 색상 |
+| 버튼 텍스트 색상 | `banner.buttonTextColor` | 버튼 글자 색상 |
+| 버튼 호버 색상 | `banner.buttonHoverColor` | 버튼 호버 시 색상 |
+| 버튼 텍스트 | `banner.buttonText` | 버튼에 표시할 텍스트 |
+| 투명 버튼 | `banner.transparentButton` | 투명 버튼 스타일 |
+| 버튼 너비 | `banner.buttonWidth` | 버튼 너비 (PC) |
+| 버튼 높이 | `banner.buttonHeight` | 버튼 높이 (PC) |
+| 배경 사용 | `banner.hasBackground` | 텍스트 배경 표시 |
+
+### ⚠️ 속성 패널에 없지만 로직에서 처리되는 속성:
+| 속성명 | 기본값 | 설명 | 중요도 |
+|--------|--------|------|--------|
+| `showTitle` | `true` | 제목/설명 표시 여부 | **높음** |
+| `showButton` | `true` | 버튼 표시 여부 | **높음** |
+| `mobileButtonWidth` | `'auto'` | 모바일 버튼 너비 | 중간 |
+| `mobileButtonHeight` | `'auto'` | 모바일 버튼 높이 | 중간 |
+| `mobileFullWidth` | `false` | 모바일 전체 너비 사용 | 중간 |
+
+### 🔴 외부 스킨 개발 시 주의사항:
+
+1. **버튼 표시 로직**:
+   ```javascript
+   // 속성 패널은 URL만 체크하지만, 실제 로직은 3가지 조건 모두 확인
+   {banner.showButton && banner.url && banner.url !== '#' && (
+     <button>...</button>
+   )}
+   ```
+
+2. **제목/설명 표시 로직**:
+   ```javascript
+   // showTitle이 true일 때만 텍스트 표시
+   {banner.showTitle && (
+     <>
+       {banner.description && <p>{banner.description}</p>}
+       {banner.text && <h2>{banner.text}</h2>}
+     </>
+   )}
+   ```
+
+3. **기본값 처리**:
+   ```javascript
+   // MainBannerLogic.ts의 processInitialBanner 함수 참고
+   showTitle: banner.showTitle !== undefined ? banner.showTitle : true,
+   showButton: banner.showButton !== undefined ? banner.showButton : true,
+   ```
+
+4. **모바일 반응형 처리**:
+   ```javascript
+   // 모바일에서는 별도 크기 속성 사용
+   width: isMobile 
+     ? (banner.mobileButtonWidth || banner.buttonWidth || 'auto') 
+     : (banner.buttonWidth || 'auto')
+   ```
 
 ## 🔄 마이그레이션 가이드
 

@@ -65,6 +65,11 @@ const components = {
     name: 'cart-skin',
     filename: 'cart-skin'
   },
+  'order-history': {
+    entry: './app/components/ui/order/OrderHistorySkin.tsx',
+    name: 'order-history-skin',
+    filename: 'order-history-skin'
+  },
   'my-order-list': {
     entry: './app/components/ui/mypage/MyOrderListSkin.tsx',
     name: 'my-order-list-skin',
