@@ -126,7 +126,7 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
                   starRating: product.rating || 0,
                   reviewCount: product.reviewCount || 0,
                   thumbnailUrl: product.image || product.thumbnail || '',
-                  badges: product.badges || (product.sale ? [product.sale] : [])
+                  badges: product.badges || (product.sale ? [product.sale] : []),
                 };
 
                 return (

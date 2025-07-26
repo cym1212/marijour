@@ -17,7 +17,7 @@ const components = {
   },
   'login': {
     entry: './app/components/ui/auth/LoginSkin.tsx',
-    name: 'login-skin',
+    name: 'LoginSkin',
     filename: 'login-skin'
   },
   'signup': {

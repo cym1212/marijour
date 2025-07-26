@@ -281,6 +281,8 @@ variants: Array<{
 
 ### 등급/직급별 가격 시스템
 
+로그인된 사용자이고 optionJson이 있는 상품의 경우 등급/직급별 할인 가격이 자동으로 계산됩니다.
+
 ```typescript
 // 상품의 등급/직급별 가격 설정
 optionJson: {
@@ -356,7 +358,7 @@ const { priceInfo, finalPrice, componentProps } = data;
       {finalPrice.toLocaleString()}원
     </span>
     <span className="discount-badge">
-      {priceInfo.levelName} {priceInfo.discountRate}% 할인
+      할인 적용됨
     </span>
   </div>
 ) : (
@@ -742,7 +744,7 @@ const MyProductDetailSkin: React.FC<ComponentSkinProps> = ({
                     {finalPrice.toLocaleString()}원
                   </span>
                   <span className="discount-info">
-                    {priceInfo.levelName} {priceInfo.discountRate}% 할인
+                    할인 적용됨
                   </span>
                 </>
               ) : (
@@ -1071,11 +1073,8 @@ export default MyProductDetailSkin;
 // 등급/직급별 가격 정보 활용
 const { priceInfo } = data;
 
-if (priceInfo.discount > 0) {
-  // 등급 할인이 적용된 경우
-  console.log(`${priceInfo.levelName}: ${priceInfo.discountRate}% 할인`);
-  console.log(`할인 금액: ${priceInfo.discount}원`);
-}
+// 로그인된 사용자 + optionJson 있으면 자동으로 할인가 계산됨
+console.log(`최종 가격: ${priceInfo.levelPrice}원`);
 ```
 
 ### 2. 옵션 변형(Variant) 처리

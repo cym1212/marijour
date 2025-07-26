@@ -4,83 +4,246 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Skin Test</title>
-    
-    <!-- CSS 로드 -->
     <link rel="stylesheet" href="./dist/login/login-skin.css">
-    
-    <!-- 기본 스타일 리셋 -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            font-family: 'Noto Sans KR', sans-serif;
         }
         
-        /* 루트 컨테이너 스타일 */
-        #login-root {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* 테스트 케이스 구분 */
+        .test-section {
+            margin-bottom: 100px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 50px;
         }
         
-        .test-info {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+        .test-title {
+            text-align: center;
             padding: 20px;
-            background: white;
-            max-width: 600px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-        
-        .test-info h2 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .test-info p {
-            color: #666;
-            line-height: 1.5;
+            background-color: #f5f5f5;
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="test-info">
-        <h2>로그인 페이지 테스트</h2>
-        <p>이메일과 비밀번호를 입력하는 로그인 폼입니다.</p>
-        <p>폼 제출 시 콘솔에 입력값이 출력됩니다.</p>
+    <!-- 테스트 1: 기본 로그인 폼 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 1: 기본 로그인 폼</h2>
+        <div id="test1"></div>
     </div>
     
-    <!-- 컴포넌트 렌더링 -->
-    <div id="login-root"></div>
+    <!-- 테스트 2: 로딩 상태 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 2: 로딩 상태</h2>
+        <div id="test2"></div>
+    </div>
     
-    <!-- React 및 ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- 테스트 3: 에러 상태 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 3: 유효성 검사 에러</h2>
+        <div id="test3"></div>
+    </div>
     
-    <!-- UMD 번들 로드 -->
+    <!-- 테스트 4: 로그인 실패 에러 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 4: 로그인 실패</h2>
+        <div id="test4"></div>
+    </div>
+    
+    <!-- 테스트 5: 성공 상태 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 5: 로그인 성공</h2>
+        <div id="test5"></div>
+    </div>
+    
+    <!-- 테스트 6: 배경 이미지 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 6: 배경 이미지</h2>
+        <div id="test6"></div>
+    </div>
+    
+    <!-- 테스트 7: 커스텀 색상 -->
+    <div class="test-section">
+        <h2 class="test-title">테스트 7: 커스텀 색상</h2>
+        <div id="test7"></div>
+    </div>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="./dist/login/login-skin.umd.js"></script>
     
-    <!-- 컴포넌트 렌더링 -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const Login = window['login-skin'].Login;
-            
-            // 컴포넌트 렌더링
-            const root = ReactDOM.createRoot(document.getElementById('login-root'));
-            root.render(React.createElement(Login));
-        });
+        const Login = window.LoginSkin.default || window.LoginSkin;
+        
+        // 테스트 1: 기본 로그인 폼
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    formData: { user_id: '', password: '' },
+                    title: '로그인'
+                },
+                actions: {
+                    handleChange: (e) => console.log('Changed:', e.target.name, e.target.value),
+                    handleSubmit: (e) => {
+                        e.preventDefault();
+                        console.log('Login submitted');
+                        alert('로그인 시도');
+                    },
+                    handleSignupClick: () => {
+                        console.log('Signup clicked');
+                        alert('회원가입 페이지로 이동');
+                    }
+                },
+                utils: {
+                    t: (key) => {
+                        const translations = {
+                            '이메일': '이메일',
+                            '비밀번호': '비밀번호',
+                            '이메일을 입력하세요': '이메일을 입력하세요',
+                            '비밀번호를 입력하세요': '비밀번호를 입력하세요',
+                            '로그인': '로그인',
+                            '로그인 중...': '로그인 중...',
+                            '회원가입': '회원가입',
+                            '비밀번호 찾기': '비밀번호 찾기',
+                            '비회원 주문 조회': '비회원 주문 조회'
+                        };
+                        return translations[key] || key;
+                    },
+                    navigate: (path) => console.log('Navigate to:', path)
+                }
+            }),
+            document.getElementById('test1')
+        );
+        
+        // 테스트 2: 로딩 상태
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    formData: { user_id: 'testuser', password: '123456' },
+                    loading: true,
+                    title: '로그인'
+                },
+                utils: {
+                    t: (key) => {
+                        const translations = {
+                            '이메일': '이메일',
+                            '비밀번호': '비밀번호',
+                            '로그인 중...': '로그인 중...',
+                            '회원가입': '회원가입',
+                            '비밀번호 찾기': '비밀번호 찾기',
+                            '비회원 주문 조회': '비회원 주문 조회'
+                        };
+                        return translations[key] || key;
+                    }
+                }
+            }),
+            document.getElementById('test2')
+        );
+        
+        // 테스트 3: 유효성 검사 에러
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    formData: { user_id: 'a', password: '123' },
+                    validationErrors: {
+                        user_id: '아이디는 2~20자로 입력해주세요',
+                        password: '비밀번호는 6자 이상이어야 합니다.'
+                    },
+                    title: '로그인'
+                },
+                utils: {
+                    t: (key) => {
+                        const translations = {
+                            '이메일': '이메일',
+                            '비밀번호': '비밀번호',
+                            '로그인': '로그인',
+                            '회원가입': '회원가입',
+                            '비밀번호 찾기': '비밀번호 찾기',
+                            '비회원 주문 조회': '비회원 주문 조회'
+                        };
+                        return translations[key] || key;
+                    }
+                }
+            }),
+            document.getElementById('test3')
+        );
+        
+        // 테스트 4: 로그인 실패
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    formData: { user_id: 'testuser', password: 'wrongpassword' },
+                    loginError: '아이디 또는 비밀번호가 올바르지 않습니다.',
+                    title: '로그인'
+                },
+                utils: {
+                    t: (key) => key
+                }
+            }),
+            document.getElementById('test4')
+        );
+        
+        // 테스트 5: 로그인 성공
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    loginSuccess: true
+                },
+                utils: {
+                    t: (key) => {
+                        if (key === '로그인되었습니다. 잠시 후 이동합니다...') {
+                            return '로그인되었습니다. 잠시 후 이동합니다...';
+                        }
+                        return key;
+                    }
+                }
+            }),
+            document.getElementById('test5')
+        );
+        
+        // 테스트 6: 배경 이미지
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    formData: { user_id: '', password: '' },
+                    title: '로그인',
+                    backgroundType: 'image',
+                    backgroundUrl: 'https://via.placeholder.com/1920x1080/4A5578/ffffff?text=Background+Image',
+                    style: {
+                        minHeight: '600px'
+                    }
+                },
+                utils: {
+                    t: (key) => key
+                }
+            }),
+            document.getElementById('test6')
+        );
+        
+        // 테스트 7: 커스텀 색상
+        ReactDOM.render(
+            React.createElement(Login, {
+                data: {
+                    formData: { user_id: '', password: '' },
+                    title: 'CUSTOM LOGIN',
+                    titleColor: '#e74c3c',
+                    labelColor: '#2c3e50',
+                    inputTextColor: '#34495e',
+                    buttonColor: '#27ae60',
+                    theme: {
+                        primary: '#9b59b6'
+                    }
+                },
+                utils: {
+                    t: (key) => key
+                }
+            }),
+            document.getElementById('test7')
+        );
     </script>
 </body>
 </html>

@@ -278,7 +278,7 @@ const { cartItems, showImage, showStock } = data;
 // 1. 기본 가격 결정: discounted_price가 있으면 사용, 없으면 default_price 사용
 const basePrice = item.product.config?.discounted_price || item.product.config?.default_price || 0;
 
-// 2. 등급/직급별 가격 계산 (로그인 & 등급/직급이 있는 경우만 할인 적용)
+// 2. 등급/직급별 가격 계산 (로그인된 사용자 + optionJson이 있는 경우 자동 할인 적용)
 const priceInfo = actions.calculateLevelPrice(basePrice, item.product);
 
 // 3. variant 추가 가격
@@ -288,24 +288,10 @@ const additionalPrice = item.variant ? parseInt(item.variant.additionalPrice) : 
 const finalPrice = priceInfo.levelPrice + additionalPrice;
 
 <div className="price-info">
-  {/* 등급/직급별 할인이 있는 경우 (discount > 0 && levelName이 있는 경우) */}
-  {priceInfo.discount > 0 && priceInfo.levelName ? (
-    <div className="level-price-info">
-      <span className="level-badge">{priceInfo.levelName}</span>
-      <span className="original-price">
-        {basePrice.toLocaleString()}원
-      </span>
-      <span className="arrow">→</span>
-      <span className="level-price">
-        {priceInfo.levelPrice.toLocaleString()}원
-      </span>
-    </div>
-  ) : (
-    // 할인이 없는 경우 (일반 가격만 표시)
-    <span className="price">
-      {basePrice.toLocaleString()}원
-    </span>
-  )}
+  {/* 로그인된 사용자 + optionJson 있으면 자동으로 할인가 계산됨 */}
+  <span className="price">
+    {priceInfo.levelPrice.toLocaleString()}원
+  </span>
   
   {/* variant 추가 가격이 있는 경우 */}
   {additionalPrice > 0 && (
@@ -633,13 +619,7 @@ export default MyCartSkin;
 ```typescript
 const priceInfo = actions.calculateLevelPrice(basePrice, product);
 // 반환값:
-// {
-//   originalPrice: 10000,    // 원가 (discounted_price 또는 default_price)
-//   levelPrice: 9000,        // 등급/직급별 할인가
-//   discount: 1000,          // 할인 금액
-//   discountRate: 10,        // 할인율(%)
-//   levelName: "VIP"         // 등급/직급명 (예: "VIP", "골드회원" 등)
-// }
+
 ```
 
 **가격 계산 순서:**

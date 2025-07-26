@@ -19,9 +19,6 @@ ProductList 컴포넌트는 상품 목록을 그리드 형태로 표시하는 �
     stock?: number; // 재고 수량
     hasOptions?: boolean; // 옵션 상품 여부
     // 등급/직급별 가격 정보
-    levelPrice?: number; // 등급/직급별 가격
-    levelName?: string; // 등급/직급 이름 (예: "골드 등급", "과장 직급")
-    hasLevelPrice?: boolean; // 등급/직급 가격 적용 여부
   }>;
   loading: boolean; // 로딩 상태
   currentPage: number; // 현재 페이지
@@ -97,9 +94,9 @@ ProductList 컴포넌트는 상품 목록을 그리드 형태로 표시하는 �
 
 ### 2. 등급/직급별 가격
 
-optionJson의 priority 필드에 따라 자동으로 등급 또는 직급별 가격을 계산하고 표시합니다.
+로그인된 사용자이고 optionJson이 있는 상품의 경우 등급/직급별 할인 가격이 자동으로 계산되어 표시됩니다.
 
-```typescript
+```javascript
 // API 응답 예시
 {
   id: 1,
@@ -107,37 +104,18 @@ optionJson의 priority 필드에 따라 자동으로 등급 또는 직급별 가
   newPrice: 50000,
   optionJson: {
     priority: "level1", // 또는 "level2"
-    level1_price: {
-      "1": 45000,  // 등급 ID별 가격
-      "2": 47000
-    },
-    level2_price: {
-      "1": 46000,  // 직급 ID별 가격
-      "2": 48000
-    }
+    level1_price: { "1": 45000, "2": 47000 },
+    level2_price: { "1": 46000, "2": 48000 }
   }
 }
 ```
 
 스킨에서 표시 예시:
 ```jsx
-{product.hasLevelPrice && product.levelName ? (
-  <>
-    <div style={{ textDecoration: 'line-through', color: '#999' }}>
-      {formatPrice(product.originalPrice)}
-    </div>
-    <div style={priceStyle}>
-      {formatPrice(product.price)}
-    </div>
-    <div style={{ fontSize: '11px', color: '#28a745' }}>
-      {product.levelName}
-    </div>
-  </>
-) : (
-  <div style={priceStyle}>
-    {formatPrice(product.price)}
-  </div>
-)}
+{/* 로그인된 사용자 + optionJson 있으면 자동으로 할인가 계산됨 */}
+<div style={priceStyle}>
+  {formatPrice(product.price)}
+</div>
 ```
 
 ### 3. 검색 및 필터링

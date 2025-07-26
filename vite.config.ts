@@ -19,4 +19,9 @@ export default defineConfig({
     ssr: {
         noExternal: ['gsap'],
     },
+    build: {
+        rollupOptions: {
+            external: ['@withcookie/webbuilder-sdk']
+        }
+    }
 });
