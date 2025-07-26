@@ -141,7 +141,7 @@
 .notice-skin-item-meta {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     font-size: 0.75rem;
     line-height: 1rem;
     color: rgba(0, 0, 0, 0.6);
@@ -149,15 +149,42 @@
 
 @media (min-width: 768px) {
     .notice-skin-item-meta {
-        gap: 5rem;
+        gap: 2rem;
         font-size: 0.875rem;
         line-height: 1.25rem;
     }
 }
 
-.notice-skin-item-writer,
+.notice-skin-item-writer {
+    color: rgba(0, 0, 0, 0.6);
+    min-width: 60px;
+    text-align: left;
+}
+
 .notice-skin-item-date {
     color: rgba(0, 0, 0, 0.6);
+    min-width: 100px;
+    text-align: center;
+}
+
+.notice-skin-item-views {
+    color: rgba(0, 0, 0, 0.6);
+    min-width: 80px;
+    text-align: right;
+}
+
+@media (min-width: 768px) {
+    .notice-skin-item-writer {
+        min-width: 80px;
+    }
+    
+    .notice-skin-item-date {
+        min-width: 120px;
+    }
+    
+    .notice-skin-item-views {
+        min-width: 100px;
+    }
 }
 
 /* 페이지네이션 */
