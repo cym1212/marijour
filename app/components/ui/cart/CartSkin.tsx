@@ -425,22 +425,7 @@ export const Cart: React.FC<ComponentSkinProps> = ({
         </div>
       </section>
 
-      {/* 사용자 등급/직급 정보 및 무료배송 안내 */}
-      {isUserLoggedIn && (
-        <section className="cart-skin-globalWrapper cart-skin-mb-4">
-          <div className="cart-skin-flex cart-skin-items-center cart-skin-gap-2 cart-skin-text-sm">
-            {user?.levelName && (
-              <span className="cart-skin-text-primary">
-              </span>
-            )}
-            {!isEligibleForFreeShipping && freeShippingRemaining > 0 && (
-              <span className="cart-skin-text-black-60">
-                {user?.levelName && '•'} {formatCurrency(freeShippingRemaining)} 더 구매시 무료배송
-              </span>
-            )}
-          </div>
-        </section>
-      )}
+
 
       {/* 메인 섹션 */}
       <section className="cart-skin-globalWrapper cart-skin-mb-20 cart-skin-relative cart-skin-flex cart-skin-flex-col cart-skin-md-flex-row cart-skin-items-start cart-skin-justify-between cart-skin-gap-5">

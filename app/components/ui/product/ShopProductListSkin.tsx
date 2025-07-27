@@ -45,6 +45,14 @@ interface Product {
   category_id?: string | number;
   variant_id?: string | number;
   stock?: number;
+  // 직급별/등급별 가격 관련 필드
+  hasLevelPrice?: boolean;
+  levelName?: string;
+  optionJson?: {
+    priority?: 'level1' | 'level2';
+    level1_price?: Record<string, number>;
+    level2_price?: Record<string, number>;
+  };
   [key: string]: any;
 }
 
@@ -68,9 +76,54 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
   const isLoadingMore = data.isLoadingMore || false;
   const mobilePage = data.mobilePage || 1;
   const mobileProducts = data.mobileProducts || products;
+  const isUserLoggedIn = data.isUserLoggedIn || false;
+  const currentUser = data.currentUser || null;
   
   // 액션 사용
   const { handleAddToCart, handleProductClick, handlePageChange, handleLoadMore } = actions;
+
+  // 직급별/등급별 가격 정보 가져오기
+  const getLevelPriceInfo = (product: Product) => {
+    // 서버에서 이미 계산된 가격과 정보를 사용
+    // API 문서에 따르면 서버가 사용자 등급/직급에 따라 가격을 계산해서 보냄
+    
+    // 1. 서버에서 직접 보내주는 경우 (권장)
+    if (product.hasLevelPrice !== undefined) {
+      return {
+        price: product.price || product.newPrice || 0,
+        originalPrice: product.originalPrice || product.oldPrice || 0,
+        hasLevelPrice: product.hasLevelPrice,
+        levelName: product.levelName || null
+      };
+    }
+    
+    // 2. optionJson으로 판단하는 경우 (기존 로직)
+    if (isUserLoggedIn && product.optionJson && currentUser) {
+      const { priority, level1_price, level2_price } = product.optionJson;
+      const userLevel = currentUser.level || currentUser.grade || '1';
+      
+      // 사용자 등급에 해당하는 가격이 있는지 확인
+      const hasLevel1Price = priority === 'level1' && level1_price && level1_price[userLevel];
+      const hasLevel2Price = priority === 'level2' && level2_price && level2_price[userLevel];
+      
+      if (hasLevel1Price || hasLevel2Price) {
+        return {
+          price: product.price || product.newPrice || 0,
+          originalPrice: product.originalPrice || product.oldPrice || 0,
+          hasLevelPrice: true,
+          levelName: hasLevel1Price ? `등급${userLevel}` : `직급${userLevel}`
+        };
+      }
+    }
+    
+    // 일반 가격
+    return {
+      price: product.price || product.newPrice || 0,
+      originalPrice: product.originalPrice || product.oldPrice || 0,
+      hasLevelPrice: false,
+      levelName: null
+    };
+  };
 
   // GSAP 애니메이션
   useGSAP(() => {
@@ -114,15 +167,20 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
           <section className="productsContainer globalWrapper w-full pb-5 md:pb-10 mb-5 md:mb-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 md:gap-x-5 gap-y-10 md:gap-y-15">
               {displayProducts.map((product: Product) => {
+                // 직급별/등급별 가격 정보 가져오기
+                const levelPriceInfo = getLevelPriceInfo(product);
+                
                 // 가이드 문서의 Product 인터페이스에 맞게 데이터 변환
                 const productData = {
                   id: product.id,
                   name: product.title || product.name || '',
-                  discountRate: product.oldPrice && product.newPrice < product.oldPrice 
-                    ? Math.round((1 - product.newPrice / product.oldPrice) * 100) 
+                  discountRate: levelPriceInfo.originalPrice && levelPriceInfo.price < levelPriceInfo.originalPrice 
+                    ? Math.round((1 - levelPriceInfo.price / levelPriceInfo.originalPrice) * 100) 
                     : 0,
-                  price: product.newPrice || product.price || 0,
-                  originalPrice: product.oldPrice || product.originalPrice || 0,
+                  price: levelPriceInfo.price,
+                  originalPrice: levelPriceInfo.originalPrice,
+                  hasLevelPrice: levelPriceInfo.hasLevelPrice,
+                  levelName: levelPriceInfo.levelName,
                   starRating: product.rating || 0,
                   reviewCount: product.reviewCount || 0,
                   thumbnailUrl: product.image || product.thumbnail || '',
@@ -174,6 +232,14 @@ const ShopProductListSkin: React.FC<SkinProps> = ({
                             price={productData.price}
                             originalPrice={productData.originalPrice}
                           />
+                          {/* 직급별/등급별 가격 표시 */}
+                          {productData.hasLevelPrice && productData.levelName && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                                {productData.levelName} 특가
+                              </span>
+                            </div>
+                          )}
                           {productData.reviewCount > 0 && (
                             <ReviewScore
                               starRating={productData.starRating}
