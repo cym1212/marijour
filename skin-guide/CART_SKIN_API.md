@@ -21,107 +21,107 @@ Cart(장바구니) 컴포넌트는 전자상거래 사이트의 장바구니 기
 
 ```typescript
 interface ComponentSkinProps {
-  data: {
-    // 기본 정보
-    id: string;
-    style: CSSStyleDeclaration;
-    componentProps: object;
-    
-    // 장바구니 데이터
-    cartItems: Array<{
-      id: number;
-      count: number;
-      productId: number;
-      variantId?: number | null;
-      variant?: {
-        id: number;
-        sku: string;
-        additionalPrice: string;
-        stock: number;
-        options?: Array<{
-          optionValue: {
-            value: string;
-            optionGroup: {
-              name: string;
-            };
-          };
-        }>;
-      };
-      product: {
-        id: number;
-        title: string;
-        config?: {
-          img_url?: string;
-          default_price?: number;
-          discounted_price?: number;
-          stock_count?: number;
-        };
-        optionGroups?: Array<{
-          id: number;
-          name: string;
-          code: string;
-          optionValues?: Array<{
+   data: {
+      // 기본 정보
+      id: string;
+      style: CSSStyleDeclaration;
+      componentProps: object;
+
+      // 장바구니 데이터
+      cartItems: Array<{
+         id: number;
+         count: number;
+         productId: number;
+         variantId?: number | null;
+         variant?: {
             id: number;
-            value: string;
-            code: string;
-          }>;
-        }>;
+            sku: string;
+            additionalPrice: string;
+            stock: number;
+            options?: Array<{
+               optionValue: {
+                  value: string;
+                  optionGroup: {
+                     name: string;
+                  };
+               };
+            }>;
+         };
+         product: {
+            id: number;
+            title: string;
+            config?: {
+               img_url?: string;
+               default_price?: number;
+               discounted_price?: number;
+               stock_count?: number;
+            };
+            optionGroups?: Array<{
+               id: number;
+               name: string;
+               code: string;
+               optionValues?: Array<{
+                  id: number;
+                  value: string;
+                  code: string;
+               }>;
+            }>;
+         };
+      }>;
+
+      // 상태 정보
+      loading: boolean;
+      error?: any;
+      localQuantities: Record<number, number>; // 로컬 수량 상태
+
+      // 계산된 값
+      calculations: {
+         subtotal: number;      // 상품 총액
+         shippingFee: number;   // 배송비
+         total: number;         // 최종 결제 금액
       };
-    }>;
-    
-    // 상태 정보
-    loading: boolean;
-    error?: any;
-    localQuantities: Record<number, number>; // 로컬 수량 상태
-    
-    // 계산된 값
-    calculations: {
-      subtotal: number;      // 상품 총액
-      shippingFee: number;   // 배송비
-      total: number;         // 최종 결제 금액
-    };
-    
-    // 사용자 정보
-    isUserLoggedIn: boolean;
-    isAdminLoggedIn: boolean;
-    withcookieData?: any;
-    userInfo?: any;
-    
-    // 설정값
-    freeShippingLimit: number;  // 무료배송 기준금액
-    title: string;              // 장바구니 제목
-    emptyText: string;          // 빈 장바구니 메시지
-    shippingFee: number;        // 기본 배송비
-    showStock: boolean;         // 재고 표시 여부
-    theme: object;
-  };
-  
-  actions: {
-    handleIncreaseQuantity: (item: any) => void;
-    handleDecreaseQuantity: (item: any) => void;
-    handleRemoveFromCart: (cartItemId: number) => Promise<void>;
-    handleCheckout: () => void;
-    handleClearCart: () => Promise<void>;
-    calculateLevelPrice: (basePrice: number, product: any) => {
-      originalPrice: number;      // 원가
-      levelPrice: number;         // 등급/직급별 할인가
-      discount: number;           // 할인 금액
-      discountRate: number;       // 할인율(%)
-      levelName: string | null;   // 등급/직급명 (예: "VIP", "골드회원" 등)
-    };
-    calculateTotalPrice: () => number;
-    calculateGrandTotal: () => number;
-  };
-  
-  utils: {
-    t: (key: string) => string;
-  };
-  
-  mode: 'editor' | 'preview' | 'production';
-  
-  editor?: {
-    isSelected: boolean;
-  };
+
+      // 사용자 정보
+      isUserLoggedIn: boolean;
+      isAdminLoggedIn: boolean;
+      withcookieData?: any;
+      userInfo?: any;
+
+      // 설정값
+      freeShippingLimit: number;  // 무료배송 기준금액
+      title: string;              // 장바구니 제목
+      emptyText: string;          // 빈 장바구니 메시지
+      shippingFee: number;        // 기본 배송비
+      showStock: boolean;         // 재고 표시 여부
+      theme: object;
+   };
+
+   actions: {
+      handleIncreaseQuantity: (item: any) => void;
+      handleDecreaseQuantity: (item: any) => void;
+      handleRemoveFromCart: (cartItemId: number) => Promise<void>;
+      handleCheckout: () => void;
+      handleClearCart: () => Promise<void>;
+      calculateLevelPrice: (basePrice: number, product: any) => {
+         originalPrice: number;      // 원가
+         levelPrice: number;         // 등급/직급별 할인가
+         discount: number;           // 할인 금액
+         discountRate: number;       // 할인율(%)
+         levelName: string | null;   // 등급/직급명 (예: "VIP", "골드회원" 등)
+      };
+      calculateTotalPrice: () => number;
+      calculateGrandTotal: () => number;
+   };
+
+   utils: {
+      t: (key: string) => string;
+   };
+
+   mode: 'editor' | 'preview' | 'production';
+
+   editor?: {
+      isSelected: boolean;
+   };
 }
 ```
 
@@ -169,34 +169,34 @@ interface ComponentSkinProps {
 
 ```typescript
 interface CartItem {
-  id: number;                    // 장바구니 아이템 ID
-  count: number;                 // 수량
-  productId: number;             // 상품 ID
-  variantId?: number | null;     // 변형 ID (옵션 조합)
-  variant?: {
-    id: number;
-    sku: string;                 // 변형 SKU
-    additionalPrice: string;     // 추가 가격
-    stock: number;               // 변형별 재고
-    options?: Array<{
-      optionValue: {
-        value: string;           // 옵션 값 (예: "빨강", "L")
-        optionGroup: {
-          name: string;          // 옵션 그룹명 (예: "색상", "사이즈")
-        };
+   id: number;                    // 장바구니 아이템 ID
+   count: number;                 // 수량
+   productId: number;             // 상품 ID
+   variantId?: number | null;     // 변형 ID (옵션 조합)
+   variant?: {
+      id: number;
+      sku: string;                 // 변형 SKU
+      additionalPrice: string;     // 추가 가격
+      stock: number;               // 변형별 재고
+      options?: Array<{
+         optionValue: {
+            value: string;           // 옵션 값 (예: "빨강", "L")
+            optionGroup: {
+               name: string;          // 옵션 그룹명 (예: "색상", "사이즈")
+            };
+         };
+      }>;
+   };
+   product: {
+      id: number;
+      title: string;               // 상품명
+      config?: {
+         img_url?: string;          // 상품 이미지 URL
+         default_price?: number;    // 정가
+         discounted_price?: number; // 할인가
+         stock_count?: number;      // 기본 재고
       };
-    }>;
-  };
-  product: {
-    id: number;
-    title: string;               // 상품명
-    config?: {
-      img_url?: string;          // 상품 이미지 URL
-      default_price?: number;    // 정가
-      discounted_price?: number; // 할인가
-      stock_count?: number;      // 기본 재고
-    };
-  };
+   };
 }
 ```
 
@@ -208,45 +208,45 @@ interface CartItem {
 const { cartItems, showImage, showStock } = data;
 
 {cartItems.length === 0 ? (
-  <div className="empty-cart">
-    <p>{data.emptyText}</p>
-  </div>
+        <div className="empty-cart">
+           <p>{data.emptyText}</p>
+        </div>
 ) : (
-  <div className="cart-items">
-    {cartItems.map((item) => (
-      <div key={item.id} className="cart-item">
-        {/* 상품 이미지 */}
-        {showImage && (
-          <div className="item-image">
-            <img src={item.product.config?.img_url} alt={item.product.title} />
-          </div>
-        )}
-        
-        {/* 상품 정보 */}
-        <div className="item-info">
-          <h3>{item.product.title}</h3>
-          
-          {/* 옵션 표시 */}
-          {item.variant?.options && (
-            <div className="item-options">
-              {item.variant.options.map((opt, idx) => (
-                <span key={idx}>
+        <div className="cart-items">
+           {cartItems.map((item) => (
+                   <div key={item.id} className="cart-item">
+                      {/* 상품 이미지 */}
+                      {showImage && (
+                              <div className="item-image">
+                                 <img src={item.product.config?.img_url} alt={item.product.title} />
+                              </div>
+                      )}
+
+                      {/* 상품 정보 */}
+                      <div className="item-info">
+                         <h3>{item.product.title}</h3>
+
+                         {/* 옵션 표시 */}
+                         {item.variant?.options && (
+                                 <div className="item-options">
+                                    {item.variant.options.map((opt, idx) => (
+                                            <span key={idx}>
                   {opt.optionValue.optionGroup.name}: {opt.optionValue.value}
                 </span>
-              ))}
-            </div>
-          )}
-          
-          {/* 재고 표시 */}
-          {showStock && (
-            <div className="stock-info">
-              재고: {item.variant ? item.variant.stock : item.product.config?.stock_count}개
-            </div>
-          )}
+                                    ))}
+                                 </div>
+                         )}
+
+                         {/* 재고 표시 */}
+                         {showStock && (
+                                 <div className="stock-info">
+                                    재고: {item.variant ? item.variant.stock : item.product.config?.stock_count}개
+                                 </div>
+                         )}
+                      </div>
+                   </div>
+           ))}
         </div>
-      </div>
-    ))}
-  </div>
 )}
 ```
 
@@ -254,21 +254,21 @@ const { cartItems, showImage, showStock } = data;
 
 ```tsx
 {data.showQuantitySelector && (
-  <div className="quantity-selector">
-    <button 
-      onClick={() => actions.handleDecreaseQuantity(item)}
-      disabled={item.count <= 1}
-    >
-      -
-    </button>
-    <span>{data.localQuantities[item.id] || item.count}</span>
-    <button 
-      onClick={() => actions.handleIncreaseQuantity(item)}
-      disabled={item.count >= (item.variant ? item.variant.stock : item.product.config?.stock_count)}
-    >
-      +
-    </button>
-  </div>
+        <div className="quantity-selector">
+           <button
+                   onClick={() => actions.handleDecreaseQuantity(item)}
+                   disabled={item.count <= 1}
+           >
+              -
+           </button>
+           <span>{data.localQuantities[item.id] || item.count}</span>
+           <button
+                   onClick={() => actions.handleIncreaseQuantity(item)}
+                   disabled={item.count >= (item.variant ? item.variant.stock : item.product.config?.stock_count)}
+           >
+              +
+           </button>
+        </div>
 )}
 ```
 
@@ -288,22 +288,22 @@ const additionalPrice = item.variant ? parseInt(item.variant.additionalPrice) : 
 const finalPrice = priceInfo.levelPrice + additionalPrice;
 
 <div className="price-info">
-  {/* 로그인된 사용자 + optionJson 있으면 자동으로 할인가 계산됨 */}
-  <span className="price">
+   {/* 로그인된 사용자 + optionJson 있으면 자동으로 할인가 계산됨 */}
+   <span className="price">
     {priceInfo.levelPrice.toLocaleString()}원
   </span>
-  
-  {/* variant 추가 가격이 있는 경우 */}
-  {additionalPrice > 0 && (
-    <span className="variant-additional-price">
+
+   {/* variant 추가 가격이 있는 경우 */}
+   {additionalPrice > 0 && (
+           <span className="variant-additional-price">
       (+{additionalPrice.toLocaleString()}원)
     </span>
-  )}
+   )}
 </div>
 
 {/* 수량 x 가격 = 소계 */}
 <div className="item-total">
-  {(finalPrice * item.count).toLocaleString()}원
+   {(finalPrice * item.count).toLocaleString()}원
 </div>
 ```
 
@@ -311,13 +311,13 @@ const finalPrice = priceInfo.levelPrice + additionalPrice;
 
 ```tsx
 {data.showRemoveButton && (
-  <button
-    className="remove-button"
-    style={{ backgroundColor: data.dangerButtonColor }}
-    onClick={() => actions.handleRemoveFromCart(item.id)}
-  >
-    삭제
-  </button>
+        <button
+                className="remove-button"
+                style={{ backgroundColor: data.dangerButtonColor }}
+                onClick={() => actions.handleRemoveFromCart(item.id)}
+        >
+           삭제
+        </button>
 )}
 ```
 
@@ -325,42 +325,42 @@ const finalPrice = priceInfo.levelPrice + additionalPrice;
 
 ```tsx
 {data.showSummary && (
-  <div 
-    className="order-summary"
-    style={{ backgroundColor: data.summaryBackgroundColor }}
-  >
-    <h3>주문 요약</h3>
-    
-    <div className="summary-row">
-      <span>상품 총액</span>
-      <span>{data.calculations.subtotal.toLocaleString()}원</span>
-    </div>
-    
-    <div className="summary-row">
-      <span>배송비</span>
-      <span>
+        <div
+                className="order-summary"
+                style={{ backgroundColor: data.summaryBackgroundColor }}
+        >
+           <h3>주문 요약</h3>
+
+           <div className="summary-row">
+              <span>상품 총액</span>
+              <span>{data.calculations.subtotal.toLocaleString()}원</span>
+           </div>
+
+           <div className="summary-row">
+              <span>배송비</span>
+              <span>
         {data.calculations.subtotal >= data.freeShippingLimit ? (
-          <span className="free-shipping">무료</span>
+                <span className="free-shipping">무료</span>
         ) : (
-          `${data.shippingFee.toLocaleString()}원`
+                `${data.shippingFee.toLocaleString()}원`
         )}
       </span>
-    </div>
-    
-    {data.calculations.subtotal < data.freeShippingLimit && (
-      <div className="free-shipping-notice">
-        {(data.freeShippingLimit - data.calculations.subtotal).toLocaleString()}원 
-        더 구매하시면 무료배송!
-      </div>
-    )}
-    
-    <div className="summary-total">
-      <span>총 결제금액</span>
-      <span style={{ color: data.priceColor }}>
+           </div>
+
+           {data.calculations.subtotal < data.freeShippingLimit && (
+                   <div className="free-shipping-notice">
+                      {(data.freeShippingLimit - data.calculations.subtotal).toLocaleString()}원
+                      더 구매하시면 무료배송!
+                   </div>
+           )}
+
+           <div className="summary-total">
+              <span>총 결제금액</span>
+              <span style={{ color: data.priceColor }}>
         {data.calculations.total.toLocaleString()}원
       </span>
-    </div>
-  </div>
+           </div>
+        </div>
 )}
 ```
 
@@ -368,24 +368,24 @@ const finalPrice = priceInfo.levelPrice + additionalPrice;
 
 ```tsx
 <div className="cart-actions">
-  <button
-    className="clear-cart-button"
-    style={{ backgroundColor: data.secondaryButtonColor }}
-    onClick={actions.handleClearCart}
-  >
-    장바구니 비우기
-  </button>
-  
-  {data.showCheckout && (
-    <button
-      className="checkout-button"
-      style={{ backgroundColor: data.primaryButtonColor }}
-      onClick={actions.handleCheckout}
-      disabled={cartItems.length === 0}
-    >
-      결제하기
-    </button>
-  )}
+   <button
+           className="clear-cart-button"
+           style={{ backgroundColor: data.secondaryButtonColor }}
+           onClick={actions.handleClearCart}
+   >
+      장바구니 비우기
+   </button>
+
+   {data.showCheckout && (
+           <button
+                   className="checkout-button"
+                   style={{ backgroundColor: data.primaryButtonColor }}
+                   onClick={actions.handleCheckout}
+                   disabled={cartItems.length === 0}
+           >
+              결제하기
+           </button>
+   )}
 </div>
 ```
 
@@ -396,215 +396,215 @@ import React from 'react';
 import { ComponentSkinProps } from '../../../types/component-skin';
 
 const MyCartSkin: React.FC<ComponentSkinProps> = ({
-  data,
-  actions,
-  utils,
-  mode,
-  editor
-}) => {
-  const { cartItems, loading, calculations, showImage, showStock, showQuantitySelector, showRemoveButton } = data;
-  const { t } = utils;
-  
-  if (loading) {
-    return <div className="loading">로딩 중...</div>;
-  }
-  
-  return (
-    <div className="my-cart-container">
-      <h1>{data.title}</h1>
-      
-      {cartItems.length === 0 ? (
-        <div className="empty-cart">
-          <p>{data.emptyText}</p>
-          <a href="/shop">쇼핑 계속하기</a>
-        </div>
-      ) : (
-        <>
-          {/* 장바구니 아이템 목록 */}
-          <div className="cart-items">
-            {cartItems.map((item) => {
-              const basePrice = item.product.config?.discounted_price || item.product.config?.default_price || 0;
-              const priceInfo = actions.calculateLevelPrice(basePrice, item.product);
-              const additionalPrice = item.variant ? parseInt(item.variant.additionalPrice) : 0;
-              const finalPrice = priceInfo.levelPrice + additionalPrice;
-              const quantity = data.localQuantities[item.id] || item.count;
-              
-              return (
-                <div key={item.id} className="cart-item">
-                  {/* 상품 이미지 */}
-                  {showImage && (
-                    <div className="item-image">
-                      <img 
-                        src={item.product.config?.img_url || '/placeholder.png'} 
-                        alt={item.product.title} 
-                      />
-                    </div>
-                  )}
-                  
-                  {/* 상품 정보 */}
-                  <div className="item-details">
-                    <h3>{item.product.title}</h3>
-                    
-                    {/* 옵션 표시 */}
-                    {item.variant?.options && (
-                      <div className="item-options">
-                        {item.variant.options.map((opt, idx) => (
-                          <span key={idx} className="option-tag">
+                                                     data,
+                                                     actions,
+                                                     utils,
+                                                     mode,
+                                                     editor
+                                                  }) => {
+   const { cartItems, loading, calculations, showImage, showStock, showQuantitySelector, showRemoveButton } = data;
+   const { t } = utils;
+
+   if (loading) {
+      return <div className="loading">로딩 중...</div>;
+   }
+
+   return (
+           <div className="my-cart-container">
+              <h1>{data.title}</h1>
+
+              {cartItems.length === 0 ? (
+                      <div className="empty-cart">
+                         <p>{data.emptyText}</p>
+                         <a href="/shop">쇼핑 계속하기</a>
+                      </div>
+              ) : (
+                      <>
+                         {/* 장바구니 아이템 목록 */}
+                         <div className="cart-items">
+                            {cartItems.map((item) => {
+                               const basePrice = item.product.config?.discounted_price || item.product.config?.default_price || 0;
+                               const priceInfo = actions.calculateLevelPrice(basePrice, item.product);
+                               const additionalPrice = item.variant ? parseInt(item.variant.additionalPrice) : 0;
+                               const finalPrice = priceInfo.levelPrice + additionalPrice;
+                               const quantity = data.localQuantities[item.id] || item.count;
+
+                               return (
+                                       <div key={item.id} className="cart-item">
+                                          {/* 상품 이미지 */}
+                                          {showImage && (
+                                                  <div className="item-image">
+                                                     <img
+                                                             src={item.product.config?.img_url || '/placeholder.png'}
+                                                             alt={item.product.title}
+                                                     />
+                                                  </div>
+                                          )}
+
+                                          {/* 상품 정보 */}
+                                          <div className="item-details">
+                                             <h3>{item.product.title}</h3>
+
+                                             {/* 옵션 표시 */}
+                                             {item.variant?.options && (
+                                                     <div className="item-options">
+                                                        {item.variant.options.map((opt, idx) => (
+                                                                <span key={idx} className="option-tag">
                             {opt.optionValue.optionGroup.name}: {opt.optionValue.value}
                           </span>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {/* 재고 표시 */}
-                    {showStock && (
-                      <div className="stock-info">
-                        재고: {item.variant ? item.variant.stock : item.product.config?.stock_count || 0}개
-                      </div>
-                    )}
-                    
-                    {/* 가격 표시 (등급/직급별 할인 포함) */}
-                    <div className="price-info">
-                      {priceInfo.discount > 0 ? (
-                        <>
+                                                        ))}
+                                                     </div>
+                                             )}
+
+                                             {/* 재고 표시 */}
+                                             {showStock && (
+                                                     <div className="stock-info">
+                                                        재고: {item.variant ? item.variant.stock : item.product.config?.stock_count || 0}개
+                                                     </div>
+                                             )}
+
+                                             {/* 가격 표시 (등급/직급별 할인 포함) */}
+                                             <div className="price-info">
+                                                {priceInfo.discount > 0 ? (
+                                                        <>
                           <span className="original-price">
                             {(priceInfo.originalPrice + additionalPrice).toLocaleString()}원
                           </span>
-                          <span className="level-price" style={{ color: data.priceColor }}>
+                                                           <span className="level-price" style={{ color: data.priceColor }}>
                             {finalPrice.toLocaleString()}원
                           </span>
-                          {priceInfo.levelName && (
-                            <span className="discount-badge">
+                                                           {priceInfo.levelName && (
+                                                                   <span className="discount-badge">
                               {priceInfo.levelName} {priceInfo.discountRate}% 할인
                             </span>
-                          )}
-                        </>
-                      ) : (
-                        <span style={{ color: data.priceColor }}>
+                                                           )}
+                                                        </>
+                                                ) : (
+                                                        <span style={{ color: data.priceColor }}>
                           {finalPrice.toLocaleString()}원
                         </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* 수량 및 액션 */}
-                  <div className="item-actions">
-                    {/* 수량 선택기 */}
-                    {showQuantitySelector && (
-                      <div className="quantity-selector">
-                        <button 
-                          onClick={() => actions.handleDecreaseQuantity(item)}
-                          disabled={quantity <= 1}
-                        >
-                          -
-                        </button>
-                        <span>{quantity}</span>
-                        <button 
-                          onClick={() => actions.handleIncreaseQuantity(item)}
-                          disabled={quantity >= (item.variant ? item.variant.stock : item.product.config?.stock_count || 99)}
-                        >
-                          +
-                        </button>
-                      </div>
-                    )}
-                    
-                    {/* 소계 */}
-                    <div className="item-subtotal">
-                      {(finalPrice * quantity).toLocaleString()}원
-                    </div>
-                    
-                    {/* 삭제 버튼 */}
-                    {showRemoveButton && (
-                      <button
-                        className="remove-button"
-                        style={{ backgroundColor: data.dangerButtonColor }}
-                        onClick={() => actions.handleRemoveFromCart(item.id)}
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          {/* 결제 요약 */}
-          {data.showSummary && (
-            <div 
-              className="order-summary"
-              style={{ backgroundColor: data.summaryBackgroundColor }}
-            >
-              <h3>주문 요약</h3>
-              
-              <div className="summary-row">
-                <span>상품 총액</span>
-                <span>{calculations.subtotal.toLocaleString()}원</span>
-              </div>
-              
-              <div className="summary-row">
-                <span>배송비</span>
-                <span>
+                                                )}
+                                             </div>
+                                          </div>
+
+                                          {/* 수량 및 액션 */}
+                                          <div className="item-actions">
+                                             {/* 수량 선택기 */}
+                                             {showQuantitySelector && (
+                                                     <div className="quantity-selector">
+                                                        <button
+                                                                onClick={() => actions.handleDecreaseQuantity(item)}
+                                                                disabled={quantity <= 1}
+                                                        >
+                                                           -
+                                                        </button>
+                                                        <span>{quantity}</span>
+                                                        <button
+                                                                onClick={() => actions.handleIncreaseQuantity(item)}
+                                                                disabled={quantity >= (item.variant ? item.variant.stock : item.product.config?.stock_count || 99)}
+                                                        >
+                                                           +
+                                                        </button>
+                                                     </div>
+                                             )}
+
+                                             {/* 소계 */}
+                                             <div className="item-subtotal">
+                                                {(finalPrice * quantity).toLocaleString()}원
+                                             </div>
+
+                                             {/* 삭제 버튼 */}
+                                             {showRemoveButton && (
+                                                     <button
+                                                             className="remove-button"
+                                                             style={{ backgroundColor: data.dangerButtonColor }}
+                                                             onClick={() => actions.handleRemoveFromCart(item.id)}
+                                                     >
+                                                        ×
+                                                     </button>
+                                             )}
+                                          </div>
+                                       </div>
+                               );
+                            })}
+                         </div>
+
+                         {/* 결제 요약 */}
+                         {data.showSummary && (
+                                 <div
+                                         className="order-summary"
+                                         style={{ backgroundColor: data.summaryBackgroundColor }}
+                                 >
+                                    <h3>주문 요약</h3>
+
+                                    <div className="summary-row">
+                                       <span>상품 총액</span>
+                                       <span>{calculations.subtotal.toLocaleString()}원</span>
+                                    </div>
+
+                                    <div className="summary-row">
+                                       <span>배송비</span>
+                                       <span>
                   {calculations.subtotal >= data.freeShippingLimit ? (
-                    <span className="free-shipping">무료</span>
+                          <span className="free-shipping">무료</span>
                   ) : (
-                    `${data.shippingFee.toLocaleString()}원`
+                          `${data.shippingFee.toLocaleString()}원`
                   )}
                 </span>
-              </div>
-              
-              {calculations.subtotal < data.freeShippingLimit && (
-                <div className="free-shipping-notice">
-                  <i className="info-icon">ℹ️</i>
-                  {(data.freeShippingLimit - calculations.subtotal).toLocaleString()}원 
-                  더 구매하시면 무료배송!
-                </div>
-              )}
-              
-              {data.showCoupon && (
-                <div className="coupon-section">
-                  <input 
-                    type="text" 
-                    placeholder="쿠폰 코드 입력"
-                    className="coupon-input"
-                  />
-                  <button className="coupon-button">적용</button>
-                </div>
-              )}
-              
-              <div className="summary-total">
-                <span>총 결제금액</span>
-                <span style={{ color: data.priceColor, fontSize: '1.5em', fontWeight: 'bold' }}>
+                                    </div>
+
+                                    {calculations.subtotal < data.freeShippingLimit && (
+                                            <div className="free-shipping-notice">
+                                               <i className="info-icon">ℹ️</i>
+                                               {(data.freeShippingLimit - calculations.subtotal).toLocaleString()}원
+                                               더 구매하시면 무료배송!
+                                            </div>
+                                    )}
+
+                                    {data.showCoupon && (
+                                            <div className="coupon-section">
+                                               <input
+                                                       type="text"
+                                                       placeholder="쿠폰 코드 입력"
+                                                       className="coupon-input"
+                                               />
+                                               <button className="coupon-button">적용</button>
+                                            </div>
+                                    )}
+
+                                    <div className="summary-total">
+                                       <span>총 결제금액</span>
+                                       <span style={{ color: data.priceColor, fontSize: '1.5em', fontWeight: 'bold' }}>
                   {calculations.total.toLocaleString()}원
                 </span>
-              </div>
-              
-              {/* 액션 버튼 */}
-              <div className="cart-actions">
-                <button
-                  className="continue-shopping"
-                  style={{ backgroundColor: data.secondaryButtonColor }}
-                  onClick={() => window.location.href = '/shop'}
-                >
-                  쇼핑 계속하기
-                </button>
-                
-                {data.showCheckout && (
-                  <button
-                    className="checkout-button"
-                    style={{ backgroundColor: data.primaryButtonColor }}
-                    onClick={actions.handleCheckout}
-                  >
-                    결제하기
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
+                                    </div>
+
+                                    {/* 액션 버튼 */}
+                                    <div className="cart-actions">
+                                       <button
+                                               className="continue-shopping"
+                                               style={{ backgroundColor: data.secondaryButtonColor }}
+                                               onClick={() => window.location.href = '/shop'}
+                                       >
+                                          쇼핑 계속하기
+                                       </button>
+
+                                       {data.showCheckout && (
+                                               <button
+                                                       className="checkout-button"
+                                                       style={{ backgroundColor: data.primaryButtonColor }}
+                                                       onClick={actions.handleCheckout}
+                                               >
+                                                  결제하기
+                                               </button>
+                                       )}
+                                    </div>
+                                 </div>
+                         )}
+                      </>
+              )}
+           </div>
+   );
 };
 
 export default MyCartSkin;
@@ -642,7 +642,7 @@ const priceInfo = actions.calculateLevelPrice(basePrice, product);
    - 등급/직급이 없는 사용자 → 기본 가격 그대로
    - optionJson이 없거나 등급/직급별 가격이 설정되지 않은 상품 → supply_price_ratio로 계산 가능
 
-**참고:** 
+**참고:**
 - 회사마다 등급제(level1) 또는 직급제(level2) 중 하나를 선택하여 사용합니다
 - 현재 기본 구현은 level2(직급)로 되어 있지만, level1(등급)도 동일한 방식으로 작동합니다
 - 기본 가격이 이미 할인된 가격(discounted_price)인 경우, 등급/직급별 할인은 추가로 적용됩니다
@@ -684,23 +684,23 @@ const priceInfo = actions.calculateLevelPrice(basePrice, product);
 
 ```css
 @media (max-width: 768px) {
-  .cart-item {
-    flex-direction: column;
-  }
-  
-  .item-image {
-    width: 100%;
-    max-width: 200px;
-    margin: 0 auto;
-  }
-  
-  .order-summary {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-radius: 20px 20px 0 0;
-  }
+   .cart-item {
+      flex-direction: column;
+   }
+
+   .item-image {
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+   }
+
+   .order-summary {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 20px 20px 0 0;
+   }
 }
 ```
 
@@ -712,8 +712,8 @@ const priceInfo = actions.calculateLevelPrice(basePrice, product);
 // 수량 증가 시 재고 확인
 const maxStock = item.variant ? item.variant.stock : item.product.config?.stock_count || 99;
 if (quantity >= maxStock) {
-  alert('재고가 부족합니다.');
-  return;
+   alert('재고가 부족합니다.');
+   return;
 }
 ```
 
@@ -721,12 +721,12 @@ if (quantity >= maxStock) {
 
 ```tsx
 if (!data.isUserLoggedIn) {
-  return (
-    <div className="login-required">
-      <p>장바구니를 이용하려면 로그인이 필요합니다.</p>
-      <a href="/login">로그인하기</a>
-    </div>
-  );
+   return (
+           <div className="login-required">
+              <p>장바구니를 이용하려면 로그인이 필요합니다.</p>
+              <a href="/login">로그인하기</a>
+           </div>
+   );
 }
 ```
 

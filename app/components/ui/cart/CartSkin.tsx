@@ -63,6 +63,7 @@ interface PriceInfo {
   discount: number;
   discountRate: number;
   levelName: string | null;
+  additionalPrice?: number;
 }
 
 interface ComponentSkinProps {
@@ -370,10 +371,20 @@ export const Cart: React.FC<ComponentSkinProps> = ({
     }
   };
 
-  // 직급별 가격 계산 헬퍼
+  // 직급별 가격 계산 헬퍼 (variant 추가 금액 포함)
   const getItemPriceInfo = (item: CartItem): PriceInfo => {
     const basePrice = item.product?.config?.discounted_price || item.product?.config?.default_price || 0;
-    return calculateLevelPrice(basePrice, item.product);  // ⭐ basePrice, product 전달
+    const levelPriceInfo = calculateLevelPrice(basePrice, item.product);  // ⭐ basePrice, product 전달
+    
+    // variant의 추가 금액 처리
+    const additionalPrice = item.variant ? parseInt(item.variant.additionalPrice || '0') : 0;
+    
+    return {
+      ...levelPriceInfo,
+      levelPrice: levelPriceInfo.levelPrice + additionalPrice,
+      originalPrice: levelPriceInfo.originalPrice + additionalPrice,
+      additionalPrice: additionalPrice // 추가 금액 정보 보관
+    };
   };
 
   // 무료배송 여부 확인
@@ -508,11 +519,27 @@ export const Cart: React.FC<ComponentSkinProps> = ({
                             {priceInfo.discount > 0 && priceInfo.levelName ? (
                               <>
                                 <em className="cart-skin-text-xs cart-skin-text-primary cart-skin-font-bold cart-skin-bg-primary-10 cart-skin-px-1 cart-skin-py-0-5 cart-skin-rounded">{priceInfo.discountRate}%</em>
-                                <p className="cart-skin-font-bold">{formatCurrency(priceInfo.levelPrice)}</p>
-                                <del className="cart-skin-text-sm cart-skin-font-bold cart-skin-text-black-40 cart-skin-w-full cart-skin-md-w-auto cart-skin-mt-neg-0-5 cart-skin-md-mt-0">{formatCurrency(priceInfo.originalPrice)}</del>
+                                <p className="cart-skin-font-bold">
+                                  {formatCurrency(priceInfo.levelPrice - (priceInfo.additionalPrice || 0))}
+                                  {priceInfo.additionalPrice && priceInfo.additionalPrice > 0 && (
+                                    <span className="cart-skin-text-xs cart-skin-text-black-60">
+                                      (+{formatCurrency(priceInfo.additionalPrice)})
+                                    </span>
+                                  )}
+                                </p>
+                                <del className="cart-skin-text-sm cart-skin-font-bold cart-skin-text-black-40 cart-skin-w-full cart-skin-md-w-auto cart-skin-mt-neg-0-5 cart-skin-md-mt-0">
+                                  {formatCurrency(priceInfo.originalPrice - (priceInfo.additionalPrice || 0))}
+                                </del>
                               </>
                             ) : (
-                              <p className="cart-skin-font-bold">{formatCurrency(priceInfo.levelPrice)}</p>
+                              <p className="cart-skin-font-bold">
+                                {formatCurrency(priceInfo.levelPrice - (priceInfo.additionalPrice || 0))}
+                                {priceInfo.additionalPrice && priceInfo.additionalPrice > 0 && (
+                                  <span className="cart-skin-text-xs cart-skin-text-black-60">
+                                    (+{formatCurrency(priceInfo.additionalPrice)})
+                                  </span>
+                                )}
+                              </p>
                             )}
                           </div>
                         </div>
