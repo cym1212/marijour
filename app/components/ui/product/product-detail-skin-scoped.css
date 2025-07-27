@@ -805,3 +805,68 @@
         display: none;
     }
 }
+
+/* 옵션 선택 영역 */
+.pd-skin-options-area {
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.pd-skin-option-group {
+    margin-bottom: 1rem;
+}
+
+.pd-skin-option-group:last-child {
+    margin-bottom: 0;
+}
+
+.pd-skin-option-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.pd-skin-required {
+    color: #ff6b6b;
+    margin-left: 0.25rem;
+}
+
+.pd-skin-option-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.pd-skin-option-select:focus {
+    outline: none;
+    border-color: #89a1be;
+}
+
+.pd-skin-option-select:hover {
+    border-color: #89a1be;
+}
+
+.pd-skin-variant-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.pd-skin-variant-price {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.pd-skin-variant-additional {
+    color: #89a1be;
+    font-weight: 500;
+}

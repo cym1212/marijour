@@ -244,6 +244,55 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                         
                     </div>
                     
+                    {/* 옵션 선택 */}
+                    {product?.optionGroups && product.optionGroups.length > 0 && (
+                        <div className="pd-skin-options-area">
+                            {product.optionGroups.map((group: any) => (
+                                <div key={group.id} className="pd-skin-option-group">
+                                    <label className="pd-skin-option-label">
+                                        {group.name} {group.isRequired && <span className="pd-skin-required">*</span>}
+                                    </label>
+                                    <select
+                                        className="pd-skin-option-select"
+                                        value={data.selectedOptions?.[group.id] || ''}
+                                        onChange={(e) => actions.handleOptionChange?.(group.id, parseInt(e.target.value))}
+                                    >
+                                        <option value="">선택하세요</option>
+                                        {group.optionValues.map((value: any) => (
+                                            <option key={value.id} value={value.id}>
+                                                {value.value || value.name}
+                                                {/* variant의 추가 가격 표시 */}
+                                                {data.variantsByOptions && (() => {
+                                                    // 현재 선택된 옵션들로 variant 찾기
+                                                    const currentSelections = {...(data.selectedOptions || {}), [group.id]: value.id};
+                                                    const variant = data.variantsByOptions[Object.values(currentSelections).sort().join('-')];
+                                                    const additionalPrice = variant ? parseInt(variant.additionalPrice || '0') : 0;
+                                                    return additionalPrice > 0 ? ` (+${formatCurrency(additionalPrice)})` : '';
+                                                })()}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ))}
+                            
+                            {/* 선택된 variant 정보 표시 */}
+                            {data.selectedVariant && (
+                                <div className="pd-skin-variant-info">
+                                    <div className="pd-skin-variant-price">
+                                        선택한 옵션: {data.selectedVariant.options?.map((opt: any) => 
+                                            `${opt.optionValue.optionGroup.name}: ${opt.optionValue.value}`
+                                        ).join(', ')}
+                                    </div>
+                                    {parseInt(data.selectedVariant.additionalPrice || '0') > 0 && (
+                                        <div className="pd-skin-variant-additional">
+                                            추가금액: {formatCurrency(parseInt(data.selectedVariant.additionalPrice))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    
                     {/* 배송비 */}
                     <div className="pd-skin-delivery-info">
                         <div className="pd-skin-delivery-item">
@@ -274,11 +323,12 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                             <button 
                                 className="pd-skin-quantity-btn"
                                 onClick={() => handleQuantityChange(quantity + 1)}
+                                disabled={data.selectedVariant && quantity >= data.selectedVariant.stock}
                             >
                                 +
                             </button>
                             <span className="pd-skin-quantity-price">
-                                {formatCurrency(priceInfo.levelPrice * quantity)}
+                                {formatCurrency((data.finalPrice || priceInfo.levelPrice) * quantity)}
                             </span>
                         </div>
                     )}
@@ -286,7 +336,7 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                     {/* 총 상품 금액 */}
                     <div className="pd-skin-total-area">
                         <span className="pd-skin-total-label">총 상품 금액 {quantity}개</span>
-                        <span className="pd-skin-total-price">{formatCurrency(priceInfo.levelPrice * quantity)}</span>
+                        <span className="pd-skin-total-price">{formatCurrency((data.finalPrice || priceInfo.levelPrice) * quantity)}</span>
                     </div>
                     
                     {/* 버튼 */}
