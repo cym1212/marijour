@@ -350,15 +350,15 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                                 장바구니
                             </button>
                         )}
-                        {componentProps.showBuyNow !== false && (
-                            <button 
-                                className="pd-skin-btn-buy"
-                                onClick={handleBuyNow}
-                                style={componentProps.buyNowButtonColor ? { backgroundColor: componentProps.buyNowButtonColor } : {}}
-                            >
-                                바로구매
-                            </button>
-                        )}
+                        {/*{componentProps.showBuyNow !== false && (*/}
+                        {/*    <button */}
+                        {/*        className="pd-skin-btn-buy"*/}
+                        {/*        onClick={handleBuyNow}*/}
+                        {/*        style={componentProps.buyNowButtonColor ? { backgroundColor: componentProps.buyNowButtonColor } : {}}*/}
+                        {/*    >*/}
+                        {/*        바로구매*/}
+                        {/*    </button>*/}
+                        {/*)}*/}
                     </div>
                 </div>
             </div>
@@ -517,9 +517,9 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                         </div>
                         <button 
                             className="pd-skin-sticky-buy-btn"
-                            onClick={handleBuyNow}
+                            onClick={handleAddToCart}
                         >
-                            구매하기
+                            장바구니
                         </button>
                     </div>
                 </div>

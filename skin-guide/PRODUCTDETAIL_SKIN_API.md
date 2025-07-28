@@ -19,7 +19,7 @@ ProductDetail(상품 상세) 컴포넌트는 전자상거래 사이트의 상품
 
 **외부 스킨 개발자를 위한 중요 안내:**
 
-ProductDetail 컴포넌트는 **별도의 `detailImage` 필드를 사용하지 않습니다**. 
+ProductDetail 컴포넌트는 **별도의 `detailImage` 필드를 사용하지 않습니다**.
 상품 상세 이미지는 `product.description` 필드에 HTML 또는 마크다운 형식으로 포함되어 있습니다.
 
 ```typescript
@@ -37,137 +37,137 @@ const descriptionImages = extractImagesFromDescription(product.description);
 
 ```typescript
 interface ComponentSkinProps {
-  data: {
-    // 기본 정보
-    id: string;
-    style: CSSStyleDeclaration;
-    componentProps: object;
-    
-    // 상품 데이터
-    product: {
-      id: number;
-      title: string;
-      description: string;
-      config: {
-        img_url: string;
-        main_image: string;
-        discounted_price: number;
-        default_price: number;
-        stock_count: number;
+   data: {
+      // 기본 정보
+      id: string;
+      style: CSSStyleDeclaration;
+      componentProps: object;
+
+      // 상품 데이터
+      product: {
+         id: number;
+         title: string;
+         description: string;
+         config: {
+            img_url: string;
+            main_image: string;
+            discounted_price: number;
+            default_price: number;
+            stock_count: number;
+         };
+         variants: Array<{
+            id: number;
+            sku: string;
+            additionalPrice: number;
+            stock: number;
+            options: Array<{
+               optionValueId: number;
+               optionValue: {
+                  optionGroupId: number;
+               };
+            }>;
+         }>;
+         optionGroups: Array<{
+            id: number;
+            code: string;
+            name: string;
+            isRequired: boolean;
+            optionValues: Array<{
+               id: number;
+               code: string;
+               name: string;
+               value: string;
+               isActive: boolean;
+            }>;
+         }>;
+         optionJson: {
+            level2_price: Record<number, number>;
+         };
+         additionalImages: string[];
+
+         // 리뷰 관련
+         recentReviews?: Array<{
+            id: number;
+            userName: string;
+            rating: number;
+            content: string;
+            createdAt: string;
+         }>;
+         totalReviews?: number;
+         averageRating?: number;
+
+         // 추가 정보
+         sku?: string;        // 상품 코드/SKU
+         features?: Array<{   // 상품 특징 목록
+            label: string;
+            value: string;
+         }>;
+         tags?: string;       // 상품 태그
+         weights?: string[];  // 무게 옵션
+         price?: number;      // 기본 가격
+
+         // 배송 정보
+         shippingInfo?: {
+            method: string;    // 배송 방법
+            cost: number;      // 배송비
+            estimatedDays: number; // 예상 배송일
+         };
       };
-      variants: Array<{
-        id: number;
-        sku: string;
-        additionalPrice: number;
-        stock: number;
-        options: Array<{
-          optionValueId: number;
-          optionValue: {
-            optionGroupId: number;
-          };
-        }>;
+
+      // 상태 정보
+      selectedOptions: Record<number, number>;
+      quantity: number;
+      loading: boolean;
+      error: any;
+      activeTab: string;
+      mainImage: string;
+      allImages: string[];
+      relatedProducts: Array<{    // 관련 상품 목록
+         id: number;
+         title: string;
+         image: string;
+         price: number;
+         rating?: number;
+         newPrice?: number;
+         oldPrice?: number;
       }>;
-      optionGroups: Array<{
-        id: number;
-        code: string;
-        name: string;
-        isRequired: boolean;
-        optionValues: Array<{
-          id: number;
-          code: string;
-          name: string;
-          value: string;
-          isActive: boolean;
-        }>;
-      }>;
-      optionJson: {
-        level2_price: Record<number, number>;
+      selectedVariant: any;
+      isMobile: boolean;
+      showBottomSheet: boolean;
+      isUserLoggedIn: boolean;
+      isAdminMode: boolean;
+      theme: object;
+
+      // 가격 정보
+      basePrice: number;
+      priceInfo: {
+         originalPrice: number;
+         levelPrice: number;
+         discount: number;
+         discountRate: number;
+         levelName: string | null;
       };
-      additionalImages: string[];
-      
-      // 리뷰 관련
-      recentReviews?: Array<{
-        id: number;
-        userName: string;
-        rating: number;
-        content: string;
-        createdAt: string;
-      }>;
-      totalReviews?: number;
-      averageRating?: number;
-      
-      // 추가 정보
-      sku?: string;        // 상품 코드/SKU
-      features?: Array<{   // 상품 특징 목록
-        label: string;
-        value: string;
-      }>;
-      tags?: string;       // 상품 태그
-      weights?: string[];  // 무게 옵션
-      price?: number;      // 기본 가격
-      
-      // 배송 정보
-      shippingInfo?: {
-        method: string;    // 배송 방법
-        cost: number;      // 배송비
-        estimatedDays: number; // 예상 배송일
-      };
-    };
-    
-    // 상태 정보
-    selectedOptions: Record<number, number>;
-    quantity: number;
-    loading: boolean;
-    error: any;
-    activeTab: string;
-    mainImage: string;
-    allImages: string[];
-    relatedProducts: Array<{    // 관련 상품 목록
-      id: number;
-      title: string;
-      image: string;
-      price: number;
-      rating?: number;
-      newPrice?: number;
-      oldPrice?: number;
-    }>;
-    selectedVariant: any;
-    isMobile: boolean;
-    showBottomSheet: boolean;
-    isUserLoggedIn: boolean;
-    isAdminMode: boolean;
-    theme: object;
-    
-    // 가격 정보
-    basePrice: number;
-    priceInfo: {
-      originalPrice: number;
-      levelPrice: number;
-      discount: number;
-      discountRate: number;
-      levelName: string | null;
-    };
-    finalPrice: number;
-    isOutOfStock: boolean;
-  };
-  actions: {
-    handleOptionChange: (groupId: number, valueId: number) => void;
-    handleQuantityChange: (quantity: number) => void;
-    handleAddToCart: () => Promise<void>;
-    handleBuyNow: () => Promise<void>;
-    handleTabChange: (tab: string) => void;
-    handleImageChange: (image: string) => void;
-    increaseQuantity: () => void;
-    decreaseQuantity: () => void;
-    setShowBottomSheet: (show: boolean) => void;
-  };
-  utils: {
-    t: (key: string) => string;
-  };
-  mode: 'editor' | 'preview' | 'production';
-  editor?: {
-    isSelected: boolean;
-  };
+      finalPrice: number;
+      isOutOfStock: boolean;
+   };
+   actions: {
+      handleOptionChange: (groupId: number, valueId: number) => void;
+      handleQuantityChange: (quantity: number) => void;
+      handleAddToCart: () => Promise<void>;
+      handleBuyNow: () => Promise<void>;
+      handleTabChange: (tab: string) => void;
+      handleImageChange: (image: string) => void;
+      increaseQuantity: () => void;
+      decreaseQuantity: () => void;
+      setShowBottomSheet: (show: boolean) => void;
+   };
+   utils: {
+      t: (key: string) => string;
+   };
+   mode: 'editor' | 'preview' | 'production';
+   editor?: {
+      isSelected: boolean;
+   };
 }
 ```
 
@@ -221,17 +221,17 @@ interface ComponentSkinProps {
 
 ```typescript
 product: {
-  id: number;                    // 상품 ID
-  title: string;                 // 상품명
-  description: string;           // 상품 설명 (마크다운 형식, 상품 상세 이미지 포함)
-  config: {
-    img_url: string;            // 메인 이미지 URL
-    main_image: string;         // 대체 메인 이미지 URL
-    discounted_price: number;   // 할인가
-    default_price: number;      // 정가
-    stock_count: number;        // 기본 재고량
-  };
-  additionalImages: string[];   // 추가 이미지 배열
+   id: number;                    // 상품 ID
+   title: string;                 // 상품명
+   description: string;           // 상품 설명 (마크다운 형식, 상품 상세 이미지 포함)
+   config: {
+      img_url: string;            // 메인 이미지 URL
+      main_image: string;         // 대체 메인 이미지 URL
+      discounted_price: number;   // 할인가
+      default_price: number;      // 정가
+      stock_count: number;        // 기본 재고량
+   };
+   additionalImages: string[];   // 추가 이미지 배열
 }
 ```
 
@@ -254,28 +254,28 @@ product: {
 ```typescript
 // 옵션 그룹 (색상, 사이즈 등)
 optionGroups: Array<{
-  id: number;           // 옵션 그룹 ID
-  code: string;         // 옵션 그룹 코드
-  name: string;         // 옵션 그룹 이름 (예: "색상", "사이즈")
-  isRequired: boolean;  // 필수 선택 여부
-  optionValues: Array<{
-    id: number;         // 옵션 값 ID
-    code: string;       // 옵션 값 코드
-    name: string;       // 옵션 값 이름 (예: "빨강", "L")
-  }>;
+   id: number;           // 옵션 그룹 ID
+   code: string;         // 옵션 그룹 코드
+   name: string;         // 옵션 그룹 이름 (예: "색상", "사이즈")
+   isRequired: boolean;  // 필수 선택 여부
+   optionValues: Array<{
+      id: number;         // 옵션 값 ID
+      code: string;       // 옵션 값 코드
+      name: string;       // 옵션 값 이름 (예: "빨강", "L")
+   }>;
 }>;
 
 // 상품 변형 (옵션 조합별 정보)
 variants: Array<{
-  id: number;              // 변형 ID
-  additionalPrice: number; // 추가 가격
-  stock: number;           // 변형별 재고
-  options: Array<{
-    optionValueId: number;
-    optionValue: {
-      optionGroupId: number;
-    };
-  }>;
+   id: number;              // 변형 ID
+   additionalPrice: number; // 추가 가격
+   stock: number;           // 변형별 재고
+   options: Array<{
+      optionValueId: number;
+      optionValue: {
+         optionGroupId: number;
+      };
+   }>;
 }>;
 ```
 
@@ -286,20 +286,27 @@ variants: Array<{
 ```typescript
 // 상품의 등급/직급별 가격 설정
 optionJson: {
-  priority: "level1" | "level2"; // 사용할 가격 체계
-  level1_price?: Record<number, number>; // 등급ID: 가격
-  level2_price?: Record<number, number>; // 직급ID: 가격
+   priority: "level1" | "level2"; // 사용할 가격 체계
+   level1_price?: Record<number, number>; // 등급ID: 가격
+   level2_price?: Record<number, number>; // 직급ID: 가격
 };
 
 // 계산된 가격 정보
 priceInfo: {
-  originalPrice: number;  // 원래 가격
-  levelPrice: number;     // 등급 할인 적용 가격
-  discount: number;       // 할인 금액
-  discountRate: number;   // 할인율 (%)
-  levelName: string;      // 등급명
+   originalPrice: number;  // 원래 가격
+   levelPrice: number;     // 등급 할인 적용 가격
+   discount: number;       // 할인 금액
+   discountRate: number;   // 할인율 (%)
+   levelName: string;      // 등급명
 };
 ```
+
+#### 가격 계산 흐름
+1. **기본 가격**: `basePrice` (상품의 기본 판매가)
+2. **등급/직급 할인**: `priceInfo.levelPrice` (로그인 사용자의 등급/직급별 가격)
+3. **옵션 추가금액**: `selectedVariant.additionalPrice`
+4. **최종 단가**: `finalPrice` (등급할인가 + 옵션추가금액)
+5. **총 금액**: `finalPrice * quantity`
 
 ## 핵심 기능 구현
 
@@ -325,48 +332,123 @@ const { mainImage, allImages, actions } = data;
 ### 2. 옵션 선택 시스템
 
 ```tsx
-{product?.optionGroups?.map(group => (
-  <div key={group.id}>
-    <label>{group.name} {group.isRequired && '*'}</label>
-    <select
-      value={selectedOptions[group.id] || ''}
-      onChange={(e) => actions.handleOptionChange(group.id, parseInt(e.target.value))}
-    >
-      <option value="">선택하세요</option>
-      {group.optionValues.map(value => (
-        <option key={value.id} value={value.id}>
-          {value.name}
-        </option>
-      ))}
-    </select>
+const { product, selectedOptions, selectedVariant } = data;
+
+// 옵션 선택 UI
+{product?.optionGroups?.length > 0 && (
+  <div className="option-selection">
+    {product.optionGroups.map((group) => (
+      <div key={group.id} className="option-group">
+        <label>
+          {group.name}
+          {group.isRequired && <span className="required">*</span>}
+        </label>
+        
+        {/* 버튼 스타일 옵션 선택 */}
+        <div className="option-buttons">
+          {group.optionValues?.map((value) => (
+            <button
+              key={value.id}
+              className={selectedOptions[group.id] === value.id ? 'selected' : ''}
+              onClick={() => actions.handleOptionChange(group.id, value.id)}
+              disabled={!value.isActive}
+            >
+              {value.value}
+            </button>
+          ))}
+        </div>
+        
+        {/* 또는 드롭다운 스타일 */}
+        <select
+          value={selectedOptions[group.id] || ''}
+          onChange={(e) => actions.handleOptionChange(group.id, parseInt(e.target.value))}
+        >
+          <option value="">선택하세요</option>
+          {group.optionValues?.map(value => (
+            <option key={value.id} value={value.id} disabled={!value.isActive}>
+              {value.value}
+            </option>
+          ))}
+        </select>
+      </div>
+    ))}
   </div>
-))}
-```
+)}
 
-### 3. 가격 표시
-
-```tsx
-const { priceInfo, finalPrice, componentProps } = data;
-
-// 등급 할인이 있는 경우
-{priceInfo.discount > 0 ? (
-  <div>
-    <span className="original-price" style={{textDecoration: 'line-through'}}>
-      {priceInfo.originalPrice.toLocaleString()}원
-    </span>
-    <span className="level-price" style={{color: componentProps.priceColor}}>
-      {finalPrice.toLocaleString()}원
-    </span>
-    <span className="discount-badge">
-      할인 적용됨
-    </span>
+{/* 선택된 variant 정보 표시 */}
+{selectedVariant && (
+  <div className="selected-variant-info">
+    <div>선택된 상품: {selectedVariant.sku}</div>
+    
+    {/* 추가 금액 표시 */}
+    {Number(selectedVariant.additionalPrice) > 0 && (
+      <div className="additional-price">
+        추가 금액: +₩{Number(selectedVariant.additionalPrice).toLocaleString()}
+      </div>
+    )}
+    
+    {/* 재고 표시 */}
+    {selectedVariant.stock === 0 ? (
+      <div className="out-of-stock">품절</div>
+    ) : (
+      <div className="in-stock">재고: {selectedVariant.stock}개</div>
+    )}
   </div>
-) : (
-  <span style={{color: componentProps.priceColor}}>
-    {finalPrice.toLocaleString()}원
-  </span>
 )}
 ```
+
+#### 옵션 선택 로직
+1. **옵션 그룹 표시**: `product.optionGroups` 배열을 순회하여 각 옵션 그룹 표시
+2. **옵션 선택**: `handleOptionChange(groupId, valueId)` 호출
+3. **Variant 자동 선택**: 모든 필수 옵션 선택 시 일치하는 variant 자동 설정
+4. **추가금액 적용**: `selectedVariant.additionalPrice`를 최종 가격에 반영
+5. **재고 확인**: `selectedVariant.stock`으로 구매 가능 여부 확인
+
+### 3. 가격 표시 (등급/직급별 할인 + 옵션별 추가금액)
+
+```tsx
+const { priceInfo, finalPrice, selectedVariant, componentProps } = data;
+
+// 가격 표시 UI
+<div className="price-section">
+  {/* 등급/직급 할인이 있는 경우 */}
+  {priceInfo.discount > 0 && priceInfo.levelName ? (
+    <>
+      <span className="level-badge">{priceInfo.levelName} 특별가</span>
+      <span className="original-price" style={{textDecoration: 'line-through'}}>
+        ₩{priceInfo.originalPrice.toLocaleString()}
+      </span>
+      <span className="discounted-price" style={{color: componentProps.priceColor}}>
+        ₩{priceInfo.levelPrice.toLocaleString()}
+      </span>
+    </>
+  ) : (
+    <span className="regular-price" style={{color: componentProps.priceColor}}>
+      ₩{basePrice.toLocaleString()}
+    </span>
+  )}
+  
+  {/* 선택된 옵션의 추가금액 표시 */}
+  {selectedVariant && Number(selectedVariant.additionalPrice) > 0 && (
+    <div className="additional-price">
+      추가 금액: +₩{Number(selectedVariant.additionalPrice).toLocaleString()}
+    </div>
+  )}
+  
+  {/* 최종 가격 표시 */}
+  <div className="final-price">
+    <span>총 금액: </span>
+    <strong style={{color: componentProps.priceColor}}>
+      ₩{(finalPrice * quantity).toLocaleString()}
+    </strong>
+  </div>
+</div>
+```
+
+#### 주의사항
+- `additionalPrice`는 문자열로 저장되므로 숫자 변환 필요
+- 등급/직급별 가격과 옵션 추가금액은 별도로 표시하여 투명성 확보
+- 최종 가격은 수량을 곱한 총 금액으로 표시
 
 ### 4. 수량 선택기
 
@@ -385,28 +467,104 @@ const { priceInfo, finalPrice, componentProps } = data;
 )}
 ```
 
-### 5. 장바구니 및 구매 버튼
+### 5. 장바구니 및 바로구매 버튼
 
 ```tsx
-{componentProps.showAddToCart && (
-  <button 
-    onClick={actions.handleAddToCart}
-    disabled={isOutOfStock}
-    style={{backgroundColor: componentProps.addToCartButtonColor}}
-  >
-    {isOutOfStock ? '품절' : '장바구니'}
-  </button>
-)}
+const { isOutOfStock, componentProps } = data;
+const { handleAddToCart, handleBuyNow } = actions;
+const { t } = utils;
 
-{componentProps.showBuyNow && (
-  <button 
-    onClick={actions.handleBuyNow}
-    disabled={isOutOfStock}
-    style={{backgroundColor: componentProps.buyNowButtonColor}}
-  >
-    {isOutOfStock ? '품절' : '바로구매'}
-  </button>
-)}
+// 구매 버튼 영역
+<div className="purchase-buttons">
+  {/* 장바구니 담기 버튼 */}
+  {componentProps.showAddToCart && (
+    <button 
+      className="add-to-cart-btn"
+      onClick={handleAddToCart}
+      disabled={isOutOfStock}
+      style={{backgroundColor: componentProps.addToCartButtonColor}}
+    >
+      {isOutOfStock ? t('품절') : t('장바구니 담기')}
+    </button>
+  )}
+  
+  {/* 바로구매 버튼 */}
+  {componentProps.showBuyNow && (
+    <button 
+      className="buy-now-btn"
+      onClick={handleBuyNow}
+      disabled={isOutOfStock}
+      style={{backgroundColor: componentProps.buyNowButtonColor}}
+    >
+      {isOutOfStock ? t('품절') : t('바로구매')}
+    </button>
+  )}
+</div>
+```
+
+#### 바로구매 기능 상세
+
+바로구매 기능은 장바구니를 거치지 않고 바로 결제 페이지로 이동하는 기능입니다.
+
+**동작 흐름:**
+1. **유효성 검증**: 상품 정보, 필수 옵션 선택, 재고 확인
+2. **구매 정보 저장**: 선택된 상품, 옵션, 수량을 Redux 상태에 임시 저장
+3. **결제 페이지 이동**: `/checkout?mode=buyNow` URL로 이동
+4. **결제 컴포넌트 처리**: Payment 컴포넌트가 buyNow 모드로 처리
+
+**바로구매 시 전달되는 데이터:**
+```typescript
+interface BuyNowItem {
+  id: number;                    // 임시 ID
+  count: number;                 // 구매 수량
+  productId: number;             // 상품 ID
+  variantId: number | null;      // 선택된 variant ID
+  variant: Variant | null;       // variant 정보
+  options: Record<string, string>; // 선택된 옵션
+  product: {                     // 상품 정보
+    id: number;
+    title: string;
+    config: any;
+    optionJson?: any;            // 등급/직급별 가격 정보
+  };
+}
+```
+
+**주의사항:**
+- `handleBuyNow`는 비동기 함수이므로 로딩 상태 처리 권장
+- 필수 옵션이 모두 선택되지 않으면 에러 메시지 표시
+- 재고가 없는 경우 버튼 비활성화 필요
+- 로그인하지 않은 사용자는 로그인 페이지로 리다이렉트될 수 있음
+- 바로구매 정보는 결제 완료 또는 페이지 이탈 시 자동으로 초기화됨
+
+**스타일링 예시:**
+```css
+.purchase-buttons {
+   display: flex;
+   gap: 10px;
+   margin-top: 20px;
+}
+
+.buy-now-btn {
+   flex: 1;
+   padding: 15px;
+   background-color: #ff6b6b;
+   color: white;
+   border: none;
+   border-radius: 4px;
+   font-size: 16px;
+   font-weight: bold;
+   cursor: pointer;
+}
+
+.buy-now-btn:hover:not(:disabled) {
+   background-color: #ff5252;
+}
+
+.buy-now-btn:disabled {
+   background-color: #ccc;
+   cursor: not-allowed;
+}
 ```
 
 ### 6. 탭 시스템
@@ -414,36 +572,36 @@ const { priceInfo, finalPrice, componentProps } = data;
 ```tsx
 // 탭 헤더
 <div className="tab-headers">
-  {componentProps.showDescriptionTab && (
-    <button 
-      className={activeTab === 'description' ? 'active' : ''}
-      onClick={() => actions.handleTabChange('description')}
-    >
-      상품설명
-    </button>
-  )}
-  {componentProps.showReviewsTab && (
-    <button 
-      className={activeTab === 'reviews' ? 'active' : ''}
-      onClick={() => actions.handleTabChange('reviews')}
-    >
-      리뷰
-    </button>
-  )}
+   {componentProps.showDescriptionTab && (
+           <button
+                   className={activeTab === 'description' ? 'active' : ''}
+                   onClick={() => actions.handleTabChange('description')}
+           >
+              상품설명
+           </button>
+   )}
+   {componentProps.showReviewsTab && (
+           <button
+                   className={activeTab === 'reviews' ? 'active' : ''}
+                   onClick={() => actions.handleTabChange('reviews')}
+           >
+              리뷰
+           </button>
+   )}
 </div>
 
 // 탭 콘텐츠
 <div className="tab-content">
-  {activeTab === 'description' && (
-    <div className="description-content">
-      {/* 상품 상세 이미지 처리 - 아래 섹션 참조 */}
-    </div>
-  )}
-  {activeTab === 'reviews' && (
-    <div className="reviews-content">
-      {/* 리뷰 목록 - 아래 섹션 참조 */}
-    </div>
-  )}
+   {activeTab === 'description' && (
+           <div className="description-content">
+              {/* 상품 상세 이미지 처리 - 아래 섹션 참조 */}
+           </div>
+   )}
+   {activeTab === 'reviews' && (
+           <div className="reviews-content">
+              {/* 리뷰 목록 - 아래 섹션 참조 */}
+           </div>
+   )}
 </div>
 ```
 
@@ -454,60 +612,60 @@ const { priceInfo, finalPrice, componentProps } = data;
 ```tsx
 // 설명에서 이미지 URL 추출 함수 (HTML과 마크다운 모두 지원)
 const extractImagesFromDescription = (description?: string): string[] => {
-  if (!description) return [];
-  const images: string[] = [];
-  
-  // HTML img 태그에서 src 추출
-  const htmlRegex = /<img[^>]+src="([^">]+)"/g;
-  let match;
-  while ((match = htmlRegex.exec(description)) !== null) {
-    if (match[1] && !match[1].includes('ProseMirror-separator')) {
-      images.push(match[1]);
-    }
-  }
-  
-  // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
-  const markdownRegex = /!\[.*?\]\((.*?)\)/g;
-  while ((match = markdownRegex.exec(description)) !== null) {
-    if (match[1]) {
-      images.push(match[1]);
-    }
-  }
-  
-  return images;
+   if (!description) return [];
+   const images: string[] = [];
+
+   // HTML img 태그에서 src 추출
+   const htmlRegex = /<img[^>]+src="([^">]+)"/g;
+   let match;
+   while ((match = htmlRegex.exec(description)) !== null) {
+      if (match[1] && !match[1].includes('ProseMirror-separator')) {
+         images.push(match[1]);
+      }
+   }
+
+   // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
+   const markdownRegex = /!\[.*?\]\((.*?)\)/g;
+   while ((match = markdownRegex.exec(description)) !== null) {
+      if (match[1]) {
+         images.push(match[1]);
+      }
+   }
+
+   return images;
 };
 
 // 상품 설명 탭 콘텐츠
 {activeTab === 'description' && (
-  <div className="description-tab-content">
-    {/* 이미지 형식의 설명인 경우 */}
-    {extractImagesFromDescription(product.description).length > 0 ? (
-      <div className="description-images">
-        {extractImagesFromDescription(product.description).map((imgUrl, index) => (
-          <div key={index} className="description-image-item">
-            <img 
-              src={imgUrl} 
-              alt={`상품 상세 이미지 ${index + 1}`}
-              style={{ width: '100%', height: 'auto', marginBottom: '15px' }}
-            />
-          </div>
-        ))}
-      </div>
-    ) : product?.description ? (
-      // HTML 형식의 설명인 경우
-      <div 
-        className="description-html"
-        dangerouslySetInnerHTML={{ 
-          __html: product.description.replace(
-            /!\[(.*?)\]\((.*?)\)/g, 
-            '<img src="$2" alt="$1" style="width:100%; height:auto; margin:10px 0;" />'
-          ) 
-        }} 
-      />
-    ) : (
-      <p>상품 설명이 없습니다.</p>
-    )}
-  </div>
+        <div className="description-tab-content">
+           {/* 이미지 형식의 설명인 경우 */}
+           {extractImagesFromDescription(product.description).length > 0 ? (
+                   <div className="description-images">
+                      {extractImagesFromDescription(product.description).map((imgUrl, index) => (
+                              <div key={index} className="description-image-item">
+                                 <img
+                                         src={imgUrl}
+                                         alt={`상품 상세 이미지 ${index + 1}`}
+                                         style={{ width: '100%', height: 'auto', marginBottom: '15px' }}
+                                 />
+                              </div>
+                      ))}
+                   </div>
+           ) : product?.description ? (
+                   // HTML 형식의 설명인 경우
+                   <div
+                           className="description-html"
+                           dangerouslySetInnerHTML={{
+                              __html: product.description.replace(
+                                      /!\[(.*?)\]\((.*?)\)/g,
+                                      '<img src="$2" alt="$1" style="width:100%; height:auto; margin:10px 0;" />'
+                              )
+                           }}
+                   />
+           ) : (
+                   <p>상품 설명이 없습니다.</p>
+           )}
+        </div>
 )}
 ```
 
@@ -518,70 +676,70 @@ const extractImagesFromDescription = (description?: string): string[] => {
 ```tsx
 // 리뷰 데이터 구조
 interface Review {
-  id: number;
-  userName: string;
-  rating: number;
-  content: string;
-  createdAt: string;
+   id: number;
+   userName: string;
+   rating: number;
+   content: string;
+   createdAt: string;
 }
 
 // 별점 표시 컴포넌트
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
-  const safeRating = Math.min(Math.max(0, rating), 5);
-  const stars = [];
-  
-  for (let i = 1; i <= 5; i++) {
-    if (i <= safeRating) {
-      stars.push(
-        <i key={i} className="star filled">★</i>
-      );
-    } else {
-      stars.push(
-        <i key={i} className="star empty">☆</i>
-      );
-    }
-  }
-  return <span className="star-rating">{stars}</span>;
+   const safeRating = Math.min(Math.max(0, rating), 5);
+   const stars = [];
+
+   for (let i = 1; i <= 5; i++) {
+      if (i <= safeRating) {
+         stars.push(
+                 <i key={i} className="star filled">★</i>
+         );
+      } else {
+         stars.push(
+                 <i key={i} className="star empty">☆</i>
+         );
+      }
+   }
+   return <span className="star-rating">{stars}</span>;
 };
 
 // 리뷰 탭 콘텐츠
 {activeTab === 'reviews' && (
-  <div className="reviews-tab-content">
-    <h4>고객 리뷰</h4>
-    
-    {/* 리뷰 통계 */}
-    {product?.totalReviews > 0 && (
-      <div className="review-stats">
-        <p>총 리뷰 수: {product.totalReviews}개</p>
-        <p>
-          평균 평점: <StarRating rating={product.averageRating || 0} />
-          <span>({product.averageRating?.toFixed(1) || '0.0'})</span>
-        </p>
-      </div>
-    )}
-    
-    {/* 리뷰 목록 */}
-    {product?.recentReviews && product.recentReviews.length > 0 ? (
-      <div className="review-list">
-        {product.recentReviews.map((review, index) => (
-          <div key={index} className="review-item">
-            <div className="review-header">
-              <span className="review-author">{review.userName || '사용자'}</span>
-              <StarRating rating={review.rating || 0} />
-              <span className="review-date">
+        <div className="reviews-tab-content">
+           <h4>고객 리뷰</h4>
+
+           {/* 리뷰 통계 */}
+           {product?.totalReviews > 0 && (
+                   <div className="review-stats">
+                      <p>총 리뷰 수: {product.totalReviews}개</p>
+                      <p>
+                         평균 평점: <StarRating rating={product.averageRating || 0} />
+                         <span>({product.averageRating?.toFixed(1) || '0.0'})</span>
+                      </p>
+                   </div>
+           )}
+
+           {/* 리뷰 목록 */}
+           {product?.recentReviews && product.recentReviews.length > 0 ? (
+                   <div className="review-list">
+                      {product.recentReviews.map((review, index) => (
+                              <div key={index} className="review-item">
+                                 <div className="review-header">
+                                    <span className="review-author">{review.userName || '사용자'}</span>
+                                    <StarRating rating={review.rating || 0} />
+                                    <span className="review-date">
                 {new Date(review.createdAt).toLocaleDateString()}
               </span>
-            </div>
-            <div className="review-content">
-              <div dangerouslySetInnerHTML={{ __html: review.content }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p>아직 리뷰가 없습니다.</p>
-    )}
-  </div>
+                                 </div>
+                                 <div className="review-content">
+                                    <div dangerouslySetInnerHTML={{ __html: review.content }} />
+                                 </div>
+                              </div>
+                      ))}
+                   </div>
+           ) : (
+                   <p>아직 리뷰가 없습니다.</p>
+           )}
+        </div>
 )}
 ```
 
@@ -589,13 +747,13 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
 
 ```tsx
 {componentProps.showStock && (
-  <div style={{color: componentProps.stockTextColor}}>
-    {selectedVariant ? (
-      <span>재고: {selectedVariant.stock}개</span>
-    ) : (
-      <span>재고: {product.config.stock_count}개</span>
-    )}
-  </div>
+        <div style={{color: componentProps.stockTextColor}}>
+           {selectedVariant ? (
+                   <span>재고: {selectedVariant.stock}개</span>
+           ) : (
+                   <span>재고: {product.config.stock_count}개</span>
+           )}
+        </div>
 )}
 ```
 
@@ -603,16 +761,16 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
 
 ```tsx
 {isMobile && showBottomSheet && (
-  <div className="bottom-sheet-overlay" onClick={() => actions.setShowBottomSheet(false)}>
-    <div className="bottom-sheet">
-      {/* 옵션 선택 UI */}
-      {/* 수량 선택 UI */}
-      {/* 버튼들 */}
-      <button onClick={() => actions.setShowBottomSheet(false)}>
-        닫기
-      </button>
-    </div>
-  </div>
+        <div className="bottom-sheet-overlay" onClick={() => actions.setShowBottomSheet(false)}>
+           <div className="bottom-sheet">
+              {/* 옵션 선택 UI */}
+              {/* 수량 선택 UI */}
+              {/* 버튼들 */}
+              <button onClick={() => actions.setShowBottomSheet(false)}>
+                 닫기
+              </button>
+           </div>
+        </div>
 )}
 ```
 
@@ -623,434 +781,434 @@ import React from 'react';
 import { ComponentSkinProps } from '../../../types/component-skin';
 
 const MyProductDetailSkin: React.FC<ComponentSkinProps> = ({
-  data,
-  actions,
-  utils,
-  mode,
-  editor
-}) => {
-  const {
-    id,
-    product,
-    selectedOptions,
-    quantity,
-    loading,
-    mainImage,
-    allImages,
-    priceInfo,
-    finalPrice,
-    isOutOfStock,
-    activeTab,
-    componentProps,
-    isMobile,
-    showBottomSheet,
-    t
-  } = data;
+                                                              data,
+                                                              actions,
+                                                              utils,
+                                                              mode,
+                                                              editor
+                                                           }) => {
+   const {
+      id,
+      product,
+      selectedOptions,
+      quantity,
+      loading,
+      mainImage,
+      allImages,
+      priceInfo,
+      finalPrice,
+      isOutOfStock,
+      activeTab,
+      componentProps,
+      isMobile,
+      showBottomSheet,
+      t
+   } = data;
 
-  // 별점 컴포넌트
-  const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
-    const safeRating = Math.min(Math.max(0, rating), 5);
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      if (i <= safeRating) {
-        stars.push(<i key={i} className="star filled">★</i>);
-      } else {
-        stars.push(<i key={i} className="star empty">☆</i>);
+   // 별점 컴포넌트
+   const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
+      const safeRating = Math.min(Math.max(0, rating), 5);
+      const stars = [];
+      for (let i = 1; i <= 5; i++) {
+         if (i <= safeRating) {
+            stars.push(<i key={i} className="star filled">★</i>);
+         } else {
+            stars.push(<i key={i} className="star empty">☆</i>);
+         }
       }
-    }
-    return <span className="star-rating">{stars}</span>;
-  };
+      return <span className="star-rating">{stars}</span>;
+   };
 
-  // 설명에서 이미지 추출 (HTML과 마크다운 모두 지원)
-  const extractImagesFromDescription = (description?: string): string[] => {
-    if (!description) return [];
-    const images: string[] = [];
-    
-    // HTML img 태그에서 src 추출
-    const htmlRegex = /<img[^>]+src="([^">]+)"/g;
-    let match;
-    while ((match = htmlRegex.exec(description)) !== null) {
-      if (match[1] && !match[1].includes('ProseMirror-separator')) {
-        images.push(match[1]);
+   // 설명에서 이미지 추출 (HTML과 마크다운 모두 지원)
+   const extractImagesFromDescription = (description?: string): string[] => {
+      if (!description) return [];
+      const images: string[] = [];
+
+      // HTML img 태그에서 src 추출
+      const htmlRegex = /<img[^>]+src="([^">]+)"/g;
+      let match;
+      while ((match = htmlRegex.exec(description)) !== null) {
+         if (match[1] && !match[1].includes('ProseMirror-separator')) {
+            images.push(match[1]);
+         }
       }
-    }
-    
-    // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
-    const markdownRegex = /!\[.*?\]\((.*?)\)/g;
-    while ((match = markdownRegex.exec(description)) !== null) {
-      if (match[1]) {
-        images.push(match[1]);
+
+      // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
+      const markdownRegex = /!\[.*?\]\((.*?)\)/g;
+      while ((match = markdownRegex.exec(description)) !== null) {
+         if (match[1]) {
+            images.push(match[1]);
+         }
       }
-    }
-    
-    return images;
-  };
 
-  if (loading) {
-    return <div className="loading">로딩 중...</div>;
-  }
+      return images;
+   };
 
-  if (!product) {
-    return <div className="error">상품을 찾을 수 없습니다.</div>;
-  }
+   if (loading) {
+      return <div className="loading">로딩 중...</div>;
+   }
 
-  const descriptionImages = extractImagesFromDescription(product.description);
+   if (!product) {
+      return <div className="error">상품을 찾을 수 없습니다.</div>;
+   }
 
-  return (
-    <div id={id} className="my-product-detail">
-      <div className="product-detail-container">
-        {/* 상품 정보 섹션 */}
-        <div className="product-info-section">
-          {/* 상품 이미지 갤러리 */}
-          <div className="product-images">
-            <div className="main-image">
-              <img src={mainImage} alt={product.title} />
-            </div>
-            <div className="thumbnail-images">
-              {allImages.map((image, index) => (
-                <img 
-                  key={index}
-                  src={image}
-                  onClick={() => actions.handleImageChange(image)}
-                  className={mainImage === image ? 'active' : ''}
-                  alt={`${product.title} ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
+   const descriptionImages = extractImagesFromDescription(product.description);
 
-          {/* 상품 정보 */}
-          <div className="product-info">
-            <h1>{product.title}</h1>
-            
-            {/* 상품 평점 */}
-            {(product.averageRating || product.totalReviews > 0) && (
-              <div className="product-rating">
-                <StarRating rating={product.averageRating} />
-                {product.totalReviews > 0 && (
-                  <span className="review-count">({product.totalReviews})</span>
-                )}
-              </div>
-            )}
-            
-            {/* 가격 표시 */}
-            <div className="price-section">
-              {priceInfo.discount > 0 ? (
-                <>
+   return (
+           <div id={id} className="my-product-detail">
+              <div className="product-detail-container">
+                 {/* 상품 정보 섹션 */}
+                 <div className="product-info-section">
+                    {/* 상품 이미지 갤러리 */}
+                    <div className="product-images">
+                       <div className="main-image">
+                          <img src={mainImage} alt={product.title} />
+                       </div>
+                       <div className="thumbnail-images">
+                          {allImages.map((image, index) => (
+                                  <img
+                                          key={index}
+                                          src={image}
+                                          onClick={() => actions.handleImageChange(image)}
+                                          className={mainImage === image ? 'active' : ''}
+                                          alt={`${product.title} ${index + 1}`}
+                                  />
+                          ))}
+                       </div>
+                    </div>
+
+                    {/* 상품 정보 */}
+                    <div className="product-info">
+                       <h1>{product.title}</h1>
+
+                       {/* 상품 평점 */}
+                       {(product.averageRating || product.totalReviews > 0) && (
+                               <div className="product-rating">
+                                  <StarRating rating={product.averageRating} />
+                                  {product.totalReviews > 0 && (
+                                          <span className="review-count">({product.totalReviews})</span>
+                                  )}
+                               </div>
+                       )}
+
+                       {/* 가격 표시 */}
+                       <div className="price-section">
+                          {priceInfo.discount > 0 ? (
+                                  <>
                   <span className="original-price">
                     {priceInfo.originalPrice.toLocaleString()}원
                   </span>
-                  <span className="level-price" style={{color: componentProps.priceColor}}>
+                                     <span className="level-price" style={{color: componentProps.priceColor}}>
                     {finalPrice.toLocaleString()}원
                   </span>
-                  <span className="discount-info">
+                                     <span className="discount-info">
                     할인 적용됨
                   </span>
-                </>
-              ) : (
-                <span className="price" style={{color: componentProps.priceColor}}>
+                                  </>
+                          ) : (
+                                  <span className="price" style={{color: componentProps.priceColor}}>
                   {finalPrice.toLocaleString()}원
                 </span>
-              )}
-            </div>
+                          )}
+                       </div>
 
-            {/* SKU 코드 */}
-            {product.sku && (
-              <div className="product-sku">
-                <span>상품코드: {product.sku}</span>
-              </div>
-            )}
-            
-            {/* 태그 정보 */}
-            {product.tags && product.tags.trim() !== "" && (
-              <div className="product-tags">
-                <strong>태그:</strong> {product.tags}
-              </div>
-            )}
-            
-            {/* 상품 특징 */}
-            {product.features && product.features.length > 0 && (
-              <div className="product-features">
-                <ul>
-                  {product.features.map((feature, index) => (
-                    <li key={index}>
-                      <strong>{feature.label}:</strong> {feature.value}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {/* 무게 옵션 */}
-            {product.weights && product.weights.length > 0 && (
-              <div className="product-weights">
-                <span>무게:</span>
-                <div className="weight-options">
-                  {product.weights.map((weight, index) => (
-                    <span key={index} className={`weight-option ${index === 0 ? 'active' : ''}`}>
+                       {/* SKU 코드 */}
+                       {product.sku && (
+                               <div className="product-sku">
+                                  <span>상품코드: {product.sku}</span>
+                               </div>
+                       )}
+
+                       {/* 태그 정보 */}
+                       {product.tags && product.tags.trim() !== "" && (
+                               <div className="product-tags">
+                                  <strong>태그:</strong> {product.tags}
+                               </div>
+                       )}
+
+                       {/* 상품 특징 */}
+                       {product.features && product.features.length > 0 && (
+                               <div className="product-features">
+                                  <ul>
+                                     {product.features.map((feature, index) => (
+                                             <li key={index}>
+                                                <strong>{feature.label}:</strong> {feature.value}
+                                             </li>
+                                     ))}
+                                  </ul>
+                               </div>
+                       )}
+
+                       {/* 무게 옵션 */}
+                       {product.weights && product.weights.length > 0 && (
+                               <div className="product-weights">
+                                  <span>무게:</span>
+                                  <div className="weight-options">
+                                     {product.weights.map((weight, index) => (
+                                             <span key={index} className={`weight-option ${index === 0 ? 'active' : ''}`}>
                       {weight}
                     </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* 재고 정보 */}
-            {componentProps.showStock && (
-              <div className="stock-info" style={{color: componentProps.stockTextColor}}>
-                재고: {selectedVariant ? selectedVariant.stock : product.config.stock_count}개
-              </div>
-            )}
+                                     ))}
+                                  </div>
+                               </div>
+                       )}
 
-            {/* 옵션 선택 */}
-            {product.optionGroups?.map(group => (
-              <div key={group.id} className="option-group">
-                <label>
-                  {group.name} {group.isRequired && <span className="required">*</span>}
-                </label>
-                <div className="option-values">
-                  {group.optionValues.map(value => (
-                    <button
-                      key={value.id}
-                      className={`option-button ${selectedOptions[group.id] === value.id ? 'active' : ''}`}
-                      onClick={() => actions.handleOptionChange(group.id, value.id)}
-                      disabled={!value.isActive}
-                    >
-                      {value.value}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+                       {/* 재고 정보 */}
+                       {componentProps.showStock && (
+                               <div className="stock-info" style={{color: componentProps.stockTextColor}}>
+                                  재고: {selectedVariant ? selectedVariant.stock : product.config.stock_count}개
+                               </div>
+                       )}
 
-            {/* 선택된 variant 정보 */}
-            {selectedVariant && (
-              <div className="variant-info">
-                <p>선택된 상품: {selectedVariant.sku}</p>
-                {selectedVariant.additionalPrice > 0 && (
-                  <p>추가 금액: +{selectedVariant.additionalPrice.toLocaleString()}원</p>
-                )}
-              </div>
-            )}
+                       {/* 옵션 선택 */}
+                       {product.optionGroups?.map(group => (
+                               <div key={group.id} className="option-group">
+                                  <label>
+                                     {group.name} {group.isRequired && <span className="required">*</span>}
+                                  </label>
+                                  <div className="option-values">
+                                     {group.optionValues.map(value => (
+                                             <button
+                                                     key={value.id}
+                                                     className={`option-button ${selectedOptions[group.id] === value.id ? 'active' : ''}`}
+                                                     onClick={() => actions.handleOptionChange(group.id, value.id)}
+                                                     disabled={!value.isActive}
+                                             >
+                                                {value.value}
+                                             </button>
+                                     ))}
+                                  </div>
+                               </div>
+                       ))}
 
-            {/* 수량 선택 */}
-            {componentProps.showQuantitySelector && (
-              <div className="quantity-selector">
-                <button onClick={actions.decreaseQuantity}>-</button>
-                <input 
-                  type="number" 
-                  value={quantity} 
-                  onChange={(e) => actions.handleQuantityChange(parseInt(e.target.value))}
-                  min="1"
-                />
-                <button onClick={actions.increaseQuantity}>+</button>
-              </div>
-            )}
+                       {/* 선택된 variant 정보 */}
+                       {selectedVariant && (
+                               <div className="variant-info">
+                                  <p>선택된 상품: {selectedVariant.sku}</p>
+                                  {selectedVariant.additionalPrice > 0 && (
+                                          <p>추가 금액: +{selectedVariant.additionalPrice.toLocaleString()}원</p>
+                                  )}
+                               </div>
+                       )}
 
-            {/* 액션 버튼들 */}
-            <div className="action-buttons">
-              {componentProps.showAddToCart && (
-                <button 
-                  className="add-to-cart"
-                  onClick={actions.handleAddToCart}
-                  disabled={isOutOfStock}
-                  style={{backgroundColor: componentProps.addToCartButtonColor}}
-                >
-                  {isOutOfStock ? t('품절') : t('장바구니')}
-                </button>
-              )}
-              
-              {componentProps.showBuyNow && (
-                <button 
-                  className="buy-now"
-                  onClick={actions.handleBuyNow}
-                  disabled={isOutOfStock}
-                  style={{backgroundColor: componentProps.buyNowButtonColor}}
-                >
-                  {isOutOfStock ? t('품절') : t('바로구매')}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+                       {/* 수량 선택 */}
+                       {componentProps.showQuantitySelector && (
+                               <div className="quantity-selector">
+                                  <button onClick={actions.decreaseQuantity}>-</button>
+                                  <input
+                                          type="number"
+                                          value={quantity}
+                                          onChange={(e) => actions.handleQuantityChange(parseInt(e.target.value))}
+                                          min="1"
+                                  />
+                                  <button onClick={actions.increaseQuantity}>+</button>
+                               </div>
+                       )}
 
-        {/* 탭 시스템 */}
-        <div className="product-tabs">
-          <div className="tab-headers">
-            {componentProps.showDescriptionTab && (
-              <button 
-                className={activeTab === 'description' ? 'active' : ''}
-                onClick={() => actions.handleTabChange('description')}
-              >
-                {t('상품설명')}
-              </button>
-            )}
-            {componentProps.showReviewsTab && (
-              <button 
-                className={activeTab === 'reviews' ? 'active' : ''}
-                onClick={() => actions.handleTabChange('reviews')}
-              >
-                {t('리뷰')}
-              </button>
-            )}
-          </div>
-          
-          <div className="tab-content">
-            {/* 상품 설명 탭 */}
-            {activeTab === 'description' && (
-              <div className="description-tab">
-                {descriptionImages.length > 0 ? (
-                  <div className="description-images">
-                    {descriptionImages.map((imgUrl, index) => (
-                      <img 
-                        key={index}
-                        src={imgUrl} 
-                        alt={`상품 상세 이미지 ${index + 1}`}
-                        style={{ width: '100%', height: 'auto', marginBottom: '15px' }}
-                      />
-                    ))}
-                  </div>
-                ) : product?.description ? (
-                  <div 
-                    className="description-html"
-                    dangerouslySetInnerHTML={{ 
-                      __html: product.description.replace(
-                        /!\[(.*?)\]\((.*?)\)/g, 
-                        '<img src="$2" alt="$1" style="width:100%; height:auto; margin:10px 0;" />'
-                      ) 
-                    }} 
-                  />
-                ) : (
-                  <p>{t('상품 설명이 없습니다.')}</p>
-                )}
-              </div>
-            )}
-            
-            {/* 리뷰 탭 */}
-            {activeTab === 'reviews' && (
-              <div className="reviews-tab">
-                <h4>{t('고객 리뷰')}</h4>
-                
-                {/* 리뷰 통계 */}
-                {product.totalReviews > 0 && (
-                  <div className="review-stats">
-                    <p>총 리뷰 수: {product.totalReviews}개</p>
-                    <p>
-                      평균 평점: <StarRating rating={product.averageRating || 0} />
-                      <span> ({product.averageRating?.toFixed(1) || '0.0'})</span>
-                    </p>
-                  </div>
-                )}
-                
-                {/* 리뷰 목록 */}
-                {product.recentReviews && product.recentReviews.length > 0 ? (
-                  <div className="review-list">
-                    {product.recentReviews.map((review, index) => (
-                      <div key={index} className="review-item">
-                        <div className="review-header">
-                          <span className="review-author">{review.userName || '사용자'}</span>
-                          <StarRating rating={review.rating || 0} />
-                          <span className="review-date">
+                       {/* 액션 버튼들 */}
+                       <div className="action-buttons">
+                          {componentProps.showAddToCart && (
+                                  <button
+                                          className="add-to-cart"
+                                          onClick={actions.handleAddToCart}
+                                          disabled={isOutOfStock}
+                                          style={{backgroundColor: componentProps.addToCartButtonColor}}
+                                  >
+                                     {isOutOfStock ? t('품절') : t('장바구니')}
+                                  </button>
+                          )}
+
+                          {componentProps.showBuyNow && (
+                                  <button
+                                          className="buy-now"
+                                          onClick={actions.handleBuyNow}
+                                          disabled={isOutOfStock}
+                                          style={{backgroundColor: componentProps.buyNowButtonColor}}
+                                  >
+                                     {isOutOfStock ? t('품절') : t('바로구매')}
+                                  </button>
+                          )}
+                       </div>
+                    </div>
+                 </div>
+
+                 {/* 탭 시스템 */}
+                 <div className="product-tabs">
+                    <div className="tab-headers">
+                       {componentProps.showDescriptionTab && (
+                               <button
+                                       className={activeTab === 'description' ? 'active' : ''}
+                                       onClick={() => actions.handleTabChange('description')}
+                               >
+                                  {t('상품설명')}
+                               </button>
+                       )}
+                       {componentProps.showReviewsTab && (
+                               <button
+                                       className={activeTab === 'reviews' ? 'active' : ''}
+                                       onClick={() => actions.handleTabChange('reviews')}
+                               >
+                                  {t('리뷰')}
+                               </button>
+                       )}
+                    </div>
+
+                    <div className="tab-content">
+                       {/* 상품 설명 탭 */}
+                       {activeTab === 'description' && (
+                               <div className="description-tab">
+                                  {descriptionImages.length > 0 ? (
+                                          <div className="description-images">
+                                             {descriptionImages.map((imgUrl, index) => (
+                                                     <img
+                                                             key={index}
+                                                             src={imgUrl}
+                                                             alt={`상품 상세 이미지 ${index + 1}`}
+                                                             style={{ width: '100%', height: 'auto', marginBottom: '15px' }}
+                                                     />
+                                             ))}
+                                          </div>
+                                  ) : product?.description ? (
+                                          <div
+                                                  className="description-html"
+                                                  dangerouslySetInnerHTML={{
+                                                     __html: product.description.replace(
+                                                             /!\[(.*?)\]\((.*?)\)/g,
+                                                             '<img src="$2" alt="$1" style="width:100%; height:auto; margin:10px 0;" />'
+                                                     )
+                                                  }}
+                                          />
+                                  ) : (
+                                          <p>{t('상품 설명이 없습니다.')}</p>
+                                  )}
+                               </div>
+                       )}
+
+                       {/* 리뷰 탭 */}
+                       {activeTab === 'reviews' && (
+                               <div className="reviews-tab">
+                                  <h4>{t('고객 리뷰')}</h4>
+
+                                  {/* 리뷰 통계 */}
+                                  {product.totalReviews > 0 && (
+                                          <div className="review-stats">
+                                             <p>총 리뷰 수: {product.totalReviews}개</p>
+                                             <p>
+                                                평균 평점: <StarRating rating={product.averageRating || 0} />
+                                                <span> ({product.averageRating?.toFixed(1) || '0.0'})</span>
+                                             </p>
+                                          </div>
+                                  )}
+
+                                  {/* 리뷰 목록 */}
+                                  {product.recentReviews && product.recentReviews.length > 0 ? (
+                                          <div className="review-list">
+                                             {product.recentReviews.map((review, index) => (
+                                                     <div key={index} className="review-item">
+                                                        <div className="review-header">
+                                                           <span className="review-author">{review.userName || '사용자'}</span>
+                                                           <StarRating rating={review.rating || 0} />
+                                                           <span className="review-date">
                             {new Date(review.createdAt).toLocaleDateString()}
                           </span>
-                        </div>
-                        <div className="review-content">
-                          <div dangerouslySetInnerHTML={{ __html: review.content }} />
-                        </div>
+                                                        </div>
+                                                        <div className="review-content">
+                                                           <div dangerouslySetInnerHTML={{ __html: review.content }} />
+                                                        </div>
+                                                     </div>
+                                             ))}
+                                          </div>
+                                  ) : (
+                                          <p>{t('아직 리뷰가 없습니다.')}</p>
+                                  )}
+                               </div>
+                       )}
+                    </div>
+                 </div>
+
+                 {/* 관련 상품 */}
+                 {componentProps.showRelatedProducts && data.relatedProducts?.length > 0 && (
+                         <div className="related-products">
+                            <h3>{t('관련 상품')}</h3>
+                            <div className="related-products-grid">
+                               {data.relatedProducts.map(relatedProduct => (
+                                       <div key={relatedProduct.id} className="related-product">
+                                          <img src={relatedProduct.image} alt={relatedProduct.title} />
+                                          <h4>{relatedProduct.title}</h4>
+                                          <span className="price">{relatedProduct.price.toLocaleString()}원</span>
+                                       </div>
+                               ))}
+                            </div>
+                         </div>
+                 )}
+              </div>
+
+              {/* 모바일 바텀시트 */}
+              {isMobile && showBottomSheet && (
+                      <div className="bottom-sheet-overlay" onClick={() => actions.setShowBottomSheet(false)}>
+                         <div className="bottom-sheet" onClick={(e) => e.stopPropagation()}>
+                            <div className="bottom-sheet-header">
+                               <h3>{product.title}</h3>
+                               <button onClick={() => actions.setShowBottomSheet(false)}>×</button>
+                            </div>
+                            <div className="bottom-sheet-content">
+                               {/* 옵션 선택 */}
+                               {product.optionGroups?.map(group => (
+                                       <div key={group.id} className="option-group">
+                                          <label>
+                                             {group.name} {group.isRequired && '*'}
+                                          </label>
+                                          <div className="option-values">
+                                             {group.optionValues.map(value => (
+                                                     <button
+                                                             key={value.id}
+                                                             className={`option-button ${selectedOptions[group.id] === value.id ? 'active' : ''}`}
+                                                             onClick={() => actions.handleOptionChange(group.id, value.id)}
+                                                             disabled={!value.isActive}
+                                                     >
+                                                        {value.value}
+                                                     </button>
+                                             ))}
+                                          </div>
+                                       </div>
+                               ))}
+
+                               {/* 선택된 variant 정보 */}
+                               {selectedVariant && (
+                                       <div className="variant-info">
+                                          <p>선택된 상품: {selectedVariant.sku}</p>
+                                          {selectedVariant.additionalPrice > 0 && (
+                                                  <p>추가 금액: +{selectedVariant.additionalPrice.toLocaleString()}원</p>
+                                          )}
+                                       </div>
+                               )}
+
+                               {/* 총 금액 표시 */}
+                               <div className="total-price">
+                                  <strong>{(finalPrice * quantity).toLocaleString()}원</strong>
+                               </div>
+
+                               {/* 액션 버튼 */}
+                               <div className="action-buttons">
+                                  <button
+                                          onClick={actions.handleAddToCart}
+                                          style={{backgroundColor: componentProps.addToCartButtonColor}}
+                                  >
+                                     {t('장바구니')}
+                                  </button>
+                                  <button
+                                          onClick={actions.handleBuyNow}
+                                          style={{backgroundColor: componentProps.buyNowButtonColor}}
+                                  >
+                                     {t('바로구매')}
+                                  </button>
+                               </div>
+                            </div>
+                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p>{t('아직 리뷰가 없습니다.')}</p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* 관련 상품 */}
-        {componentProps.showRelatedProducts && data.relatedProducts?.length > 0 && (
-          <div className="related-products">
-            <h3>{t('관련 상품')}</h3>
-            <div className="related-products-grid">
-              {data.relatedProducts.map(relatedProduct => (
-                <div key={relatedProduct.id} className="related-product">
-                  <img src={relatedProduct.image} alt={relatedProduct.title} />
-                  <h4>{relatedProduct.title}</h4>
-                  <span className="price">{relatedProduct.price.toLocaleString()}원</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 모바일 바텀시트 */}
-      {isMobile && showBottomSheet && (
-        <div className="bottom-sheet-overlay" onClick={() => actions.setShowBottomSheet(false)}>
-          <div className="bottom-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="bottom-sheet-header">
-              <h3>{product.title}</h3>
-              <button onClick={() => actions.setShowBottomSheet(false)}>×</button>
-            </div>
-            <div className="bottom-sheet-content">
-              {/* 옵션 선택 */}
-              {product.optionGroups?.map(group => (
-                <div key={group.id} className="option-group">
-                  <label>
-                    {group.name} {group.isRequired && '*'}
-                  </label>
-                  <div className="option-values">
-                    {group.optionValues.map(value => (
-                      <button
-                        key={value.id}
-                        className={`option-button ${selectedOptions[group.id] === value.id ? 'active' : ''}`}
-                        onClick={() => actions.handleOptionChange(group.id, value.id)}
-                        disabled={!value.isActive}
-                      >
-                        {value.value}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              
-              {/* 선택된 variant 정보 */}
-              {selectedVariant && (
-                <div className="variant-info">
-                  <p>선택된 상품: {selectedVariant.sku}</p>
-                  {selectedVariant.additionalPrice > 0 && (
-                    <p>추가 금액: +{selectedVariant.additionalPrice.toLocaleString()}원</p>
-                  )}
-                </div>
               )}
-              
-              {/* 총 금액 표시 */}
-              <div className="total-price">
-                <strong>{(finalPrice * quantity).toLocaleString()}원</strong>
-              </div>
-              
-              {/* 액션 버튼 */}
-              <div className="action-buttons">
-                <button 
-                  onClick={actions.handleAddToCart}
-                  style={{backgroundColor: componentProps.addToCartButtonColor}}
-                >
-                  {t('장바구니')}
-                </button>
-                <button 
-                  onClick={actions.handleBuyNow}
-                  style={{backgroundColor: componentProps.buyNowButtonColor}}
-                >
-                  {t('바로구매')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+           </div>
+   );
 };
 
 export default MyProductDetailSkin;
@@ -1063,7 +1221,7 @@ export default MyProductDetailSkin;
 상품의 등급/직급별 가격은 다음 우선순위로 계산됩니다:
 
 1. **optionJson.priority 확인**: "level1" 또는 "level2" 사용 결정
-2. **상품별 등급/직급 가격**: 
+2. **상품별 등급/직급 가격**:
    - level1: `product.optionJson.level1_price[userLevel1Id]`
    - level2: `product.optionJson.level2_price[userLevel2Id]`
 3. **등급/직급 정책의 공급가 비율**: `levelPolicy.settingJson.supply_price_ratio`
@@ -1086,9 +1244,9 @@ console.log(`최종 가격: ${priceInfo.levelPrice}원`);
 const { selectedVariant, finalPrice } = data;
 
 if (selectedVariant) {
-  // 변형별 추가 가격이 최종 가격에 포함됨
-  console.log(`추가 가격: ${selectedVariant.additionalPrice}원`);
-  console.log(`변형 재고: ${selectedVariant.stock}개`);
+   // 변형별 추가 가격이 최종 가격에 포함됨
+   console.log(`추가 가격: ${selectedVariant.additionalPrice}원`);
+   console.log(`변형 재고: ${selectedVariant.stock}개`);
 }
 ```
 
@@ -1107,7 +1265,7 @@ const { isOutOfStock, selectedVariant, product } = data;
 
 // 품절 상태 확인
 if (isOutOfStock) {
-  // 품절 상태 UI 표시
+   // 품절 상태 UI 표시
 }
 
 // 필수 옵션 선택 확인은 handleAddToCart에서 자동 처리됨
@@ -1148,13 +1306,13 @@ const { isMobile } = data;
 
 // 모바일에서 다른 레이아웃 적용
 {isMobile ? (
-  <div className="mobile-layout">
-    {/* 모바일용 UI */}
-  </div>
+        <div className="mobile-layout">
+           {/* 모바일용 UI */}
+        </div>
 ) : (
-  <div className="desktop-layout">
-    {/* 데스크톱용 UI */}
-  </div>
+        <div className="desktop-layout">
+           {/* 데스크톱용 UI */}
+        </div>
 )}
 ```
 
@@ -1165,7 +1323,7 @@ const { isMobile } = data;
 ```tsx
 // 모바일에서 옵션 선택 버튼 클릭 시
 <button onClick={() => actions.setShowBottomSheet(true)}>
-  옵션 선택
+   옵션 선택
 </button>
 ```
 
@@ -1176,7 +1334,7 @@ const { isMobile } = data;
 ```tsx
 // 탭 키로 접근 가능하도록 tabIndex 설정
 <button tabIndex={0} onKeyDown={handleKeyDown}>
-  장바구니
+   장바구니
 </button>
 ```
 
@@ -1185,12 +1343,12 @@ const { isMobile } = data;
 ```tsx
 // 가격 정보에 대한 설명 제공
 <div aria-label={`상품 가격 ${finalPrice.toLocaleString()}원`}>
-  {finalPrice.toLocaleString()}원
+   {finalPrice.toLocaleString()}원
 </div>
 
 // 재고 상태 안내
 <div aria-live="polite">
-  {isOutOfStock ? '품절된 상품입니다' : '구매 가능한 상품입니다'}
+   {isOutOfStock ? '품절된 상품입니다' : '구매 가능한 상품입니다'}
 </div>
 ```
 
@@ -1199,12 +1357,12 @@ const { isMobile } = data;
 ```css
 /* 충분한 색상 대비 확보 */
 .price {
-  color: #d73527; /* 4.5:1 이상의 대비율 */
+   color: #d73527; /* 4.5:1 이상의 대비율 */
 }
 
 .button {
-  background-color: #0056b3;
-  color: #ffffff; /* 7:1 이상의 대비율 */
+   background-color: #0056b3;
+   color: #ffffff; /* 7:1 이상의 대비율 */
 }
 ```
 
@@ -1214,17 +1372,17 @@ const { isMobile } = data;
 
 ```tsx
 // 이미지 지연 로딩
-<img 
-  src={image} 
-  loading="lazy"
-  alt={product.title}
+<img
+        src={image}
+        loading="lazy"
+        alt={product.title}
 />
 
 // 반응형 이미지
-<img 
-  src={image}
-  sizes="(max-width: 768px) 100vw, 50vw"
-  alt={product.title}
+<img
+        src={image}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        alt={product.title}
 />
 ```
 
@@ -1240,15 +1398,15 @@ const { isMobile } = data;
 const { loading, error, product } = data;
 
 if (loading) {
-  return <div className="loading">로딩 중...</div>;
+   return <div className="loading">로딩 중...</div>;
 }
 
 if (error) {
-  return <div className="error">오류가 발생했습니다: {error.message}</div>;
+   return <div className="error">오류가 발생했습니다: {error.message}</div>;
 }
 
 if (!product) {
-  return <div className="not-found">상품을 찾을 수 없습니다.</div>;
+   return <div className="not-found">상품을 찾을 수 없습니다.</div>;
 }
 ```
 

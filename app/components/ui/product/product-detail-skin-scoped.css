@@ -673,29 +673,61 @@
     }
     
     .pd-skin-sticky-content {
-        padding: 12px 15px;
-    }
-    
-    .pd-skin-sticky-info {
+        padding: 10px 12px;
         gap: 10px;
     }
     
+    .pd-skin-sticky-info {
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }
+    
     .pd-skin-sticky-image {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+    
+    .pd-skin-sticky-details {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
     }
     
     .pd-skin-sticky-title {
-        font-size: 13px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+    }
+    
+    .pd-skin-sticky-price {
+        flex-wrap: wrap;
+    }
+    
+    .pd-skin-sticky-discount {
+        font-size: 11px;
+        padding: 1px 4px;
     }
     
     .pd-skin-sticky-current-price {
-        font-size: 16px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .pd-skin-sticky-original-price {
+        font-size: 12px;
+        width: 100%;
+        margin-top: 2px;
     }
     
     .pd-skin-sticky-buy-btn {
-        padding: 10px 30px;
-        font-size: 14px;
+        padding: 8px 16px;
+        font-size: 13px;
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 }
 
@@ -728,12 +760,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 15px;
 }
 
 .pd-skin-sticky-info {
     display: flex;
     align-items: center;
     gap: 15px;
+    flex: 1;
+    min-width: 0;
 }
 
 .pd-skin-sticky-image {
@@ -746,6 +781,8 @@
 .pd-skin-sticky-details {
     display: flex;
     flex-direction: column;
+    flex: 1;
+    min-width: 0;
 }
 
 .pd-skin-sticky-title {
