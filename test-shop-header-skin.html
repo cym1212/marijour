@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Header Skin Test</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 컴포넌트 스타일 -->
+    <link rel="stylesheet" href="./dist/shop-header/shop-header-skin.css">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .test-container {
+            background-color: white;
+            min-height: 100vh;
+        }
+        
+        .test-info {
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        
+        .test-info h2 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        
+        .test-info code {
+            background-color: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-info">
+            <h2>Shop Header Skin Component Test</h2>
+            <p>테스트 환경: <code>development</code></p>
+            <p>컴포넌트: <code>ShopHeaderSkin</code></p>
+            <p>파일: <code>dist/shop-header/shop-header-skin.umd.js</code></p>
+        </div>
+        
+        <!-- 컴포넌트가 렌더링될 위치 -->
+        <div id="shop-header-root"></div>
+    </div>
+    
+    <!-- 컴포넌트 스크립트 -->
+    <script src="./dist/shop-header/shop-header-skin.umd.js"></script>
+    
+    <script>
+        // 컴포넌트 렌더링
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Shop Header Skin 로드 중...');
+            
+            // 전역 변수 확인
+            if (typeof ShopHeaderSkin === 'undefined') {
+                console.error('ShopHeaderSkin이 정의되지 않았습니다!');
+                return;
+            }
+            
+            console.log('ShopHeaderSkin:', ShopHeaderSkin);
+            
+            const container = document.getElementById('shop-header-root');
+            const root = ReactDOM.createRoot(container);
+            
+            // 테스트용 props
+            const testProps = {
+                data: {
+                    componentProps: {
+                        menuItems: [
+                            {
+                                id: 'menu-test-1',
+                                categoryId: 1,
+                                categoryName: 'Best',
+                                routingPath: '/best',
+                                parentId: null,
+                                order: 1,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-2',
+                                categoryId: 2,
+                                categoryName: '키친&다이닝',
+                                routingPath: '/kitchen-dining',
+                                parentId: null,
+                                order: 2,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-2-1',
+                                categoryId: 21,
+                                categoryName: '그릇&접시',
+                                routingPath: '/kitchen-dining/dishes',
+                                parentId: 'menu-test-2',
+                                order: 1,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-2-2',
+                                categoryId: 22,
+                                categoryName: '컵&머그',
+                                routingPath: '/kitchen-dining/cups',
+                                parentId: 'menu-test-2',
+                                order: 2,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-2-3',
+                                categoryId: 23,
+                                categoryName: '수저&커트러리',
+                                routingPath: '/kitchen-dining/cutlery',
+                                parentId: 'menu-test-2',
+                                order: 3,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-3',
+                                categoryId: 3,
+                                categoryName: '바디케어',
+                                routingPath: '/body-care',
+                                parentId: null,
+                                order: 3,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-3-1',
+                                categoryId: 31,
+                                categoryName: '샴푸&린스',
+                                routingPath: '/body-care/shampoo',
+                                parentId: 'menu-test-3',
+                                order: 1,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-3-2',
+                                categoryId: 32,
+                                categoryName: '바디워시',
+                                routingPath: '/body-care/bodywash',
+                                parentId: 'menu-test-3',
+                                order: 2,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-4',
+                                categoryId: 4,
+                                categoryName: '침실&패브릭',
+                                routingPath: '/bedroom-fabric',
+                                parentId: null,
+                                order: 4,
+                                visible: true
+                            },
+                            {
+                                id: 'menu-test-5',
+                                categoryId: 5,
+                                categoryName: '리빙&홈데코',
+                                routingPath: '/living-homedeco',
+                                parentId: null,
+                                order: 5,
+                                visible: true
+                            }
+                        ],
+                        showProductCount: false,
+                        showIcon: false,
+                        showDescription: false,
+                        showCategoryInfo: false,
+                        layout: 'list',
+                        emptyMessage: '메뉴가 없습니다.'
+                    },
+                    loading: false,
+                    error: null,
+                    selectedItemId: null,
+                    isExpanded: false
+                },
+                actions: {
+                    handleMenuItemClick: function(item) {
+                        console.log('메뉴 클릭됨:', item);
+                        // 선택된 아이템 업데이트 (실제로는 웹빌더가 처리)
+                        testProps.data.selectedItemId = item.id;
+                        // 재렌더링
+                        renderComponent();
+                    },
+                    toggleExpanded: function() {
+                        console.log('확장 토글');
+                    }
+                },
+                utils: {
+                    t: function(key) {
+                        return key;
+                    },
+                    navigate: function(path, options) {
+                        console.log('Navigate to:', path, options);
+                        alert('페이지 이동: ' + path);
+                    }
+                },
+                mode: 'preview'
+            };
+            
+            // 컴포넌트 렌더링 함수
+            function renderComponent() {
+                root.render(
+                    React.createElement(ShopHeaderSkin, testProps)
+                );
+            }
+            
+            // 초기 렌더링
+            renderComponent();
+            
+            console.log('Shop Header Skin 렌더링 완료');
+            
+            // 테스트를 위한 전역 함수
+            window.toggleShowIcon = function() {
+                testProps.data.componentProps.showIcon = !testProps.data.componentProps.showIcon;
+                renderComponent();
+            };
+            
+            window.toggleShowDescription = function() {
+                testProps.data.componentProps.showDescription = !testProps.data.componentProps.showDescription;
+                renderComponent();
+            };
+            
+            window.toggleShowCategoryInfo = function() {
+                testProps.data.componentProps.showCategoryInfo = !testProps.data.componentProps.showCategoryInfo;
+                renderComponent();
+            };
+            
+            window.toggleShowProductCount = function() {
+                testProps.data.componentProps.showProductCount = !testProps.data.componentProps.showProductCount;
+                renderComponent();
+            };
+            
+            console.log('테스트 함수: toggleShowIcon(), toggleShowDescription(), toggleShowCategoryInfo(), toggleShowProductCount()');
+        });
+    </script>
+</body>
+</html>

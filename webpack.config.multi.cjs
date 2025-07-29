@@ -94,6 +94,11 @@ const components = {
     entry: './app/components/ui/notice/NoticeIntegratedSkin.tsx',
     name: 'notice-integrated-skin',
     filename: 'notice-integrated-skin'
+  },
+  'shop-header': {
+    entry: './app/components/ui/shop/ShopHeaderSkin.tsx',
+    name: 'ShopHeaderSkin',
+    filename: 'shop-header-skin'
   }
   // 추후 다른 컴포넌트들 추가 가능
 };

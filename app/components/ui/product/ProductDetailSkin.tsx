@@ -140,27 +140,49 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
         if (!description) return [];
         const images: string[] = [];
         
-        // HTML img 태그에서 src 추출
-        const htmlRegex = /<img[^>]+src="([^">]+)"/g;
-        let match;
-        while ((match = htmlRegex.exec(description)) !== null) {
-            if (match[1] && !match[1].includes('ProseMirror-separator')) {
-                images.push(match[1]);
+        // HTML img 태그에서 src 추출 - 다양한 형식 지원
+        // 큰따옴표, 작은따옴표, 따옴표 없는 경우 모두 처리
+        const htmlRegexPatterns = [
+            /<img[^>]+src=["']([^"']+)["']/gi,  // 큰따옴표 또는 작은따옴표
+            /<img[^>]+src=([^\s>]+)/gi          // 따옴표 없는 경우
+        ];
+        
+        htmlRegexPatterns.forEach(regex => {
+            let match;
+            while ((match = regex.exec(description)) !== null) {
+                if (match[1] && !match[1].includes('ProseMirror-separator')) {
+                    // 상대 경로를 절대 경로로 변환 (필요한 경우)
+                    let imageUrl = match[1];
+                    
+                    // 디버깅을 위한 로그
+                    console.log('[상품 상세] 추출된 이미지 URL:', imageUrl);
+                    
+                    // 중복 제거
+                    if (!images.includes(imageUrl)) {
+                        images.push(imageUrl);
+                    }
+                }
             }
-        }
+        });
         
         // 마크다운 이미지 문법에서 URL 추출 (하위 호환성)
         const markdownRegex = /!\[.*?\]\((.*?)\)/g;
+        let match;
         while ((match = markdownRegex.exec(description)) !== null) {
-            if (match[1]) {
+            if (match[1] && !images.includes(match[1])) {
+                console.log('[상품 상세] 마크다운 이미지 URL:', match[1]);
                 images.push(match[1]);
             }
         }
         
+        console.log('[상품 상세] 총 추출된 이미지 개수:', images.length);
         return images;
     };
     
     const detailImages = React.useMemo(() => {
+        console.log('[상품 상세] product.description:', product.description);
+        console.log('[상품 상세] product.description 타입:', typeof product.description);
+        console.log('[상품 상세] product.description 길이:', product.description?.length);
         return extractImagesFromDescription(product.description);
     }, [product.description]);
     
@@ -373,6 +395,14 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                                 src={image}
                                 alt={`상품 상세 이미지 ${index + 1}`}
                                 className="pd-skin-detail-image"
+                                onError={(e) => {
+                                    console.error('[상품 상세] 이미지 로드 실패:', image);
+                                    // 이미지 로드 실패 시 대체 이미지 표시
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                                onLoad={() => {
+                                    console.log('[상품 상세] 이미지 로드 성공:', image);
+                                }}
                             />
                         ))}
                     </div>
@@ -382,6 +412,10 @@ const ProductDetailSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                             src="/images/product-detail.png"
                             alt="상품 상세 이미지"
                             className="pd-skin-detail-image"
+                            onError={(e) => {
+                                console.error('[상품 상세] 폴백 이미지 로드 실패');
+                                (e.target as HTMLImageElement).style.display = 'none';
+                            }}
                         />
                     </div>
                 )}

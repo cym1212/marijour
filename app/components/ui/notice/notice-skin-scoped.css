@@ -155,6 +155,12 @@
     }
 }
 
+.notice-skin-item-number {
+    color: rgba(0, 0, 0, 0.6);
+    min-width: 40px;
+    text-align: left;
+}
+
 .notice-skin-item-writer {
     color: rgba(0, 0, 0, 0.6);
     min-width: 60px;

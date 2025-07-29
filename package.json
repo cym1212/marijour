@@ -26,7 +26,8 @@
         "build:skin:my-info": "COMPONENT=my-info webpack --config webpack.config.multi.cjs",
         "build:skin:notice-list": "COMPONENT=notice-list webpack --config webpack.config.multi.cjs",
         "build:skin:notice-detail": "COMPONENT=notice-detail webpack --config webpack.config.multi.cjs",
-        "build:skin:notice-integrated": "COMPONENT=notice-integrated webpack --config webpack.config.multi.cjs"
+        "build:skin:notice-integrated": "COMPONENT=notice-integrated webpack --config webpack.config.multi.cjs",
+        "build:skin:shop-header": "COMPONENT=shop-header webpack --config webpack.config.multi.cjs"
     },
     "dependencies": {
         "@gsap/react": "^2.1.2",

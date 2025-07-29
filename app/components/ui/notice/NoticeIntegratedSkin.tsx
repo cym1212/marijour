@@ -742,6 +742,9 @@ export const NoticeIntegrated: React.FC<ComponentSkinProps> = (props) => {
                                         )}
                                     </div>
                                     <div className="notice-skin-item-meta">
+                                        <span className="notice-skin-item-number">
+                                            {post.id}
+                                        </span>
                                         {showWriter && (
                                             <span className="notice-skin-item-writer">{getAuthorName(post)}</span>
                                         )}
