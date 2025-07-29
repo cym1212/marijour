@@ -374,9 +374,31 @@ export const ShopHeaderSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                 
                 {/* Shop 타이틀 - 항상 표시 */}
                 <h2 className="sh-skin-font-serif sh-skin-text-3xl sh-skin-leading-heading">
-                    {breadcrumb && breadcrumb.length > 0 
-                        ? breadcrumb[breadcrumb.length - 1].name 
-                        : 'Shop'}
+                    {(() => {
+                        // breadcrumb이 없거나 비어있으면 Shop
+                        if (!breadcrumb || breadcrumb.length === 0) {
+                            return 'Shop';
+                        }
+                        
+                        // selectedItemId가 null이거나 'all'이면 루트로 간주
+                        if (!selectedItemId || selectedItemId === 'all') {
+                            return 'Shop';
+                        }
+                        
+                        // 현재 표시되는 메뉴가 루트 메뉴들인지 확인
+                        const rootMenus = menuItems.filter(item => !item.parentId);
+                        const isShowingRootMenus = displayItems.length === rootMenus.length &&
+                            displayItems.every(item => 
+                                rootMenus.some(root => root.id === item.id)
+                            );
+                        
+                        if (isShowingRootMenus) {
+                            return 'Shop';
+                        }
+                        
+                        // 그 외의 경우 마지막 breadcrumb 표시
+                        return breadcrumb[breadcrumb.length - 1].name;
+                    })()}
                 </h2>
                 
                 {/* 현재 뎁스의 메뉴들만 표시 - 하위 메뉴가 있을 때만 */}

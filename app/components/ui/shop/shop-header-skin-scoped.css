@@ -1,18 +1,10 @@
 /* Shop Header Skin Scoped CSS */
 
 /* Container */
-.sh-skin-globalWrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
+
 
 @media (min-width: 768px) {
-    .sh-skin-globalWrapper {
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
+
 }
 
 /* Layout utilities */
