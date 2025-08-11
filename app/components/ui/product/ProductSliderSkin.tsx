@@ -204,16 +204,16 @@ const defaultProps: ComponentSkinProps = {
         exclude_category_ids: ''
     },
     actions: {
-        moveSlide: (direction) => console.log('Move slide:', direction),
-        handleAddToCart: (product, e) => console.log('Added to cart:', product),
-        handleProductClick: (product) => console.log('Product clicked:', product),
-        handleTouchStart: (e) => console.log('Touch start'),
-        handleTouchMove: (e) => console.log('Touch move'),
-        handleTouchEnd: () => console.log('Touch end'),
-        handleTitleDoubleClick: () => console.log('Title double click'),
-        handleTitleBlur: () => console.log('Title blur'),
-        setTitleEditValue: (value) => console.log('Set title edit value:', value),
-        handleFilterOptionChange: (optionName, value) => console.log('Filter change:', optionName, value),
+        moveSlide: (_direction) => {},
+        handleAddToCart: (_product, _e) => {},
+        handleProductClick: (_product) => {},
+        handleTouchStart: (_e) => {},
+        handleTouchMove: (_e) => {},
+        handleTouchEnd: () => {},
+        handleTitleDoubleClick: () => {},
+        handleTitleBlur: () => {},
+        setTitleEditValue: (_value) => {},
+        handleFilterOptionChange: (_optionName, _value) => {},
         renderFilteringSettings: () => false,
         formatPrice: (price) => `${price.toLocaleString()}원`
     },
@@ -221,7 +221,7 @@ const defaultProps: ComponentSkinProps = {
     mode: 'production',
     utils: {
         t: (key) => key,
-        navigate: (path) => console.log('Navigate to:', path),
+        navigate: (_path) => {},
         formatCurrency: (amount) => `${amount.toLocaleString()}원`,
         formatDate: (date) => new Date(date).toLocaleDateString(),
         getAssetUrl: (path) => path,
@@ -278,16 +278,8 @@ const ProductSliderSkin: React.FC<ComponentSkinProps> = (props = {}) => {
     if (!productsToShow || productsToShow.length === 0) {
         return <div className="ps-skin-empty">표시할 상품이 없습니다.</div>;
     }
-    
-    console.log('[ProductSliderSkin] 받은 data:', data);
-    console.log('[ProductSliderSkin] showTitle:', showTitle);
-    console.log('[ProductSliderSkin] sliderTitle:', sliderTitle);
-    console.log('[ProductSliderSkin] showPrice:', showPrice);
-    console.log('[ProductSliderSkin] showAddToCart:', showAddToCart);
-    console.log('[ProductSliderSkin] 전체 상품 개수:', productsToShow?.length);
-    console.log('[ProductSliderSkin] translateX:', translateX);
-    console.log('[ProductSliderSkin] slideWidth:', slideWidth);
-    
+
+
     // productsToShow를 사용하여 전체 상품을 내부 컴포넌트에 전달
     const mappedProducts = (productsToShow || []).map(product => {
         const mapped = mapWebBuilderProduct(product);
@@ -360,7 +352,6 @@ const ProductSliderSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                                     desktopSlidesPerView={3} // 기본값 사용
                                     mobileSlidesPerView={1}
                                     onProductClick={(product) => {
-                                        console.log('[ProductSliderSkin] onProductClick 호출됨:', product);
                                         const originalProduct = productsToShow?.find(p => p.id === product.id);
                                         if (originalProduct && actions?.handleProductClick) {
                                             actions.handleProductClick(originalProduct);
@@ -373,7 +364,6 @@ const ProductSliderSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                                         }
                                     }}
                                     onAddToCart={(product) => {
-                                        console.log('[ProductSliderSkin] Add to cart:', product);
                                         const originalProduct = productsToShow?.find(p => p.id === product.id);
                                         if (originalProduct && actions?.handleAddToCart) {
                                             // 수정된 API: 이벤트 객체도 전달
@@ -392,7 +382,6 @@ const ProductSliderSkin: React.FC<ComponentSkinProps> = (props = {}) => {
                             </div>
                         );
                     } catch (error) {
-                        console.error('[ProductSliderSkin] ProductSlider 렌더링 오류:', error);
                         return (
                             <div style={{
                                 background: 'red', 
