@@ -287,9 +287,27 @@ export const Cart: React.FC<ComponentSkinProps> = ({
   // ✅ 기본 스킨과 동일한 방식으로 utils 추출
   const {
     t = (key: string) => key,
-    formatCurrency = (amount: number) => `${amount.toLocaleString()}원`,
+    // formatCurrency는 사용하지 않음 (내부 함수로 대체)
     cx = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ')
   } = utils || {};
+
+  // formatCurrency 함수 - 웹빌더 스타일로 수정 (₩ 기호 사용)
+  const formatCurrency = React.useCallback((amount: number): string => {
+    // 타입 체크 및 NaN 처리
+    if (amount === null || amount === undefined || typeof amount !== 'number' || isNaN(amount)) {
+      console.warn('Invalid amount passed to formatCurrency:', amount);
+      return '₩0';
+    }
+    
+    // 정수로 변환 (반올림)
+    const intAmount = Math.round(amount);
+    
+    // 천단위 구분 정규식 적용
+    const formatted = intAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    
+    // 웹빌더 스타일: ₩ 기호만 사용, "원" 제거
+    return `₩${formatted}`;
+  }, []);
 
   // ✅ 기본 스킨과 동일한 방식으로 options 추출
   const {
@@ -312,11 +330,19 @@ export const Cart: React.FC<ComponentSkinProps> = ({
     : localQuantities;
 
   // 로컬 수량 상태 관리 (즉시 UI 업데이트용)
-  const [quantities, setQuantities] = React.useState<{[key: string]: number}>({});
+  // 초기값을 actualCartItems에서 가져옴
+  const [quantities, setQuantities] = React.useState<{[key: string]: number}>(() => {
+    const initial: {[key: string]: number} = {};
+    actualCartItems.forEach(item => {
+      const itemId = String(item.id);
+      initial[itemId] = actualLocalQuantities[itemId] || item.count || 1;
+    });
+    return initial;
+  });
   
-  // localQuantities가 변경될 때 로컬 상태 업데이트
+  // localQuantities가 변경될 때 로컬 상태 업데이트 (단, quantities가 비어있을 때만)
   React.useEffect(() => {
-    if (actualLocalQuantities && Object.keys(actualLocalQuantities).length > 0) {
+    if (Object.keys(quantities).length === 0 && actualLocalQuantities && Object.keys(actualLocalQuantities).length > 0) {
       setQuantities(actualLocalQuantities);
     }
   }, [actualLocalQuantities]);
@@ -471,8 +497,8 @@ export const Cart: React.FC<ComponentSkinProps> = ({
                 }
                 
                 const itemId = String(item.id);
-                // localQuantities 우선, 그 다음 quantities, 마지막으로 item.count
-                const quantity = actualLocalQuantities[item.id] || quantities[itemId] || item.count || 1;
+                // quantities 상태를 우선 사용 (사용자가 변경한 값), 없으면 localQuantities, 마지막으로 item.count
+                const quantity = quantities[itemId] || actualLocalQuantities[itemId] || item.count || 1;
                 const priceInfo = getItemPriceInfo(item);
                 const totalPrice = priceInfo.levelPrice * quantity;
 
@@ -520,7 +546,7 @@ export const Cart: React.FC<ComponentSkinProps> = ({
                               <>
                                 <em className="cart-skin-text-xs cart-skin-text-primary cart-skin-font-bold cart-skin-bg-primary-10 cart-skin-px-1 cart-skin-py-0-5 cart-skin-rounded">{priceInfo.discountRate}%</em>
                                 <p className="cart-skin-font-bold">
-                                  {formatCurrency(priceInfo.levelPrice - (priceInfo.additionalPrice || 0))}
+                                  {formatCurrency(priceInfo.levelPrice)}
                                   {priceInfo.additionalPrice && priceInfo.additionalPrice > 0 && (
                                     <span className="cart-skin-text-xs cart-skin-text-black-60">
                                       (+{formatCurrency(priceInfo.additionalPrice)})
@@ -528,12 +554,12 @@ export const Cart: React.FC<ComponentSkinProps> = ({
                                   )}
                                 </p>
                                 <del className="cart-skin-text-sm cart-skin-font-bold cart-skin-text-black-40 cart-skin-w-full cart-skin-md-w-auto cart-skin-mt-neg-0-5 cart-skin-md-mt-0">
-                                  {formatCurrency(priceInfo.originalPrice - (priceInfo.additionalPrice || 0))}
+                                  {formatCurrency(priceInfo.originalPrice)}
                                 </del>
                               </>
                             ) : (
                               <p className="cart-skin-font-bold">
-                                {formatCurrency(priceInfo.levelPrice - (priceInfo.additionalPrice || 0))}
+                                {formatCurrency(priceInfo.levelPrice)}
                                 {priceInfo.additionalPrice && priceInfo.additionalPrice > 0 && (
                                   <span className="cart-skin-text-xs cart-skin-text-black-60">
                                     (+{formatCurrency(priceInfo.additionalPrice)})
